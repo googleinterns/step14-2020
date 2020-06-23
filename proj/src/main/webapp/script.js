@@ -12,6 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Adds a random greeting to the page.
- */
+messaging.usePublicVapidKey("BO2VqN71OqBF2YNXz3PlbTGECciW2YnIkQeIxxx-2Qzl-hS2fcJABIk6AMtYO-htt-vaqNWUCTd36Cz7bM_MV6Y");
