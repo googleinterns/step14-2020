@@ -9,5 +9,7 @@ function test() {
     const dbRefObject = firebase.database().ref().child('object');
 
     // sync object data
-    dbRefObject.on('value', snap => console.log(snap.val()));
+    dbRefObject.on('value', snap => {
+        divObject.innerHTML = JSON.stringify(snap.val(), null, 3);
+    });
 }
