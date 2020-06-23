@@ -34,17 +34,16 @@ messaging.requestPermission()
 
 messaging.onMessage((payload) => {
     console.log("Message received. ", payload);
-    // appendMessage(payload);
+    appendMessage(payload);
 });
 
-//NOT YET IMPLEMENTED
 function appendMessage(payload){
-    const messagesElement = document.querySelector("#messages");
-    dataHeaderElement = document.createElement("h5");
+    const messagesElement = document.getElementById("messages");
+    const dataHeaderElement = document.createElement("h4");
     const dataElement = document.createElement("pre");
-    dataElement.style = "overflow-x:hidden;";
-    dataHeaderElement.textContent = "Received message:";
-    dataElement.textContent = JSON.stringify(payload, null, 2);
+    dataHeaderElement.textContent = payload.notification.title;
+    dataElement.textContent = payload.notification.body;
+
     messagesElement.appendChild(dataHeaderElement);
     messagesElement.appendChild(dataElement);
 }
