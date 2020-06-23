@@ -12,4 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-messaging.usePublicVapidKey("BO2VqN71OqBF2YNXz3PlbTGECciW2YnIkQeIxxx-2Qzl-hS2fcJABIk6AMtYO-htt-vaqNWUCTd36Cz7bM_MV6Y");
+// Your web app's Firebase configuration
+var firebaseConfig = {
+    
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+const messaging = firebase.messaging();
+messaging.requestPermission()
+.then(function(){
+    console.log("Permission granted");
+    return messaging.getToken();
+})
+.then(function(token) {
+    console.log(token);
+})
+.catch(function(err){
+    console.log("Permission denied");
+})
+
+messaging.onMessage((payload) => {
+    console.log("Message received. ", payload);
+    // appendMessage(payload);
+});
+
+//NOT YET IMPLEMENTED
+function appendMessage(payload){
+    const messagesElement = document.querySelector("#messages");
+    dataHeaderElement = document.createElement("h5");
+    const dataElement = document.createElement("pre");
+    dataElement.style = "overflow-x:hidden;";
+    dataHeaderElement.textContent = "Received message:";
+    dataElement.textContent = JSON.stringify(payload, null, 2);
+    messagesElement.appendChild(dataHeaderElement);
+    messagesElement.appendChild(dataElement);
+}
