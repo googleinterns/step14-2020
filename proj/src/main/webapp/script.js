@@ -30,3 +30,39 @@ function pushChatMessage() {
     // push message to datastore
     messageRef.push(message);
 } 
+
+// Your web app's Firebase configuration
+var firebaseConfig = {
+    
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+const messaging = firebase.messaging();
+messaging.requestPermission()
+.then(function(){
+    console.log("Permission granted");
+    return messaging.getToken();
+})
+.then(function(token) {
+    console.log(token);
+})
+.catch(function(err){
+    console.log("Permission denied");
+})
+
+messaging.onMessage((payload) => {
+    console.log("Message received. ", payload);
+    appendMessage(payload);
+});
+
+function appendMessage(payload){
+    const messagesElement = document.getElementById("messages");
+    const dataHeaderElement = document.createElement("h4");
+    const dataElement = document.createElement("pre");
+    dataHeaderElement.textContent = payload.notification.title;
+    dataElement.textContent = payload.notification.body;
+
+    messagesElement.appendChild(dataHeaderElement);
+    messagesElement.appendChild(dataElement);
+}
