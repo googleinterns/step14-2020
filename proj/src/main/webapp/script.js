@@ -20,6 +20,7 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
+
 messaging.requestPermission()
 .then(function(){
     console.log("Permission granted");
