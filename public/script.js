@@ -19,7 +19,6 @@ function initRef() {
     dbRefObject.on('child_added', snap => {
         const li = document.createElement('li');
         li.innerText = snap.val();
-        console.log(snap.val());
         listObject.appendChild(li);
     });
 }
@@ -30,5 +29,4 @@ function pushChatMessage() {
     const message = document.getElementById('message-input').value;
     // push message to datastore
     messageRef.push(message);
-    console.log("yo")
 }
