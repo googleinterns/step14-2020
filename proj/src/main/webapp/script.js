@@ -1,36 +1,26 @@
 // Your web app's Firebase configuration
-var firebaseConfig = {
-    apiKey: "AIzaSyAcpxnpwrTCO4XTymTcneRscMBzJBne2Qg",
-    authDomain: "arringtonh-step-2020-d.firebaseapp.com",
-    databaseURL: "https://arringtonh-step-2020-d.firebaseio.com",
-    projectId: "arringtonh-step-2020-d",
-    storageBucket: "arringtonh-step-2020-d.appspot.com",
-    messagingSenderId: "336825043126",
-    appId: "1:336825043126:web:1256d7b08f1c8daa93be17",
-    measurementId: "G-VJQS6TEYGV"
-};
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
 /*
     Notifications
  */
-const messaging = firebase.messaging();
 
+const messaging = firebase.messaging();
 messaging.requestPermission()
-.then(function(){
-    console.log("Permission granted");
-    return messaging.getToken();
-})
-.then(function(token) {
-    console.log(token);
-})
-.catch(function(err){
-    console.log("Permission denied");
-})
+.then(function () {
+    console.log("Have permission");
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        .then(function(registration) {
+            console.log('Registration successful, scope is:', registration.scope);
+        }).catch(function(err) {
+            console.log('Service worker registration failed, error:', err);
+        });
+    }
+});
 
 messaging.onMessage((payload) => {
-    console.log("Message received. ", payload);
     appendMessage(payload);
 });
 
