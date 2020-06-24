@@ -1,10 +1,13 @@
-function init() {
-    initRef();
-}
-
 // Your web app's Firebase configuration
 var firebaseConfig = {
-    
+    apiKey: "AIzaSyAcpxnpwrTCO4XTymTcneRscMBzJBne2Qg",
+    authDomain: "arringtonh-step-2020-d.firebaseapp.com",
+    databaseURL: "https://arringtonh-step-2020-d.firebaseio.com",
+    projectId: "arringtonh-step-2020-d",
+    storageBucket: "arringtonh-step-2020-d.appspot.com",
+    messagingSenderId: "336825043126",
+    appId: "1:336825043126:web:1256d7b08f1c8daa93be17",
+    measurementId: "G-VJQS6TEYGV"
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
@@ -46,6 +49,10 @@ function appendMessage(payload){
     Realtime Database
  */
 const path = '/messages'; // can make this more detailed (for example add user ID)
+
+function init() {
+    initRef();
+}
 
 // initializes the .on() functions for the database reference
 function initRef() {
