@@ -1,18 +1,26 @@
 function init() {
-    test();
+    initRef();
 }
 
-const path = '/messages'; // can make this more detailed
+const path = '/messages'; // can make this more detailed (for example add user ID)
 
-function test() {
-    const divObject = document.getElementById('content');
-
+// initializes the .on() functions for the database reference
+function initRef() {
     // create database reference
     const dbRefObject = firebase.database().ref(path);
 
     // sync object data
+    const divObject = document.getElementById('content');
     dbRefObject.on('value', snap => {
         divObject.innerHTML = JSON.stringify(snap.val(), null, 3);
+    });
+
+    const listObject = document.getElementById('chat-as-list');
+    dbRefObject.on('child_added', snap => {
+        const li = document.createElement('li');
+        li.innerText = snap.val();
+        console.log(snap.val());
+        listObject.appendChild(li);
     });
 }
 
@@ -22,4 +30,5 @@ function pushChatMessage() {
     const message = document.getElementById('message-input').value;
     // push message to datastore
     messageRef.push(message);
+    console.log("yo")
 }
