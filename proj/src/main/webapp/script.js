@@ -18,6 +18,8 @@ function initRef() {
     const limit = 20; // how many messages to load at a time
 
     const listObject = document.getElementById('chat-as-list');
+    // note that when a comment is added it will display more than the limit, which
+    // is intentional
     dbRefObject.limitToLast(limit).on('child_added', snap => {
         const li = document.createElement('li');
         li.innerText = snap.val();
