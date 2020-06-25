@@ -5,17 +5,30 @@
         <meta charset="UTF-8">
         <title>My Portfolio</title>
         <link rel="stylesheet" href="style.css">
+        
         <!-- The core Firebase JS SDK is always required and must be listed first -->
         <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
 
         <!-- TODO: Add SDKs for Firebase products that you want to use
             https://firebase.google.com/docs/web/setup#available-libraries -->
         <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
+
+        <script>
+            var firebaseConfig = {
+            apiKey: "AIzaSyAcpxnpwrTCO4XTymTcneRscMBzJBne2Qg",
+            authDomain: "arringtonh-step-2020-d.firebaseapp.com",
+            databaseURL: "https://arringtonh-step-2020-d.firebaseio.com",
+            projectId: "arringtonh-step-2020-d",
+            storageBucket: "arringtonh-step-2020-d.appspot.com",
+            messagingSenderId: "336825043126",
+            appId: "1:336825043126:web:1256d7b08f1c8daa93be17",
+            measurementId: "G-VJQS6TEYGV"};
+        </script>
+
         <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-database.js"></script>
         <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-messaging.js"></script>
         <script src="script.js"></script>
     </head>
-
     <body onload="init()">
         <div id="content"></div>
         <ul id="chat-as-list"></ul>
@@ -23,7 +36,11 @@
             <input type="text" id="message-input" />
             <button type="button" onclick="pushChatMessage()">send</button>
         </form>
-        <div id="messages"></div>
-    </body>
+        <div id="content"></div>
 
+        <div id="messages"></div>
+
+
+
+    </body>
 </html>

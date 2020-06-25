@@ -15,16 +15,13 @@
 importScripts("https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js");
 importScripts("https://www.gstatic.com/firebasejs/7.15.4/firebase-messaging.js");
 
-var firebaseConfig = {
-    
-};
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 
 messaging.setBackgroundMessageHandler(function(payload) {
-    console.log("[messages.js] Received background message ", payload);
+    console.log("Received background message ", payload);
     const notificationTitle = "Background Message Title";
     const notificationOptions = {
         body: "Background Message body."
