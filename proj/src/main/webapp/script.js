@@ -1,5 +1,9 @@
 function init() {
     initRef();
+
+    const chat = document.getElementById('chat-as-list');
+    chat.addEventListener('scroll', addMoreMessagesAtTheTop);
+
 }
 
 const path = '/messages'; // can make this more detailed (for example add user ID)
@@ -33,6 +37,14 @@ function pushChatMessage() {
     const message = document.getElementById('message-input').value;
     // push message to datastore
     messageRef.push(message);
+}
+
+function addMoreMessagesAtTheTop() {
+    const chat = document.getElementById('chat-as-list');
+    if (chat.scrollTop === 0) {
+        alert('at the top!')
+        // load more messages, somehow
+    }
 }
 
 const messaging = firebase.messaging();
