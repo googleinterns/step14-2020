@@ -39,12 +39,12 @@ function init() {
     clickWithEnterKey();
 }
 
-const path = '/messages'; // can make this more detailed (for example add user ID)
+const PATH = '/messages'; // can make this more detailed (for example add user ID)
 
 // initializes the .on() functions for the database reference
 function initRef() {
     // create database reference
-    const dbRefObject = firebase.database().ref(path);
+    const dbRefObject = firebase.database().ref(PATH);
 
     // sync object data
     const divObject = document.getElementById('content');
@@ -61,7 +61,7 @@ function initRef() {
 }
 
 function pushChatMessage() {
-    const messageRef = firebase.database().ref(path);
+    const messageRef = firebase.database().ref(PATH);
 
     const messageInput = document.getElementById('message-input');
     // push message to datastore
