@@ -29,6 +29,7 @@ function appendMessage(payload){
 
     messagesElement.appendChild(dataHeaderElement);
     messagesElement.appendChild(dataElement);
+}
 
 /*
     Realtime Database
@@ -39,11 +40,6 @@ function init() {
 }
 
 const path = '/messages'; // can make this more detailed (for example add user ID)
-
-function init() {
-    initRef();
-    clickWithEnterKey();
-}
 
 // initializes the .on() functions for the database reference
 function initRef() {
@@ -83,7 +79,7 @@ function clickWithEnterKey() {
 
     messageInput.addEventListener('keyup', function(event) {
         if (event.keyCode === 13) { // 13 is the keycode for the enter key
-            document.getElementById('send-button').click();
+            pushChatMessage();
         }
     });
 }
