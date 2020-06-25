@@ -2,7 +2,8 @@
     "steps": [
     {
         "name": "gcr.io/cloud-builders/mvn",
-        "args": ["package"]
+        "entrypoint": "bash",
+        "args": ["-c", "cd proj && mvn package"]
     }
     ]
 }
