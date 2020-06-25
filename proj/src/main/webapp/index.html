@@ -20,8 +20,11 @@
         <div id="content"></div>
         <ul id="chat-as-list"></ul>
         <form>
+            <!-- this button stops form submission on pressing enter
+            which is not what we want because it reloads the page -->
+            <button type="submit" disabled style="display: none" aria-hidden="true"></button>
             <input type="text" id="message-input" />
-            <button type="button" onclick="pushChatMessage()">send</button>
+            <button type="button" onclick="pushChatMessage()" id="send-button">send</button>
         </form>
         <div id="messages"></div>
     </body>
