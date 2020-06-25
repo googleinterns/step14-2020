@@ -15,8 +15,10 @@ function initRef() {
         divObject.innerHTML = JSON.stringify(snap.val(), null, 3);
     });
 
+    const limit = 20; // how many messages to load at a time
+
     const listObject = document.getElementById('chat-as-list');
-    dbRefObject.on('child_added', snap => {
+    dbRefObject.limitToLast(limit).on('child_added', snap => {
         const li = document.createElement('li');
         li.innerText = snap.val();
         listObject.appendChild(li);
@@ -29,14 +31,7 @@ function pushChatMessage() {
     const message = document.getElementById('message-input').value;
     // push message to datastore
     messageRef.push(message);
-} 
-
-// Your web app's Firebase configuration
-var firebaseConfig = {
-    
-};
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+}
 
 const messaging = firebase.messaging();
 messaging.requestPermission()
