@@ -43,6 +43,12 @@ function addMoreMessagesAtTheTop() {
     const chat = document.getElementById('chat-as-list');
     if (chat.scrollTop === 0) {
         alert('at the top!')
+        const oldScrollHeight = chat.scrollHeight;
+        const li = document.createElement('li');
+        li.innerText = "test";
+        const listElement = document.getElementById('chat-as-list');
+        listElement.insertBefore(li, listElement.firstChild);
+        chat.scrollTop = chat.scrollHeight - oldScrollHeight;
         // load more messages, somehow
     }
 }
