@@ -1,4 +1,3 @@
-
 /*
     Notifications
  */
@@ -36,21 +35,24 @@ function appendMessage(payload){
     Realtime Database
  */
 
-const path = '/messages'; // can make this more detailed (for example add user ID)
+const PATH = '/messages'; // can make this more detailed (for example add user ID)
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
 function init() {
     initRef();
+    clickWithEnterKey();
 
     const chat = document.getElementById('chat-as-list');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
 }
 
+const PATH = '/messages'; // can make this more detailed (for example add user ID)
+
 // initializes the .on() functions for the database reference
 function initRef() {
     // create database reference
-    const dbRefObject = firebase.database().ref(path);
+    const dbRefObject = firebase.database().ref(PATH);
 
     const listObject = document.getElementById('chat-as-list');
     // note that when a comment is added it will display more than the limit, which
@@ -67,15 +69,16 @@ function initRef() {
 }
 
 function pushChatMessage() {
-    const messageRef = firebase.database().ref(path);
+    const messageRef = firebase.database().ref(PATH);
 
-    const message = document.getElementById('message-input').value;
+    const messageInput = document.getElementById('message-input');
     // push message to datastore
-    messageRef.push(message);
+    messageRef.push(messageInput.value);
+    messageInput.value = null; // clear the message
 }
 
 function addMoreMessagesAtTheTop() {
-    const dbRefObject = firebase.database().ref(path);
+    const dbRefObject = firebase.database().ref(PATH);
     const chat = document.getElementById('chat-as-list');
     if (chat.scrollTop === 0) {
         const oldScrollHeight = chat.scrollHeight;
@@ -101,4 +104,19 @@ function addMessagesToListElement(messages, firstChild, oldScrollHeight) {
         }
     }
     chat.scrollTop = chat.scrollHeight - oldScrollHeight;
+}
+
+/**
+    so pressing enter instead of using the button submits the form,
+    which is not what we want because it reloads the page. so this
+    makes it so when they press enter, it presses the send button
+ */
+function clickWithEnterKey() {
+    const messageInput = document.getElementById('message-input');
+
+    messageInput.addEventListener('keyup', function(event) {
+        if (event.keyCode === 13) { // 13 is the keycode for the enter key
+            pushChatMessage();
+        }
+    });
 }
