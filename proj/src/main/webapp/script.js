@@ -80,7 +80,6 @@ function addMoreMessagesAtTheTop() {
     const chat = document.getElementById('chat-as-list');
     if (chat.scrollTop === 0) {
         const oldScrollHeight = chat.scrollHeight;
-        console.log(oldScrollHeight);
         // because we don't add the last child, add one to the limit
         dbRefObject.orderByKey().endAt(FIRST_CHILD_KEY).limitToLast(LIMIT + 1).once('value', snap => {
             FIRST_CHILD_KEY = null;
