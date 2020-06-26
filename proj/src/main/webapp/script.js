@@ -80,8 +80,8 @@ function addMoreMessagesAtTheTop() {
     if (chat.scrollTop === 0) {
         const oldScrollHeight = chat.scrollHeight;
         // because we don't add the last child, add one to the limit
-        dbRefObject.orderByKey().endAt(FIRST_CHILD_KEY).limitToLast(LIMIT + 1).once('value', snap => {
-            FIRST_CHILD_KEY = null;
+        dbRefObject.orderByKey().endAt(firstChildKey).limitToLast(LIMIT + 1).once('value', snap => {
+            firstChildKey = null;
             addMessagesToListElement(snap.val(), chat.firstChild, oldScrollHeight);
         });
     }
@@ -91,8 +91,8 @@ function addMessagesToListElement(messages, firstChild, oldScrollHeight) {
     const chat = document.getElementById('chat-as-list');
     for (var key in messages) {
         if (messages.hasOwnProperty(key)) {
-            if (!FIRST_CHILD_KEY) {
-                FIRST_CHILD_KEY = key;
+            if (!firstChildKey) {
+                firstChildKey = key;
                 continue;
             }
             const li = document.createElement('li');
