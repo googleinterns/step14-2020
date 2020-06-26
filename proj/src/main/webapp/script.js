@@ -14,14 +14,6 @@ function initRef() {
     // create database reference
     const dbRefObject = firebase.database().ref(path);
 
-    // sync object data
-    const divObject = document.getElementById('content');
-    dbRefObject.on('value', snap => {
-        divObject.innerHTML = JSON.stringify(snap.val(), null, 3);
-    });
-
-
-
     const listObject = document.getElementById('chat-as-list');
     // note that when a comment is added it will display more than the limit, which
     // is intentional
@@ -50,16 +42,16 @@ function addMoreMessagesAtTheTop() {
     const chat = document.getElementById('chat-as-list');
     if (chat.scrollTop === 0) {
         const oldScrollHeight = chat.scrollHeight;
+        console.log(oldScrollHeight);
         // because we don't add the last child, add one to the limit
         dbRefObject.orderByKey().endAt(FIRST_CHILD_KEY).limitToLast(LIMIT + 1).once('value', snap => {
             FIRST_CHILD_KEY = null;
-            addMessagesToListElement(snap.val(), chat.firstChild);
+            addMessagesToListElement(snap.val(), chat.firstChild, oldScrollHeight);
         });
-        chat.scrollTop = chat.scrollHeight - oldScrollHeight;
     }
 }
 
-function addMessagesToListElement(messages, firstChild) {
+function addMessagesToListElement(messages, firstChild, oldScrollHeight) {
     const chat = document.getElementById('chat-as-list');
     for (var key in messages) {
         if (messages.hasOwnProperty(key)) {
@@ -72,7 +64,9 @@ function addMessagesToListElement(messages, firstChild) {
             chat.insertBefore(li, firstChild);
         }
     }
+    chat.scrollTop = chat.scrollHeight - oldScrollHeight;
 }
+
 const messaging = firebase.messaging();
 messaging.requestPermission()
 .then(function(){
