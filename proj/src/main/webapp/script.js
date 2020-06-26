@@ -3,10 +3,11 @@ function init() {
 
     const chat = document.getElementById('chat-as-list');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
-
 }
 
 const path = '/messages'; // can make this more detailed (for example add user ID)
+const LIMIT = 20; // how many messages to load at a time
+var FIRST_CHILD_KEY;
 
 // initializes the .on() functions for the database reference
 function initRef() {
@@ -19,15 +20,19 @@ function initRef() {
         divObject.innerHTML = JSON.stringify(snap.val(), null, 3);
     });
 
-    const limit = 20; // how many messages to load at a time
+
 
     const listObject = document.getElementById('chat-as-list');
     // note that when a comment is added it will display more than the limit, which
     // is intentional
-    dbRefObject.limitToLast(limit).on('child_added', snap => {
-        const li = document.createElement('li');
-        li.innerText = snap.val();
-        listObject.appendChild(li);
+    dbRefObject.limitToLast(LIMIT + 1).on('child_added', snap => {
+        if (!FIRST_CHILD_KEY) {
+            FIRST_CHILD_KEY = snap.key;
+        } else {
+            const li = document.createElement('li');
+            li.innerText = snap.val();
+            listObject.appendChild(li);
+        }
     });
 }
 
@@ -39,20 +44,35 @@ function pushChatMessage() {
     messageRef.push(message);
 }
 
+var messages;
 function addMoreMessagesAtTheTop() {
+    const dbRefObject = firebase.database().ref(path);
     const chat = document.getElementById('chat-as-list');
     if (chat.scrollTop === 0) {
-        alert('at the top!')
         const oldScrollHeight = chat.scrollHeight;
-        const li = document.createElement('li');
-        li.innerText = "test";
-        const listElement = document.getElementById('chat-as-list');
-        listElement.insertBefore(li, listElement.firstChild);
+        // because we don't add the last child, add one to the limit
+        dbRefObject.orderByKey().endAt(FIRST_CHILD_KEY).limitToLast(LIMIT + 1).once('value', snap => {
+            FIRST_CHILD_KEY = null;
+            addMessagesToListElement(snap.val(), chat.firstChild);
+        });
         chat.scrollTop = chat.scrollHeight - oldScrollHeight;
-        // load more messages, somehow
     }
 }
 
+function addMessagesToListElement(messages, firstChild) {
+    const chat = document.getElementById('chat-as-list');
+    for (var key in messages) {
+        if (messages.hasOwnProperty(key)) {
+            if (!FIRST_CHILD_KEY) {
+                FIRST_CHILD_KEY = key;
+                continue;
+            }
+            const li = document.createElement('li');
+            li.innerText = messages[key];
+            chat.insertBefore(li, firstChild);
+        }
+    }
+}
 const messaging = firebase.messaging();
 messaging.requestPermission()
 .then(function(){
