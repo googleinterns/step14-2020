@@ -38,7 +38,7 @@ function appendMessage(payload){
 
 const path = '/messages'; // can make this more detailed (for example add user ID)
 const LIMIT = 20; // how many messages to load at a time
-var FIRST_CHILD_KEY;
+var firstChildKey;
 
 function init() {
     initRef();
@@ -56,8 +56,8 @@ function initRef() {
     // note that when a comment is added it will display more than the limit, which
     // is intentional
     dbRefObject.limitToLast(LIMIT + 1).on('child_added', snap => {
-        if (!FIRST_CHILD_KEY) {
-            FIRST_CHILD_KEY = snap.key;
+        if (!firstChildKey) {
+            firstChildKey = snap.key;
         } else {
             const li = document.createElement('li');
             li.innerText = snap.val();
@@ -74,7 +74,6 @@ function pushChatMessage() {
     messageRef.push(message);
 }
 
-var messages;
 function addMoreMessagesAtTheTop() {
     const dbRefObject = firebase.database().ref(path);
     const chat = document.getElementById('chat-as-list');
