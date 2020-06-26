@@ -93,11 +93,11 @@ function addMessagesToListElement(messages, firstChild, oldScrollHeight) {
         if (messages.hasOwnProperty(key)) {
             if (!firstChildKey) {
                 firstChildKey = key;
-                continue;
+            } else {
+                const li = document.createElement('li');
+                li.innerText = messages[key];
+                chat.insertBefore(li, firstChild);
             }
-            const li = document.createElement('li');
-            li.innerText = messages[key];
-            chat.insertBefore(li, firstChild);
         }
     }
     chat.scrollTop = chat.scrollHeight - oldScrollHeight;
