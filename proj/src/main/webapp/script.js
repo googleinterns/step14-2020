@@ -1,6 +1,55 @@
-// Your web app's Firebase configuration
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+
+/*
+    Authentication
+ */
+
+// Elements of login container
+const txtEmail = document.getElementById("email");
+const txtPassword = document.getElementById("pass");
+const btnLogin = document.getElementById("btnLogin");
+const btnSignUp = document.getElementById("btnSignUp");
+const btnLogout = document.getElementById("btnLogout");
+
+// Add login event
+btnLogin.addEventListener("click", e => {
+    const emailVal = txtEmail.value;
+    const passVal = pass.value;
+
+    // Initialize auth object
+    const auth = firebase.auth();
+
+    const promise = auth.signInWithEmailAndPassword(emailVal, passVal);
+    promise.catch(e => console.log(e.message));
+});
+
+// Add sign up event 
+btnSignUp.addEventListener("click", e => {
+    const emailVal = txtEmail.value;
+    const passVal = pass.value;
+
+    // Initialize auth object
+    const auth = firebase.auth();
+
+    const promise = auth.createUserWithEmailAndPassword(emailVal, passVal);
+    promise.catch(e => console.log(e.message));
+});
+
+btnLogout.addEventListener("click", e => {
+    firebase.auth().signOut();
+});
+
+firebase.auth().onAuthStateChanged(firebaseUser => {
+    if(firebaseUser){
+        console.log(firebaseUser);
+        btnLogout.classList.remove("hidden");
+    }
+    else{
+        console.log("not logged in");
+        btnLogout.classList.add("hidden");
+    }
+});
 
 /*
     Notifications
