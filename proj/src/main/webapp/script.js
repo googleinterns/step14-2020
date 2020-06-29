@@ -97,8 +97,6 @@ function init() {
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
 }
 
-const PATH = '/messages'; // can make this more detailed (for example add user ID)
-
 // initializes the .on() functions for the database reference
 function initRef() {
     // create database reference
