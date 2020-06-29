@@ -13,10 +13,11 @@
     <!-- Font  -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
   </head>
+
   <body>
     <div class="container screen">
       <div class="row fullscreen">
-        <!-- page:signup and signin   desktop:left    mobile:full screen -->
+        <!-- title  desktop:left    mobile:none -->
         <div class="col-sm-8 info-graphic">
           <div class="header">
             <h1>camaraderie</h1>
@@ -27,37 +28,31 @@
               <img id="chat-image"src="./images/friendsChatting.svg" alt="Friends chatting icon">
             </div>
             <div class="inblock-center-container">
-              <h3 class="center-text"> meet friends <br> create communities</h3>
-              <!-- hide button on desktop -->
-              <button type="button" name="button" class="button">begin</button>
+              <h3 class="black-bold-subtitle center-text"> meet friends <br> create communities</h3>
             </div> 
           </div>
         </div>
-        <!-- sign up   desktop:right    mobile:full screen -->        
+        <!-- sign up   desktop:left    mobile:top -->
         <div class="col-sm-4 sign-up">
           <div class="header">
-            <h1 id="sign-in-title">sign in</h1>
-            <h4>welcome back friend</h4>
+            <h1 id="sign-in-title">sign up</h1>
+            <h4>welcome</h4>
           </div> 
           <div class="row justify-content-md-center">
             <form>
+              <label for="fname">first name:</label><br>
+              <input type="text" id="fname" name="fname" class="input" required><br>
+              <label for="lname">last name:</label><br>
+              <input type="text" id="lname" name="lname" class="input" required><br>
               <label for="email">email:</label><br>
               <input type="text" id="email" name="email" class="input" required><br>
               <label for="password">password:</label><br>
               <input type="text" id="password" name="password" class="input" required><br>
-              <button type="button" name="button" class="button">sign in</button>
+              <label for="tags">tags:</label><br>
+              <input type="text" id="tags" name="tags" class="input" required><br>
+
+              <button type="button" name="button" class="button">join</button>
             </form>
-            <h4>or sign up with</h4>
-            <div class="sign-un-icons justify-content-md-center">
-                <div class="col-sm-6 sign-up-icon-container">
-                    <a href="./signup.html">
-                        <img id="mail-svg"src="./images/mail.svg" alt="Sign up with an email">
-                    </a>
-                </div>
-                <div class="col-sm-6 sign-up-icon-container">
-                    <img id="gmail-svg"src="./images/gmail.svg" alt="Sign up with a Google account">
-                </div>
-            </div>
         </div>
       </div>
   </div>
@@ -65,5 +60,6 @@
   <footer>
     <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
   <footer>
+
   </body>
 </html>
