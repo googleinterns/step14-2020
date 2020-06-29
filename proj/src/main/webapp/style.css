@@ -1,15 +1,10 @@
-
-html {
+html{
   font-family: 'Montserrat', sans-serif;
-}
-
-div {
-    border: 1px solid black;
 }
 
 .screen {
   background: grey;
-  height: 100vh;
+  height: 97vh;
   margin-left: 5%;
   margin-right:5%;
   width: auto;
@@ -19,78 +14,185 @@ div {
     width:75%;
 }
 
+.hidden{
+    visibility:hidden;
+}
+
 /* main: welcome page */
 /* view: mobile */
 
-/* large titles */
+/* NOTE: remove later */
+div {
+  box-sizing: border-box;
+  border: 1px solid black;
+}
+
+/* override bootstrap presets */
+.container,
+.row {
+  margin: 0;
+  padding: 0;
+}
+
+.col-sm-4,
+.col-sm-8 {
+  padding-left: 3vw;
+  padding-right: 3vw;
+}
+
+/* left side */
+.info-graphic {
+  display: block;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  height: 97vh;
+}
+
+/* title font */
 h1 {
   font-weight: bold;
-  font-size: 8vw;
+  font-size: 9vmin;
   text-align: center;
   color: #333333;
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  letter-spacing: 0.05em;
 }
 
-/* left-aligned bold captions */
+/* black subtitle font */
 h3 {
-    size: 4vw;
-    color: #333333;
-    font-weight: bold;
-    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    align-content: flex-start;
+  font-size: 3vmin;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  display: inline-block;
 }
 
-/* golden captions */
+/* light golden subtitle font */
 h4 {
-  font-size: 2vw;
+  font-size: 3vmin;
+  font-weight: lighter;
   text-align: center;
-
   color: #D1B280;
 }
 
-#info-graphic-container {
-  width: 35%;  
+.full-screen {
+  height: 97vh;
 }
 
-img {
+.sign-up {
+  background-color: #333333;
+  height: 100%;
+}
+
+#chat-image-containter {
+  width: 50%;
+  height: auto;
+  margin: 0 auto;
+  max-width: 450px;
+}
+
+#chat-image {
   width: 100%;
   height: auto;
 }
 
-
-.center-image {
+.center-info {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  justify-content: center;
 }
 
-/* .center-text {
-  text-align: center;
+.inblock-center-container {
+  width: 50%;
+  max-width: 450px;
+  margin: 0 auto;
 }
 
-.center-container {
-  text-align:center;
-} */
+/* right side of welcome page */
+.sign-up {
+  justify-content: center;
+  padding-left: 5%;
+  padding-right: 5%;
+}
 
-/* .center-info{
+#sign-in-title {
+  color: white;
+  text-shadow: 0px 4px 4px rgba(255, 255, 255, 0.2);
+}
+
+.sign-in-form {
+  max-width: 500px;
+  justify-content: center;
+  padding: 8%;
+}
+
+.input {
+  display: inline-flex;
+  outline: none;
+  background: transparent;
+  border: none;
   width: 100%;
-}  */
+  border-bottom: 2px solid #D1B280;
+  font-size:2rem;
+  font-weight: lighter;
+  color: #FFFFFF;
+}
 
-#start-button {
-  width: 275px;
-  height: 55px;
+label {
+  font-size:2rem;
+  font-weight: lighter;
+  color: #FFFFFF;
+}
+
+
+.button {
+  width: 100%;
+  height: 6vmin;
 
   background: #4F4F4F;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 32px;
   align-items: center;
   border-width: 0;
+
+  font-size:3vmin;
+  font-weight: normal;
+  color: #FFFFFF;
 }
 
-.white-button-font {
-  font-size: 28px;
-  line-height: 34px;
+.sign-up-icons {
+    display: block;
+}
 
-  color: #FFFFFF;
+.sign-up-icon-conatiner {
+  width: 50%;
+  height: auto;
+  margin: 0 auto;
+  max-width: 450px;
+  display: flex;
+}
+
+.sign-up-icon-conatiner img {
+  align: center;
+  vertical-align: middle;
+  height: 90%;
+  width: auto;
+}
+
+/* website footer */
+
+footer div {
+  border: none;
+  display: inline-block;
+  height: 3vh;
+  width: 100vw;
+  bottom: 0;
+  left: 0;
+  text-align: center;
+  background: grey;
+  font-weight: lighter;
+  color: white;
+}
+
+footer a,
+footer a:hover {
+  font-weight: lighter;
+  color: white;
 }
