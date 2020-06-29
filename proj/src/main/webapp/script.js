@@ -85,7 +85,8 @@ function appendMessage(payload){
     Realtime Database
  */
 
-const PATH = '/messages'; // can make this more detailed (for example add user ID)
+const CHAT_ID = '-MB0ycAOM8VGIXlev5u8'
+const PATH = '/chat/'+CHAT_ID+'/messages'; // can make this more detailed (for example add user ID)
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
@@ -110,18 +111,23 @@ function initRef() {
             firstChildKey = snap.key;
         } else {
             const li = document.createElement('li');
-            li.innerText = snap.val();
+            li.innerText = snap.val().content;
             listObject.appendChild(li);
         }
     });
 }
 
 function pushChatMessage() {
-    const messageRef = firebase.database().ref(PATH);
-
     const messageInput = document.getElementById('message-input');
+
+    const chatRef = firebase.database().ref(PATH);
+
+    var message = {
+        content : messageInput.value,
+        timestamp : new Date().getTime()
+    }
     // push message to datastore
-    messageRef.push(messageInput.value);
+    chatRef.push(message);
     messageInput.value = null; // clear the message
 }
 
@@ -146,7 +152,7 @@ function addMessagesToListElement(messages, firstChild, oldScrollHeight) {
                 firstChildKey = key;
             } else {
                 const li = document.createElement('li');
-                li.innerText = messages[key];
+                li.innerText = messages[key].content;
                 chat.insertBefore(li, firstChild);
             }
         }
