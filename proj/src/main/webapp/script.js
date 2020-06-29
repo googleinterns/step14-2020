@@ -84,29 +84,35 @@ function appendMessage(payload){
 /*
     Realtime Database
  */
+
+const PATH = '/messages'; // can make this more detailed (for example add user ID)
+const LIMIT = 20; // how many messages to load at a time
+var firstChildKey;
+
 function init() {
     initRef();
     clickWithEnterKey();
-}
 
-const PATH = '/messages'; // can make this more detailed (for example add user ID)
+    const chat = document.getElementById('chat-as-list');
+    chat.addEventListener('scroll', addMoreMessagesAtTheTop);
+}
 
 // initializes the .on() functions for the database reference
 function initRef() {
     // create database reference
     const dbRefObject = firebase.database().ref(PATH);
 
-    // sync object data
-    const divObject = document.getElementById('content');
-    dbRefObject.on('value', snap => {
-        divObject.innerHTML = JSON.stringify(snap.val(), null, 3);
-    });
-
     const listObject = document.getElementById('chat-as-list');
-    dbRefObject.on('child_added', snap => {
-        const li = document.createElement('li');
-        li.innerText = snap.val();
-        listObject.appendChild(li);
+    // note that when a comment is added it will display more than the limit, which
+    // is intentional
+    dbRefObject.limitToLast(LIMIT + 1).on('child_added', snap => {
+        if (!firstChildKey) {
+            firstChildKey = snap.key;
+        } else {
+            const li = document.createElement('li');
+            li.innerText = snap.val();
+            listObject.appendChild(li);
+        }
     });
 }
 
@@ -117,6 +123,35 @@ function pushChatMessage() {
     // push message to datastore
     messageRef.push(messageInput.value);
     messageInput.value = null; // clear the message
+}
+
+function addMoreMessagesAtTheTop() {
+    const dbRefObject = firebase.database().ref(PATH);
+    const chat = document.getElementById('chat-as-list');
+    if (chat.scrollTop === 0) {
+        const oldScrollHeight = chat.scrollHeight;
+        // because we don't add the last child, add one to the limit
+        dbRefObject.orderByKey().endAt(firstChildKey).limitToLast(LIMIT + 1).once('value', snap => {
+            firstChildKey = null;
+            addMessagesToListElement(snap.val(), chat.firstChild, oldScrollHeight);
+        });
+    }
+}
+
+function addMessagesToListElement(messages, firstChild, oldScrollHeight) {
+    const chat = document.getElementById('chat-as-list');
+    for (var key in messages) {
+        if (messages.hasOwnProperty(key)) {
+            if (!firstChildKey) {
+                firstChildKey = key;
+            } else {
+                const li = document.createElement('li');
+                li.innerText = messages[key];
+                chat.insertBefore(li, firstChild);
+            }
+        }
+    }
+    chat.scrollTop = chat.scrollHeight - oldScrollHeight;
 }
 
 /**
