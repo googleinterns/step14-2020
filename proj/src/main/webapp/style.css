@@ -22,10 +22,10 @@ html{
 /* view: mobile */
 
 /* NOTE: remove later */
-div {
+/* div {
   box-sizing: border-box;
   border: 1px solid black;
-}
+} */
 
 /* override bootstrap presets */
 .container,
@@ -110,6 +110,7 @@ h4 {
   justify-content: center;
   padding-left: 5%;
   padding-right: 5%;
+  /* in the wrong div: max-width: 500px; */
 }
 
 #sign-in-title {
@@ -161,12 +162,12 @@ label {
     display: block;
 }
 
-.sign-up-icon-conatiner {
+.sign-up-icon-container {
   width: 50%;
   height: auto;
   margin: 0 auto;
   max-width: 450px;
-  display: flex;
+  text-align: center;
 }
 
 .sign-up-icon-conatiner img {
