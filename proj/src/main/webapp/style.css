@@ -1,4 +1,4 @@
-html{
+html important!{
   font-family: 'Montserrat', sans-serif;
 }
 
@@ -14,7 +14,7 @@ html{
     width:75%;
 }
 
-.hidden{
+.hidden {
     visibility:hidden;
 }
 
@@ -23,8 +23,8 @@ html{
 
 /* NOTE: remove later, using this for organization */
 div {
-  box-sizing: border-box;
-  border: 1px solid black;
+  /* box-sizing: border-box;
+  border: 1px solid black; */
 }
 
 /* override bootstrap presets */
@@ -124,12 +124,6 @@ h4 {
 #sign-in-title {
   color: white;
   text-shadow: 0px 4px 4px rgba(255, 255, 255, 0.2);
-}
-
-.sign-in-form {
-  max-width: 500px;
-  justify-content: center;
-  padding: 8%;
 }
 
 .input {
