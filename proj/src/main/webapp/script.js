@@ -19,6 +19,7 @@ btnLogin.addEventListener("click", e => {
 
     const promise = auth.signInWithEmailAndPassword(emailVal, passVal);
     promise.catch(e => console.log(e.message));
+    window.location.replace("chat.html");
 });
 
 // Add sign up event 
@@ -28,13 +29,17 @@ btnSignUp.addEventListener("click", e => {
 
     // Initialize auth object
     const auth = firebase.auth();
+    auth.useDeviceLanguage();
 
     const promise = auth.createUserWithEmailAndPassword(emailVal, passVal);
     promise.catch(e => console.log(e.message));
+    window.location.replace("chat.html");
+
 });
 
 btnLogout.addEventListener("click", e => {
     firebase.auth().signOut();
+    window.location.replace("welcome.html");
 });
 
 firebase.auth().onAuthStateChanged(firebaseUser => {
