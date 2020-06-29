@@ -21,7 +21,7 @@ html{
 /* main: welcome page */
 /* view: mobile */
 
-/* NOTE: remove later */
+/* NOTE: remove later, using this for organization */
 /* div {
   box-sizing: border-box;
   border: 1px solid black;
@@ -40,11 +40,18 @@ html{
   padding-right: 3vw;
 }
 
+/* stretch to fullscren  */
+.fullscreen {
+  align-items:stretch; 
+  display: flex;
+  flex-wrap: wrap;
+}
+
 /* left side */
 .info-graphic {
   display: block;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   background-color: white;
   height: 97vh;
 }
@@ -60,7 +67,8 @@ h1 {
 
 /* black subtitle font */
 h3 {
-  font-size: 3vmin;
+  font-size: 3.5vmin;
+  font-weight: bold;
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   display: inline-block;
 }
