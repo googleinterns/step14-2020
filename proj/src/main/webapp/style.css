@@ -1,11 +1,10 @@
-
-html{
+html important!{
   font-family: 'Montserrat', sans-serif;
 }
 
 .screen {
   background: grey;
-  height: 100vh;
+  height: 97vh;
   margin-left: 5%;
   margin-right:5%;
   width: auto;
@@ -14,7 +13,6 @@ html{
 #messages {
     width:75%;
 }
-
 
 #chat-as-list {
     height: 300px;
@@ -25,48 +23,256 @@ html{
 .hidden{
     visibility:hidden;
 }
+
 /* main: welcome page */
 /* view: mobile */
+
+/* NOTE: remove later, using this for organization */
+div {
+  /* box-sizing: border-box;
+  border: 1px solid black; */
+}
+
+/* override bootstrap presets */
+.container,
+.row {
+  margin: 0;
+  padding: 0;
+}
+
+.col-sm-4,
+.col-sm-8 {
+  padding-left: 3vw;
+  padding-right: 3vw;
+}
+
+/* stretch to fullscren  */
+.fullscreen {
+  align-items:stretch; 
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* left side */
+.info-graphic {
+  display: block;
+  justify-content: center;
+  align-items: stretch;
+  background-color: white;
+  height: 97vh;
+}
+
+/* title font */
 h1 {
   font-weight: bold;
-  font-size: 3.5rem;
+  font-size: 9vmin;
   text-align: center;
   color: #333333;
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-h4 {
-  font-size: 14px;
-  line-height: 17px;
-  text-align: center;
+/* black subtitle font */
+h3 {
+  font-size: 3.5vmin;
+  font-weight: bold;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  display: inline-block;
+}
 
+/* light golden subtitle font */
+h4 {
+  font-size: 3vmin;
+  font-weight: lighter;
+  text-align: center;
   color: #D1B280;
 }
 
-.center-image {
+.full-screen {
+  height: 97vh;
+}
+
+.sign-up {
+  background-color: #333333;
+  height: 100%;
+}
+
+#chat-image-containter {
+  width: 50%;
+  height: auto;
+  margin: 0 auto;
+  max-width: 450px;
+}
+
+#chat-image {
+  width: 100%;
+  height: auto;
+}
+
+.center-info {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  justify-content: center;
 }
 
-.center-text {
-  text-align: center;
+.inblock-center-container {
+  width: 50%;
+  max-width: 450px;
+  margin: 0 auto;
 }
 
-#start-button {
-  width: 275px;
-  height: 55px;
+/* right side of welcome page */
+.sign-up {
+  justify-content: center;
+  padding-left: 5%;
+  padding-right: 5%;
+  /* in the wrong div: max-width: 500px; */
+}
+
+#sign-in-title {
+  color: white;
+  text-shadow: 0px 4px 4px rgba(255, 255, 255, 0.2);
+}
+
+.input {
+  display: inline-flex;
+  outline: none;
+  background: transparent;
+  border: none;
+  width: 100%;
+  border-bottom: 2px solid #D1B280;
+  font-size:2rem;
+  font-weight: lighter;
+  color: #FFFFFF;
+}
+
+label {
+  font-size:2rem;
+  font-weight: lighter;
+  color: #FFFFFF;
+}
+
+
+.button {
+  width: 100%;
+  height: 6vmin;
 
   background: #4F4F4F;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 32px;
   align-items: center;
   border-width: 0;
+
+  font-size:3vmin;
+  font-weight: normal;
+  color: #FFFFFF;
 }
 
-.white-button-font {
-  font-size: 28px;
-  line-height: 34px;
+.sign-up-icons {
+    display: block;
+}
 
+.sign-up-icon-container {
+  width: 50%;
+  height: auto;
+  margin: 0 auto;
+  max-width: 450px;
+  text-align: center;
+}
+
+.sign-up-icon-conatiner img {
+  align: center;
+  vertical-align: middle;
+  height: 90%;
+  width: auto;
+}
+
+/* website footer */
+
+footer div {
+  border: none;
+  display: inline-block;
+  height: 3vh;
+  width: 100vw;
+  bottom: 0;
+  left: 0;
+  text-align: center;
+  background: grey;
+  font-weight: lighter;
+  color: white;
+}
+
+footer a,
+footer a:hover {
+  font-weight: lighter;
+  color: white;
+}
+
+/* chat page */
+.chat-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: lightgrey;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.chat-page h1{
+  color: #D1B280;
+}
+
+#chat-screen {
+    background-color: white;
+    width: 90vw;
+    height: 90vh;
+    border-radius:39px;
+}
+
+#chat-messages {
+  list-style-type: none;
+}
+
+.message {
+  border: thin solid lightgrey;
+  display: flex;
+  margin: 10px;
+  padding: 10px;
+  width: 600px;
+}
+
+.message {
+  flex-grow: 1;
+}
+
+.input-box {
+    padding-left: 8%;
+    padding-right: 8%;
+    /* this line is not working */
+    align-self: end; 
+}
+
+.input-box input {
+  display: inline-flex;
+  align-items: center;
+  outline: none;
+  background: lightgrey;
+  border: none;
+  width: 100%;
+  border-radius: 32px;
+  font-size:2.5vmin;.
+  height: 5vmin;
+  color: black;
+}
+
+.input-box button {
+  width: 25%;
+  height: 4vmin;
+
+  background: #4F4F4F;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 32px;
+  align-items: center;
+  border-width: 0;
+
+  font-size:2vmin;
+  font-weight: normal;
   color: #FFFFFF;
 }
