@@ -15,6 +15,13 @@ html{
     width:75%;
 }
 
+
+#chat-as-list {
+    height: 300px;
+    width: 500px;
+    overflow: scroll;
+}
+
 .hidden{
     visibility:hidden;
 }
