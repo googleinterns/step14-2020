@@ -22,10 +22,10 @@ html{
 /* view: mobile */
 
 /* NOTE: remove later, using this for organization */
-/* div {
+div {
   box-sizing: border-box;
   border: 1px solid black;
-} */
+}
 
 /* override bootstrap presets */
 .container,
@@ -204,4 +204,75 @@ footer a,
 footer a:hover {
   font-weight: lighter;
   color: white;
+}
+
+/* chat page */
+.chat-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: lightgrey;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.chat-page h1{
+  color: #D1B280;
+}
+
+#chat-screen {
+    background-color: white;
+    width: 90vw;
+    height: 90vh;
+    border-radius:39px;
+}
+
+#chat-messages {
+  list-style-type: none;
+}
+
+.message {
+  border: thin solid lightgrey;
+  display: flex;
+  margin: 10px;
+  padding: 10px;
+  width: 600px;
+}
+
+.message {
+  flex-grow: 1;
+}
+
+.input-box {
+    padding-left: 8%;
+    padding-right: 8%;
+    /* this line is not working */
+    align-self: end; 
+}
+
+.input-box input {
+  display: inline-flex;
+  align-items: center;
+  outline: none;
+  background: lightgrey;
+  border: none;
+  width: 100%;
+  border-radius: 32px;
+  font-size:2.5vmin;.
+  height: 5vmin;
+  color: black;
+}
+
+.input-box button {
+  width: 25%;
+  height: 4vmin;
+
+  background: #4F4F4F;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 32px;
+  align-items: center;
+  border-width: 0;
+
+  font-size:2vmin;
+  font-weight: normal;
+  color: #FFFFFF;
 }
