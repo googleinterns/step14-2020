@@ -27,55 +27,63 @@ if(btnLogin){
     });
 }
 
+
+// Adds user to an existing chat when given a reference to the place in the database
+function addUserToTag(reference){
+    var currentUID = firebase.auth().currentUser.uid
+    console.log("adding new user to chat room with uid: " + currentUID);
+    reference.push(currentUID);
+}
+
+// Creates a new chat given a tag and adds the current user as a member
+function createNewChatWithUser(tag){
+    console.log("creating new chat with tag: " + tag);
+    var newChat = {
+        "name" : tag,
+        "tag" : tag,
+    };
+    var currentReference = firebase.database().ref("/chat/" + tag);
+    var postKey = currentReference.push(newChat).key;
+    currentReference = firebase.database().ref("/chat/" + tag + "/" + postKey + "/users/");
+    addUserToTag(currentReference);
+}
+
 // Create or join chatroom
 function createOrJoinChat(currentTag){
-    firebase.database().ref("/chat/").once("value").then(function(snapshot){
+    var ref = firebase.database().ref("/chat/");
+    ref.once("value").then(function(snapshot){
+        // Checks to see if tag already exists in database
         if(snapshot.hasChild(currentTag)){
+
+            // If tag already exists, navigate to users and add users if there is room
             var query = firebase.database().ref("/chat/" + currentTag + "/").orderByKey();
-            query.once().then(function(snapshot){
-                snapshot.foreach(function(childSnapshot){
+            query.once("value").then(function(snapshot){
+
+                snapshot.forEach(function(childSnapshot){
+
                     var currentReference = childSnapshot.ref;
-                    if(currentReference.hasChild("users")){
-                        var usersReference = currentReference + "/users";
-                        if(usersReference.numChildren() < 200){
-                            usersReference.set({"uid" : auth.currentUser.uid});
+                    if(childSnapshot.hasChild("users")){
+
+                        var userSnapshot = childSnapshot.child("users");
+                        var usersReference = userSnapshot.ref;
+                        if(userSnapshot.numChildren() < 200){
+                            addUserToTag(usersReference);
+                            return;
                         }
                     }
-                }).catch(function(){
-                    console.log("creating new chat room with tag: " + currentTag);
-                    var newChat = {
-                        "name" : currentTag,
-                        "tag" : currentTag,
-                    };
-                    var currentReference = firebase.database().ref("/chat/" + currentTag + "/");
-                    currentReference = currentReference.push(newChat);
-                    currentReference = currentReference + "/users";
-                    currentReference.set({"uid" : auth.currentUser.uid});
-                })
-            })
+                });
+                
+                // Create new chat if room is full, add new user
+                createNewChatWithUser(currentTag);
+            });
         }
         else{
-            console.log("creating new tag: " + currentTag);
-            var newChat = {
-                "name" : currentTag,
-                "tag" : currentTag,
-            };
-            var currentReference = firebase.database().ref("/chat/" + currentTag);
-            postKey = currentReference.push(newChat).key;
-            currentReference = firebase.database().ref("/chat/" + currentTag + "/" + postKey + "/users/");
-            currentReference.set({"uid" : firebase.auth().currentUser.uid});
+            // Create new chat if tag does not exist yet
+            createNewChatWithUser(currentTag);
         }
         return;
     }).catch(function(){
-        console.log("creating new tag: " + currentTag);
-        var newChat = {
-            "name" : currentTag,
-            "tag" : currentTag,
-        };
-        var currentReference = firebase.database().ref("/chat/" + currentTag);
-        postKey = currentReference.push(newChat).key;
-        currentReference = firebase.database().ref("/chat/" + currentTag + "/" + postKey + "/users/");
-        currentReference.set({"uid" : firebase.auth().currentUser.uid});
+        console.log("unexpected error searching for chat rooms");
     });
 }
 
