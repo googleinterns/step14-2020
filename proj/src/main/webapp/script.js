@@ -117,8 +117,7 @@ function appendMessage(payload){
  */
 
 const CHAT_ID = '-MB0ycAOM8VGIXlev5u8'
-// TODO: not hardcode, use path to an actual tag
-const PATH = '/chat/test/'+CHAT_ID+'/messages';
+const PATH = getPath("test", CHAT_ID);
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
@@ -217,4 +216,8 @@ function createMessageWithTemplate(messageObj) {
     const msgBody = message.querySelector('.message-body');
     msgBody.innerText = messageObj.content;
     return message;
+}
+
+function getPath(tag, chatId) {
+    return "/chat/"+tag+"/"+chatId+"messages";
 }
