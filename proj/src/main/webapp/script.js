@@ -29,31 +29,45 @@ if(btnLogin){
 
 // Create or join chatroom
 function createOrJoinChat(currentTag){
-    console.log(currentTag);
-    firebase.database().ref("/chat/" + currentTag).once("value").then(function(){
-        var query = firebase.database().ref("/chat/" + currentTag + "/").orderByKey();
-        query.once().then(function(snapshot){
-            snapshot.foreach(function(childSnapshot){
-                var currentReference = childSnapshot.ref;
-                if(currentReference.hasChild("users")){
-                    var usersReference = currentReference + "/users";
-                    if(usersReference.numChildren() < 200){
-                        usersReference.set({"uid" : auth.currentUser.uid});
+    firebase.database().ref("/chat/").once("value").then(function(snapshot){
+        if(snapshot.hasChild(currentTag)){
+            var query = firebase.database().ref("/chat/" + currentTag + "/").orderByKey();
+            query.once().then(function(snapshot){
+                snapshot.foreach(function(childSnapshot){
+                    var currentReference = childSnapshot.ref;
+                    if(currentReference.hasChild("users")){
+                        var usersReference = currentReference + "/users";
+                        if(usersReference.numChildren() < 200){
+                            usersReference.set({"uid" : auth.currentUser.uid});
+                        }
                     }
-                }
-            }).catch(function(){
-                var newChat = {
-                    "name" : currentTag,
-                    "tag" : currentTag,
-                };
-                var currentReference = firebase.database().ref("/chat/" + currentTag + "/");
-                currentReference = currentReference.push(newChat);
-                currentReference = currentReference + "/users";
-                currentReference.set({"uid" : auth.currentUser.uid});
+                }).catch(function(){
+                    console.log("creating new chat room with tag: " + currentTag);
+                    var newChat = {
+                        "name" : currentTag,
+                        "tag" : currentTag,
+                    };
+                    var currentReference = firebase.database().ref("/chat/" + currentTag + "/");
+                    currentReference = currentReference.push(newChat);
+                    currentReference = currentReference + "/users";
+                    currentReference.set({"uid" : auth.currentUser.uid});
+                })
             })
-        })
+        }
+        else{
+            console.log("creating new tag: " + currentTag);
+            var newChat = {
+                "name" : currentTag,
+                "tag" : currentTag,
+            };
+            var currentReference = firebase.database().ref("/chat/" + currentTag);
+            postKey = currentReference.push(newChat).key;
+            currentReference = firebase.database().ref("/chat/" + currentTag + "/" + postKey + "/users/");
+            currentReference.set({"uid" : firebase.auth().currentUser.uid});
+        }
+        return;
     }).catch(function(){
-        console.log(currentTag);
+        console.log("creating new tag: " + currentTag);
         var newChat = {
             "name" : currentTag,
             "tag" : currentTag,
@@ -88,9 +102,9 @@ if(btnSignUp){
                     tags : tagList
                 }).then(function(){
                     for(var ii = 0; ii < tagList.length; ii++){
-                        createOrJoinChat(tagList);
+                        createOrJoinChat(tagList[ii]);
                     }
-                    
+
                     // window.location.replace("chat.html");
                 });
             }).catch(function(){
