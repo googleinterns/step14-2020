@@ -209,9 +209,7 @@ function createMessageWithTemplate(messageObj) {
     const message = messageTemplate.content.cloneNode(true);
 
     const msgHeader = message.querySelector('.message-header');
-    const username = document.createElement('p');
-    username.innerText = 'name go here';
-    msgHeader.appendChild(username); // similarly can add profile image
+    msgHeader.getElementById('username').innerText = 'name go here';
             
     const msgBody = message.querySelector('.message-body');
     msgBody.innerText = messageObj.content;
