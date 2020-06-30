@@ -13,6 +13,7 @@
     <!-- Font  -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
+
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
 
@@ -26,10 +27,11 @@
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-messaging.js"></script>
   </head>
+
   <body>
     <div class="container screen">
       <div class="row fullscreen">
-        <!-- page:signup and signin   desktop:left    mobile:full screen -->
+        <!-- title  desktop:left    mobile:none -->
         <div class="col-sm-8 info-graphic">
           <div class="header">
             <h1>camaraderie</h1>
@@ -40,40 +42,32 @@
               <img id="chat-image"src="./images/friendsChatting.svg" alt="Friends chatting icon">
             </div>
             <div class="inblock-center-container">
-              <h3 class="center-text"> meet friends <br> create communities</h3>
-              <!-- hide button on desktop -->
-              <button type="button" name="button" class="button">begin</button>
+              <h3 class="black-bold-subtitle center-text"> meet friends <br> create communities</h3>
             </div> 
           </div>
         </div>
-        <!-- sign up   desktop:right    mobile:full screen -->        
+        <!-- sign up   desktop:left    mobile:top -->
         <div class="col-sm-4 sign-up">
           <div class="header">
-            <h1 id="sign-in-title">sign in</h1>
-            <h4>welcome back friend</h4>
+            <h1 id="sign-in-title">sign up</h1>
+            <h4>welcome</h4>
           </div> 
           <div class="row justify-content-md-center">
             <form>
-              <input type="text" id="fname" name="fname" class="hidden">
-              <input type="text" id="lname" name="lname" class="hidden">
+              <label for="fname">first name:</label><br>
+              <input type="text" id="fname" name="fname" class="input"><br>
+              <label for="lname">last name:</label><br>
+              <input type="text" id="lname" name="lname" class="input"><br>
               <label for="email">email:</label><br>
               <input type="text" id="email" name="email" class="input" required><br>
               <label for="password">password:</label><br>
               <input type="password" id="pass" name="password" class="input" required><br>
-              <button type="button" name="button" class="button" id="btnLogin">sign in</button>
+              <label for="tags">tags:</label><br>
+              <input type="text" id="tags" name="tags" class="input"><br>
+
+              <button type="button" name="button" class="button" id="btnSignUp">join</button>
               <button type="button" name="button" class="hidden button" id="btnLogout">Logout</button>
             </form>
-            <h4>or sign up with</h4>
-            <div class="sign-un-icons justify-content-md-center">
-                <div class="col-sm-6 sign-up-icon-container">
-                    <a href="./signup.html">
-                        <img id="mail-svg"src="./images/mail.svg" alt="Sign up with an email">
-                    </a>
-                </div>
-                <div class="col-sm-6 sign-up-icon-container">
-                    <img id="gmail-svg"src="./images/gmail.svg" alt="Sign up with a Google account">
-                </div>
-            </div>
         </div>
       </div>
   </div>
