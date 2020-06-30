@@ -3,6 +3,7 @@
  */
 
 // Elements of login container
+const fname = document.getElementById("fname")
 const txtEmail = document.getElementById("email");
 const txtPassword = document.getElementById("pass");
 const btnLogin = document.getElementById("btnLogin");
@@ -10,41 +11,61 @@ const btnSignUp = document.getElementById("btnSignUp");
 const btnLogout = document.getElementById("btnLogout");
 
 // Add login event
-btnLogin.addEventListener("click", e => {
-    const emailVal = txtEmail.value;
-    const passVal = pass.value;
+if(btnLogin){
+    btnLogin.addEventListener("click", e => {
+        const emailVal = txtEmail.value;
+        const passVal = pass.value;
 
-    // Initialize auth object
-    const auth = firebase.auth();
+        // Initialize auth object
+        const auth = firebase.auth();
 
-    const promise = auth.signInWithEmailAndPassword(emailVal, passVal);
-    promise.catch(e => console.log(e.message));
-});
+        const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(user){
+            window.location.replace("chat.html");
+        });
+        promise.catch(e => console.log(e.message));
+    });
+}
 
-// Add sign up event 
-btnSignUp.addEventListener("click", e => {
-    const emailVal = txtEmail.value;
-    const passVal = pass.value;
+// Add sign up event
+if(btnSignUp){
+    btnSignUp.addEventListener("click", e => {
+        const emailVal = txtEmail.value;
+        const passVal = pass.value;
 
-    // Initialize auth object
-    const auth = firebase.auth();
+        // Initialize auth object
+        const auth = firebase.auth();
+        auth.useDeviceLanguage();
 
-    const promise = auth.createUserWithEmailAndPassword(emailVal, passVal);
-    promise.catch(e => console.log(e.message));
-});
+        const promise = auth.createUserWithEmailAndPassword(emailVal, passVal).then(function(){
+            auth.currentUser.updateProfile({displayName: fname.value + " " + lname.value}).then(function(){
+                console.log("display name updated successfully");
+                window.location.replace("chat.html");
+            }).catch(function(){
+                console.log("error updating display name");
+            })
+        });
+        promise.catch(e => console.log(e.message));
 
-btnLogout.addEventListener("click", e => {
-    firebase.auth().signOut();
-});
+    });
+}
+
+if(btnLogout){
+    btnLogout.addEventListener("click", e => {
+        firebase.auth().signOut();
+        window.location.replace("welcome.html");
+    });
+}
 
 firebase.auth().onAuthStateChanged(firebaseUser => {
     if(firebaseUser){
         console.log(firebaseUser);
-        btnLogout.classList.remove("hidden");
+        if(btnLogout)
+            btnLogout.classList.remove("hidden");
     }
     else{
         console.log("not logged in");
-        btnLogout.classList.add("hidden");
+        if(btnLogout)
+            btnLogout.classList.add("hidden");
     }
 });
 
