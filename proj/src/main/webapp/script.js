@@ -30,7 +30,6 @@ if(btnLogin){
 // Add sign up event
 if(btnSignUp){
     btnSignUp.addEventListener("click", e => {
-        const dbRef = firebase.database().ref("/users");
         const emailVal = txtEmail.value;
         const passVal = pass.value;
 
@@ -44,15 +43,13 @@ if(btnSignUp){
                 displayName: fname.value + " " + lname.value
                 }).then(function(){
                 console.log("display name updated successfully");
-                if(fname && lname && tagStr){
-                    firebase.database().ref("users/" + auth.currentUser.uid).set({
-                        firstName : fname.value,
-                        lastName : lname.value,
-                        tags : tagStr.value.split(',')
-                    }).then(function(){
-                        window.location.replace("chat.html");
-                    });
-                }
+                firebase.database().ref("users/" + auth.currentUser.uid).set({
+                    firstName : fname.value,
+                    lastName : lname.value,
+                    tags : tagStr.value.split(',')
+                }).then(function(){
+                    window.location.replace("chat.html");
+                });
             }).catch(function(){
                 console.log("error updating display name");
             });
