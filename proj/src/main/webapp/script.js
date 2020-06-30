@@ -86,7 +86,7 @@ function appendMessage(payload){
  */
 
 const CHAT_ID = '-MB0ycAOM8VGIXlev5u8'
-const PATH = '/chat/'+CHAT_ID+'/messages'; // can make this more detailed (for example add user ID)
+const PATH = '/chat/test/'+CHAT_ID+'/messages'; // can make this more detailed (for example add user ID)
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
@@ -94,7 +94,7 @@ function init() {
     initRef();
     clickWithEnterKey();
 
-    const chat = document.getElementById('chat-as-list');
+    const chat = document.querySelector('.chat');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
 }
 
@@ -103,16 +103,15 @@ function initRef() {
     // create database reference
     const dbRefObject = firebase.database().ref(PATH);
 
-    const listObject = document.getElementById('chat-as-list');
+    const chat = document.querySelector('.chat');
     // note that when a comment is added it will display more than the limit, which
     // is intentional
     dbRefObject.limitToLast(LIMIT + 1).on('child_added', snap => {
         if (!firstChildKey) {
             firstChildKey = snap.key;
         } else {
-            const li = document.createElement('li');
-            li.innerText = snap.val().content;
-            listObject.appendChild(li);
+            messageDom = createMessageWithTemplate(snap.val());
+            chat.appendChild(messageDom);
         }
     });
 }
@@ -133,7 +132,7 @@ function pushChatMessage() {
 
 function addMoreMessagesAtTheTop() {
     const dbRefObject = firebase.database().ref(PATH);
-    const chat = document.getElementById('chat-as-list');
+    const chat = document.querySelector('.chat');
     if (chat.scrollTop === 0) {
         const oldScrollHeight = chat.scrollHeight;
         // because we don't add the last child, add one to the limit
@@ -145,15 +144,14 @@ function addMoreMessagesAtTheTop() {
 }
 
 function addMessagesToListElement(messages, firstChild, oldScrollHeight) {
-    const chat = document.getElementById('chat-as-list');
+    const chat = document.querySelector('.chat');
     for (var key in messages) {
         if (messages.hasOwnProperty(key)) {
             if (!firstChildKey) {
                 firstChildKey = key;
             } else {
-                const li = document.createElement('li');
-                li.innerText = messages[key].content;
-                chat.insertBefore(li, firstChild);
+                const messageDom = createMessageWithTemplate(messages[key]);
+                chat.insertBefore(messageDom, firstChild);
             }
         }
     }
@@ -173,4 +171,18 @@ function clickWithEnterKey() {
             pushChatMessage();
         }
     });
+}
+
+function createMessageWithTemplate(messageObj) {
+    const messageTemplate = document.getElementById('message-temp');
+    const message = messageTemplate.content.cloneNode(true);
+
+    const msgHeader = message.querySelector('.message-header');
+    const username = document.createElement('p');
+    username.innerText = 'name go here';
+    msgHeader.appendChild(username); // similarly can add profile image
+            
+    const msgBody = message.querySelector('.message-body');
+    msgBody.innerText = messageObj.content;
+    return message;
 }
