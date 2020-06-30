@@ -117,7 +117,8 @@ function appendMessage(payload){
  */
 
 const CHAT_ID = '-MB0ycAOM8VGIXlev5u8'
-const PATH = '/chat/test/'+CHAT_ID+'/messages'; // can make this more detailed (for example add user ID)
+// TODO: not hardcode, use path to an actual tag
+const PATH = '/chat/test/'+CHAT_ID+'/messages';
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
