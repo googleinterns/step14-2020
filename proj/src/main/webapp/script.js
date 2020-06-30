@@ -27,11 +27,50 @@ if(btnLogin){
     });
 }
 
+// Create or join chatroom
+function createOrJoinChat(currentTag){
+    console.log(currentTag);
+    firebase.database().ref("/chat/" + currentTag).once("value").then(function(){
+        var query = firebase.database().ref("/chat/" + currentTag + "/").orderByKey();
+        query.once().then(function(snapshot){
+            snapshot.foreach(function(childSnapshot){
+                var currentReference = childSnapshot.ref;
+                if(currentReference.hasChild("users")){
+                    var usersReference = currentReference + "/users";
+                    if(usersReference.numChildren() < 200){
+                        usersReference.set({"uid" : auth.currentUser.uid});
+                    }
+                }
+            }).catch(function(){
+                var newChat = {
+                    "name" : currentTag,
+                    "tag" : currentTag,
+                };
+                var currentReference = firebase.database().ref("/chat/" + currentTag + "/");
+                currentReference = currentReference.push(newChat);
+                currentReference = currentReference + "/users";
+                currentReference.set({"uid" : auth.currentUser.uid});
+            })
+        })
+    }).catch(function(){
+        console.log(currentTag);
+        var newChat = {
+            "name" : currentTag,
+            "tag" : currentTag,
+        };
+        var currentReference = firebase.database().ref("/chat/" + currentTag);
+        postKey = currentReference.push(newChat).key;
+        currentReference = firebase.database().ref("/chat/" + currentTag + "/" + postKey + "/users/");
+        currentReference.set({"uid" : firebase.auth().currentUser.uid});
+    });
+}
+
 // Add sign up event
 if(btnSignUp){
     btnSignUp.addEventListener("click", e => {
         const emailVal = txtEmail.value;
         const passVal = pass.value;
+        var tagList = tagStr.value.split(',');
 
         // Initialize auth object
         const auth = firebase.auth();
@@ -46,9 +85,13 @@ if(btnSignUp){
                 firebase.database().ref("users/" + auth.currentUser.uid).set({
                     firstName : fname.value,
                     lastName : lname.value,
-                    tags : tagStr.value.split(',')
+                    tags : tagList
                 }).then(function(){
-                    window.location.replace("chat.html");
+                    for(var ii = 0; ii < tagList.length; ii++){
+                        createOrJoinChat(tagList);
+                    }
+                    
+                    // window.location.replace("chat.html");
                 });
             }).catch(function(){
                 console.log("error updating display name");
