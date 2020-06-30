@@ -113,7 +113,7 @@ if(btnSignUp){
                         createOrJoinChat(tagList[ii]);
                     }
 
-                    // window.location.replace("chat.html");
+                    window.location.replace("chat.html");
                 });
             }).catch(function(){
                 console.log("error updating display name");
