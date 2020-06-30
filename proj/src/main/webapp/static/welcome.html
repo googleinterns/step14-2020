@@ -12,6 +12,19 @@
     <link rel="stylesheet" href="../style.css">
     <!-- Font  -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
+
+    <script src="../app.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-messaging.js"></script>
   </head>
   <body>
     <div class="container screen">
@@ -41,11 +54,14 @@
           </div> 
           <div class="row justify-content-md-center">
             <form>
+              <input type="text" id="fname" name="fname" class="hidden">
+              <input type="text" id="lname" name="lname" class="hidden">
               <label for="email">email:</label><br>
               <input type="text" id="email" name="email" class="input" required><br>
               <label for="password">password:</label><br>
-              <input type="text" id="password" name="password" class="input" required><br>
-              <button type="button" name="button" class="button">sign in</button>
+              <input type="password" id="pass" name="password" class="input" required><br>
+              <button type="button" name="button" class="button" id="btnLogin">sign in</button>
+              <button type="button" name="button" class="hidden button" id="btnLogout">Logout</button>
             </form>
             <h4>or sign up with</h4>
             <div class="sign-un-icons justify-content-md-center">
@@ -65,5 +81,6 @@
   <footer>
     <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
   <footer>
+      <script src="../script.js"></script>
   </body>
 </html>
