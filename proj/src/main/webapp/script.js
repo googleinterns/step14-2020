@@ -6,6 +6,7 @@
 const fname = document.getElementById("fname")
 const txtEmail = document.getElementById("email");
 const txtPassword = document.getElementById("pass");
+const tagStr = document.getElementById("tags");
 const btnLogin = document.getElementById("btnLogin");
 const btnSignUp = document.getElementById("btnSignUp");
 const btnLogout = document.getElementById("btnLogout");
@@ -37,12 +38,21 @@ if(btnSignUp){
         auth.useDeviceLanguage();
 
         const promise = auth.createUserWithEmailAndPassword(emailVal, passVal).then(function(){
-            auth.currentUser.updateProfile({displayName: fname.value + " " + lname.value}).then(function(){
+            const user = auth.currentUser;
+            user.updateProfile({
+                displayName: fname.value + " " + lname.value
+                }).then(function(){
                 console.log("display name updated successfully");
-                window.location.replace("chat.html");
+                firebase.database().ref("users/" + auth.currentUser.uid).set({
+                    firstName : fname.value,
+                    lastName : lname.value,
+                    tags : tagStr.value.split(',')
+                }).then(function(){
+                    window.location.replace("chat.html");
+                });
             }).catch(function(){
                 console.log("error updating display name");
-            })
+            });
         });
         promise.catch(e => console.log(e.message));
 
