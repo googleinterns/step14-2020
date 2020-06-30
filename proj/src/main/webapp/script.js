@@ -126,7 +126,7 @@ function init() {
     initRef();
     clickWithEnterKey();
 
-    const chat = document.querySelector('.chat');
+    const chat = document.getElementById('chatbox');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
 }
 
@@ -135,7 +135,7 @@ function initRef() {
     // create database reference
     const dbRefObject = firebase.database().ref(PATH);
 
-    const chat = document.querySelector('.chat');
+    const chat = document.getElementById('chatbox');
     // note that when a comment is added it will display more than the limit, which
     // is intentional
     dbRefObject.limitToLast(LIMIT + 1).on('child_added', snap => {
@@ -164,7 +164,7 @@ function pushChatMessage() {
 
 function addMoreMessagesAtTheTop() {
     const dbRefObject = firebase.database().ref(PATH);
-    const chat = document.querySelector('.chat');
+    const chat = document.getElementById('chatbox');
     if (chat.scrollTop === 0) {
         const oldScrollHeight = chat.scrollHeight;
         // because we don't add the last child, add one to the limit
@@ -176,7 +176,7 @@ function addMoreMessagesAtTheTop() {
 }
 
 function addMessagesToListElement(messages, firstChild, oldScrollHeight) {
-    const chat = document.querySelector('.chat');
+    const chat = document.getElementById('chatbox');
     for (var key in messages) {
         if (messages.hasOwnProperty(key)) {
             if (!firstChildKey) {
