@@ -14,12 +14,6 @@ html important!{
     width:75%;
 }
 
-#chat-as-list {
-    height: 300px;
-    width: 500px;
-    overflow: scroll;
-}
-
 .hidden{
     visibility:hidden;
 }
@@ -226,27 +220,26 @@ footer a:hover {
     border-radius:39px;
 }
 
-#chat-messages {
+#chat-as-list {
   list-style-type: none;
+  height: 60vh;
+  width: auto%;
+  overflow: scroll;
+  padding-left: 0;
+  text-align: center;
 }
 
-.message {
+
+.converstation li {
   border: thin solid lightgrey;
   display: flex;
-  margin: 10px;
-  padding: 10px;
-  width: 600px;
-}
-
-.message {
+  padding: 25px;
   flex-grow: 1;
+  font-size:1.5rem;
 }
 
 .input-box {
-    padding-left: 8%;
-    padding-right: 8%;
-    /* this line is not working */
-    align-self: end; 
+  padding-left: 5%;
 }
 
 .input-box input {
@@ -254,22 +247,22 @@ footer a:hover {
   align-items: center;
   outline: none;
   background: lightgrey;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
   border: none;
-  width: 100%;
+  width: 80%;
   border-radius: 32px;
-  font-size:2.5vmin;.
-  height: 5vmin;
+  font-size:2rem;
+  height: 4vmin;
   color: black;
 }
 
 .input-box button {
-  width: 25%;
+  width: 10%;
   height: 4vmin;
 
   background: #4F4F4F;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 32px;
-  align-items: center;
   border-width: 0;
 
   font-size:2vmin;
