@@ -31,7 +31,15 @@
                 <h1> Chat Room </h1>
                 <div class="chat-and-input"> 
                     <div class="conversation">
-                        <ul id="chat-as-list">
+                        <div id="chatbox" class="chat"></div>
+                        <template id="message-temp">
+                            <div class="message">
+                                <div class="message-header">
+                                <img id="pfp">
+                                <p id="username"></p>
+                            </div>
+                            <pre class="message-body"></pre>
+                        </template>
                     </div>     
                      
                     <div class="input-box">
