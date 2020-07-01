@@ -234,7 +234,9 @@ function pushChatMessage() {
 
     var message = {
         content : messageInput.value,
-        timestamp : new Date().getTime()
+        timestamp : new Date().getTime(),
+        senderDisplay : firebase.auth().currentUser.displayName,
+        senderUID : firebase.auth().currentUser.uid
     }
     // push message to datastore
     dbRefObject.push(message);
@@ -288,7 +290,7 @@ function createMessageWithTemplate(messageObj) {
     const message = messageTemplate.content.cloneNode(true);
 
     const msgHeader = message.querySelector('.message-header');
-    msgHeader.querySelector('#username').innerText = 'name go here';
+    msgHeader.querySelector('#username').innerText = messageObj.senderDisplay;
             
     const msgBody = message.querySelector('.message-body');
     msgBody.innerText = messageObj.content;
