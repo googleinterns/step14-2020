@@ -222,7 +222,7 @@ footer a:hover {
     border-radius:39px;
 }
 
-#chat-as-list {
+#chats {
   list-style-type: none;
   height: 60vh;
   width: auto%;
