@@ -222,6 +222,7 @@ footer a:hover {
     border-radius:39px;
 }
 
+/* in usage? */
 #chats {
   list-style-type: none;
   height: 60vh;
@@ -231,6 +232,9 @@ footer a:hover {
   text-align: center;
 }
 
+.conversation {
+  overflow: scroll;
+}
 
 .conversation li {
   border-top: thin solid lightgrey;
