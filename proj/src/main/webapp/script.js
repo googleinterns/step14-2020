@@ -52,9 +52,34 @@ function createNewChatWithUser(tag){
     return postKey;
 }
 
+// Loops through open chat rooms, adds the user to the first open chat and returns the key
+function findChatAndAddUser(snapshot){
+    var key;
+    var foundOpenRoom = false;
+    snapshot.forEach(function(childSnapshot){
+        key = childSnapshot.key;
+        console.log("key1 " + key);
+
+        var userSnapshot = childSnapshot.child("users");
+        var usersReference = userSnapshot.ref;
+
+        // Handled below if spillover is needed
+        if(userSnapshot.numChildren() < MAX_CHAT_SIZE){
+            addUserToTag(usersReference);
+            foundOpenRoom = true;
+            return true;
+        }
+    });
+    if(foundOpenRoom){
+        return key;
+    } else {
+        // Create new chat if room is full, add new user
+        return createNewChatWithUser(currentTag);
+    }
+}
+
 // Create or join chatroom
 function createOrJoinChat(currentTag){
-    var key;
     var ref = firebase.database().ref("/chat/");
     return ref.once("value").then(function(snapshot){
         // Checks to see if tag already exists in database
@@ -64,34 +89,14 @@ function createOrJoinChat(currentTag){
             var query = firebase.database().ref("/chat/" + currentTag + "/").orderByKey();
             return query.once("value").then(function(snapshot){
 
-                var foundOpenRoom = false;
-                snapshot.forEach(function(childSnapshot){
-                    key = childSnapshot.key;
-                    console.log("key1 " + key);
-
-                    var userSnapshot = childSnapshot.child("users");
-                    var usersReference = userSnapshot.ref;
-
-                    // Handled below if spillover is needed
-                    if(userSnapshot.numChildren() < MAX_CHAT_SIZE){
-                        addUserToTag(usersReference);
-                        foundOpenRoom = true;
-                        return true;
-                    }
-                });
-                if(foundOpenRoom){
-                    return key;
-                } else {
-                    // Create new chat if room is full, add new user
-                    return createNewChatWithUser(currentTag);
-                }
+                //adds user to chat and returns key
+                return findChatAndAddUser(snapshot);
             });
         }
         else{
             // Create new chat if tag does not exist yet
            return createNewChatWithUser(currentTag);
         }
-        return;
     }).catch(function(){
         console.log("unexpected error searching for chat rooms");
     });
