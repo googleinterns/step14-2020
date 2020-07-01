@@ -125,6 +125,7 @@ var firstChildKey;
 function init() {
     initRef();
     clickWithEnterKey();
+    populateSidebar();
 
     const chat = document.getElementById('chatbox');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
@@ -204,7 +205,7 @@ function createMessageWithTemplate(messageObj) {
     const message = messageTemplate.content.cloneNode(true);
 
     const msgHeader = message.querySelector('.message-header');
-    msgHeader.getElementById('username').innerText = 'name go here';
+    msgHeader.querySelector('#username').innerText = 'name go here';
             
     const msgBody = message.querySelector('.message-body');
     msgBody.innerText = messageObj.content;
@@ -212,7 +213,63 @@ function createMessageWithTemplate(messageObj) {
 }
 
 function getDbRef(tag, chatId) {
-    const path = "/chat/"+tag+"/"+chatId+"messages";
+    const path = "/chat/"+tag+"/"+chatId+"/messages";
     const dbRefObj = firebase.database().ref(path);
     return dbRefObj;
+}
+
+async function makePreviewWithLastMessage(tag, chatId) {
+    var chatName;
+    var preview;
+    const tagRefObj = firebase.database().ref('/chat/'+tag+'/'+chatId)
+    await tagRefObj.on('value', (snap) => {
+        chatName = snap.val().name;
+        const last = Object.keys(snap.val().messages).pop();
+        preview = makeChatPreview(chatName, snap.val().messages[last], chatId)
+
+        const sidebar = document.getElementById('sidebar');
+        sidebar.prepend(preview);
+    });
+}
+
+function makeChatPreview(name, messageObj, chatId) {
+    if (document.getElementById(chatId)) {
+        oldPreview = document.getElementById(chatId);
+        oldPreview.remove();
+    }
+
+    const previewTemplate = document.getElementById('chat-preview-temp');
+    const docFrag = previewTemplate.content.cloneNode(true);
+    const preview = docFrag.querySelector(".chat-preview")
+
+    const chatName = preview.querySelector('#chat-name');
+    chatName.innerText = name;
+
+    const msgHeader = preview.querySelector('.message-header');
+    msgHeader.querySelector('#username').innerText = 'name go here';
+            
+    const msgBody = preview.querySelector('.message-body');
+    msgBody.innerText = messageObj.content;
+    preview.setAttribute("id", chatId)
+
+    return preview;
+}
+
+function populateSidebar() {
+    // Initialize auth object
+    const auth = firebase.auth();
+
+    // const iud = auth.currentUser.uid;
+    const iud = "testuserwithdict";
+    const userTagsRef = firebase.database().ref('/users/'+iud+'/tags');
+
+    userTagsRef.orderByKey().on('child_added', snap => {
+        const chatTag = snap.key;
+        const chatId = snap.val();
+
+        // get last message
+        makePreviewWithLastMessage(chatTag, chatId)
+        
+    })
+    
 }
