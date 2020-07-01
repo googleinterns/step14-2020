@@ -116,8 +116,9 @@ function appendMessage(payload){
     Realtime Database
  */
 
-const CHAT_ID = '-MB0ycAOM8VGIXlev5u8'
-const PATH = getPath("test", CHAT_ID);
+var CHAT_ID = '-MB0ycAOM8VGIXlev5u8'
+var tag = 'test';
+var dbRefObject = getDbRef(tag, CHAT_ID);
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
@@ -131,9 +132,6 @@ function init() {
 
 // initializes the .on() functions for the database reference
 function initRef() {
-    // create database reference
-    const dbRefObject = firebase.database().ref(PATH);
-
     const chat = document.getElementById('chatbox');
     // note that when a comment is added it will display more than the limit, which
     // is intentional
@@ -150,19 +148,16 @@ function initRef() {
 function pushChatMessage() {
     const messageInput = document.getElementById('message-input');
 
-    const chatRef = firebase.database().ref(PATH);
-
     var message = {
         content : messageInput.value,
         timestamp : new Date().getTime()
     }
     // push message to datastore
-    chatRef.push(message);
+    dbRefObject.push(message);
     messageInput.value = null; // clear the message
 }
 
 function addMoreMessagesAtTheTop() {
-    const dbRefObject = firebase.database().ref(PATH);
     const chat = document.getElementById('chatbox');
     if (chat.scrollTop === 0) {
         const oldScrollHeight = chat.scrollHeight;
@@ -216,6 +211,8 @@ function createMessageWithTemplate(messageObj) {
     return message;
 }
 
-function getPath(tag, chatId) {
-    return "/chat/"+tag+"/"+chatId+"messages";
+function getDbRef(tag, chatId) {
+    const path = "/chat/"+tag+"/"+chatId+"messages";
+    const dbRefObj = firebase.database().ref(path);
+    return dbRefObj;
 }
