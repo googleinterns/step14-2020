@@ -2,6 +2,8 @@
     Authentication
  */
 
+const MAX_CHAT_SIZE = 200;
+
 // Elements of login container
 const fname = document.getElementById("fname")
 const txtEmail = document.getElementById("email");
@@ -27,17 +29,101 @@ if(btnLogin){
     });
 }
 
+
+// Adds user to an existing chat when given a reference to the place in the database
+function addUserToTag(reference){
+    var currentUID = firebase.auth().currentUser.uid
+    console.log("adding new user to chat room with uid: " + currentUID);
+    reference.push(currentUID);
+}
+
+// Creates a new chat given a tag and adds the current user as a member
+function createNewChatWithUser(tag){
+    console.log("creating new chat with tag: " + tag);
+    var newChat = {
+        "name" : tag,
+        "tag" : tag,
+    };
+    var currentReference = firebase.database().ref("/chat/" + tag);
+    var postKey = currentReference.push(newChat).key;
+    currentReference = firebase.database().ref("/chat/" + tag + "/" + postKey + "/users/");
+    addUserToTag(currentReference);
+
+    return postKey;
+}
+
+// Loops through open chat rooms, adds the user to the first open chat and returns the key
+function findChatAndAddUser(snapshot){
+    var key;
+    var foundOpenRoom = false;
+    snapshot.forEach(function(childSnapshot){
+        key = childSnapshot.key;
+        console.log("key1 " + key);
+
+        var userSnapshot = childSnapshot.child("users");
+        var usersReference = userSnapshot.ref;
+
+        // Handled below if spillover is needed
+        if(userSnapshot.numChildren() < MAX_CHAT_SIZE){
+            addUserToTag(usersReference);
+            foundOpenRoom = true;
+            return true;
+        }
+    });
+    if(foundOpenRoom){
+        return key;
+    } else {
+        // Create new chat if room is full, add new user
+        return createNewChatWithUser(currentTag);
+    }
+}
+
+// Create or join chatroom
+function createOrJoinChat(currentTag){
+    var ref = firebase.database().ref("/chat/");
+    return ref.once("value").then(function(snapshot){
+        // Checks to see if tag already exists in database
+        if(snapshot.hasChild(currentTag)){
+
+            // If tag already exists, navigate to users and add users if there is room
+            var query = firebase.database().ref("/chat/" + currentTag + "/").orderByKey();
+            return query.once("value").then(function(snapshot){
+
+                //adds user to chat and returns key
+                return findChatAndAddUser(snapshot);
+            });
+        }
+        else{
+            // Create new chat if tag does not exist yet
+           return createNewChatWithUser(currentTag);
+        }
+    }).catch(function(){
+        console.log("unexpected error searching for chat rooms");
+    });
+}
+
+
 // Add sign up event
 if(btnSignUp){
     btnSignUp.addEventListener("click", e => {
         const emailVal = txtEmail.value;
         const passVal = pass.value;
+        var tagList = tagStr.value.split(',');
 
         // Initialize auth object
         const auth = firebase.auth();
         auth.useDeviceLanguage();
 
-        const promise = auth.createUserWithEmailAndPassword(emailVal, passVal).then(function(){
+        const promise = auth.createUserWithEmailAndPassword(emailVal, passVal).then(async function(){
+            var allTags = {};
+            for(var ii = 0; ii < tagList.length; ii++){
+
+                var tag = tagList[ii];
+                var key = await createOrJoinChat(tag)
+                allTags[tag] = key;
+
+            }
+
             const user = auth.currentUser;
             user.updateProfile({
                 displayName: fname.value + " " + lname.value
@@ -46,15 +132,15 @@ if(btnSignUp){
                 firebase.database().ref("users/" + auth.currentUser.uid).set({
                     firstName : fname.value,
                     lastName : lname.value,
-                    tags : tagStr.value.split(',')
+                    allTags : allTags
                 }).then(function(){
+
                     window.location.replace("chat.html");
                 });
             }).catch(function(){
                 console.log("error updating display name");
             });
         });
-        promise.catch(e => console.log(e.message));
 
     });
 }
