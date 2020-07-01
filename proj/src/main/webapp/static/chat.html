@@ -27,6 +27,19 @@
     <body onload="init()">
         <div class="container screen chat-page">
             <div class="row">
+                <aside id="sidebar">
+                    <template id="chat-preview-temp">
+                        <div id="chat-preview">
+                            <p id="chat-name"></p>
+                            <div class="message">
+                                <div class="message-header">
+                                    <img id="pfp">
+                                    <p id="username"></p>
+                                </div>
+                                <pre class="message-body"></pre>
+                            </div>
+                    </template>
+                </aside>
             <div class="col" id="chat-screen"> 
                 <h1> Chat Room </h1>
                 <div class="chat-and-input"> 
