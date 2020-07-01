@@ -1,6 +1,5 @@
 /*
     Authentication
-    mvn package appengine:deploy
  */
 
 // Elements of login container
