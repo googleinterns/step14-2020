@@ -121,7 +121,6 @@ if(btnSignUp){
                 var tag = tagList[ii];
                 var key = await createOrJoinChat(tag)
                 allTags[tag] = key;
-
             }
 
             const user = auth.currentUser;
@@ -134,7 +133,6 @@ if(btnSignUp){
                     lastName : lname.value,
                     allTags : allTags
                 }).then(function(){
-
                     window.location.replace("chat.html");
                 });
             }).catch(function(){
