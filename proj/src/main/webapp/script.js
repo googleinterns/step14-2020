@@ -204,7 +204,7 @@ function createMessageWithTemplate(messageObj) {
     const message = messageTemplate.content.cloneNode(true);
 
     const msgHeader = message.querySelector('.message-header');
-    msgHeader.getElementById('username').innerText = 'name go here';
+    msgHeader.querySelector('#username').innerText = 'name go here';
             
     const msgBody = message.querySelector('.message-body');
     msgBody.innerText = messageObj.content;
