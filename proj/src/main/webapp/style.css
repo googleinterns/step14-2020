@@ -215,7 +215,7 @@ footer a:hover {
   font-family: 'Montserrat', sans-serif;
 }
 
-.chat-page h1{
+.chat-page h1 {
   color: #D1B280;
   padding: 2vh 0 2vh;
 }
@@ -224,7 +224,7 @@ footer a:hover {
   background-color: white;
   width: 90vw;
   height: 90vh;
-  border-radius:39px;
+  border-radius: 39px;
 }
 
 .conversation {
@@ -244,7 +244,7 @@ footer a:hover {
   font-size: 1.5rem;
   background: none;
   border: none;
-  padding:0;
+  padding: 0;
 }
 
 #username {
@@ -268,7 +268,7 @@ footer a:hover {
   border: none;
   width: 87%;
   border-radius: 32px;
-  font-size:2rem;
+  font-size: 2rem;
   height: 3vh;
   color: black;
 }
