@@ -2,6 +2,8 @@
     Authentication
  */
 
+const MAX_CHAT_SIZE = 200;
+
 // Elements of login container
 const fname = document.getElementById("fname")
 const txtEmail = document.getElementById("email");
@@ -46,46 +48,55 @@ function createNewChatWithUser(tag){
     var postKey = currentReference.push(newChat).key;
     currentReference = firebase.database().ref("/chat/" + tag + "/" + postKey + "/users/");
     addUserToTag(currentReference);
+
+    return postKey;
 }
 
 // Create or join chatroom
 function createOrJoinChat(currentTag){
+    var key;
     var ref = firebase.database().ref("/chat/");
-    ref.once("value").then(function(snapshot){
+    return ref.once("value").then(function(snapshot){
         // Checks to see if tag already exists in database
         if(snapshot.hasChild(currentTag)){
 
             // If tag already exists, navigate to users and add users if there is room
             var query = firebase.database().ref("/chat/" + currentTag + "/").orderByKey();
-            query.once("value").then(function(snapshot){
+            return query.once("value").then(function(snapshot){
 
+                var foundOpenRoom = false;
                 snapshot.forEach(function(childSnapshot){
+                    key = childSnapshot.key;
+                    console.log("key1 " + key);
 
-                    var currentReference = childSnapshot.ref;
-                    if(childSnapshot.hasChild("users")){
+                    var userSnapshot = childSnapshot.child("users");
+                    var usersReference = userSnapshot.ref;
 
-                        var userSnapshot = childSnapshot.child("users");
-                        var usersReference = userSnapshot.ref;
-                        if(userSnapshot.numChildren() < 200){
-                            addUserToTag(usersReference);
-                            return;
-                        }
+                    // Handled below if spillover is needed
+                    if(userSnapshot.numChildren() < MAX_CHAT_SIZE){
+                        addUserToTag(usersReference);
+                        foundOpenRoom = true;
+                        return true;
                     }
                 });
-                
-                // Create new chat if room is full, add new user
-                createNewChatWithUser(currentTag);
+                if(foundOpenRoom){
+                    return key;
+                } else {
+                    // Create new chat if room is full, add new user
+                    return createNewChatWithUser(currentTag);
+                }
             });
         }
         else{
             // Create new chat if tag does not exist yet
-            createNewChatWithUser(currentTag);
+           return createNewChatWithUser(currentTag);
         }
         return;
     }).catch(function(){
         console.log("unexpected error searching for chat rooms");
     });
 }
+
 
 // Add sign up event
 if(btnSignUp){
@@ -98,7 +109,18 @@ if(btnSignUp){
         const auth = firebase.auth();
         auth.useDeviceLanguage();
 
-        const promise = auth.createUserWithEmailAndPassword(emailVal, passVal).then(function(){
+        const promise = auth.createUserWithEmailAndPassword(emailVal, passVal).then(async function(){
+            var allTags = {};
+            for(var ii = 0; ii < tagList.length; ii++){
+
+                var tag = tagList[ii];
+                var key = await createOrJoinChat(tag)
+                allTags[tag] = key;
+
+            }
+
+            console.log(allTags);
+
             const user = auth.currentUser;
             user.updateProfile({
                 displayName: fname.value + " " + lname.value
@@ -107,19 +129,15 @@ if(btnSignUp){
                 firebase.database().ref("users/" + auth.currentUser.uid).set({
                     firstName : fname.value,
                     lastName : lname.value,
-                    tags : tagList
+                    allTags : allTags
                 }).then(function(){
-                    for(var ii = 0; ii < tagList.length; ii++){
-                        createOrJoinChat(tagList[ii]);
-                    }
 
-                    window.location.replace("chat.html");
+                    // window.location.replace("chat.html");
                 });
             }).catch(function(){
                 console.log("error updating display name");
             });
         });
-        promise.catch(e => console.log(e.message));
 
     });
 }
