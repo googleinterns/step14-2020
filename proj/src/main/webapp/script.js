@@ -124,8 +124,6 @@ if(btnSignUp){
 
             }
 
-            console.log(allTags);
-
             const user = auth.currentUser;
             user.updateProfile({
                 displayName: fname.value + " " + lname.value
@@ -137,7 +135,7 @@ if(btnSignUp){
                     allTags : allTags
                 }).then(function(){
 
-                    // window.location.replace("chat.html");
+                    window.location.replace("chat.html");
                 });
             }).catch(function(){
                 console.log("error updating display name");
