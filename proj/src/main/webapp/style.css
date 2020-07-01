@@ -203,6 +203,10 @@ footer a:hover {
 }
 
 /* chat page */
+.full-height {
+  height: 100vh;
+}
+
 .chat-page {
   display: flex;
   align-items: center;
@@ -213,36 +217,19 @@ footer a:hover {
 
 .chat-page h1{
   color: #D1B280;
+  padding: 2vh 0 2vh;
 }
 
 #chat-screen {
-    background-color: white;
-    width: 90vw;
-    height: 90vh;
-    border-radius:39px;
-}
-
-/* in usage? */
-#chats {
-  list-style-type: none;
-  height: 60vh;
-  width: auto%;
-  overflow: scroll;
-  padding-left: 0;
-  text-align: center;
+  background-color: white;
+  width: 90vw;
+  height: 90vh;
+  border-radius:39px;
 }
 
 .conversation {
   overflow: scroll;
   height: 60vh;
-}
-
-.conversation li {
-  border-top: thin solid lightgrey;
-  display: flex;
-  padding: 25px;
-  flex-grow: 1;
-  font-size:1.5rem;
 }
 
 .input-box {
@@ -259,20 +246,20 @@ footer a:hover {
   width: 80%;
   border-radius: 32px;
   font-size:2rem;
-  height: 4vmin;
+  height: 3vh;
   color: black;
 }
 
 .input-box button {
-  width: 10%;
-  height: 4vmin;
+  width: 12%;
+  height: 3vh;
 
   background: #4F4F4F;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 32px;
   border-width: 0;
 
-  font-size:2vmin;
+  font-size:2rem;
   font-weight: normal;
   color: #FFFFFF;
 }
