@@ -134,6 +134,7 @@ function init() {
 // initializes the .on() functions for the database reference
 function initRef() {
     const chat = document.getElementById('chatbox');
+    chat.innerHTML = '';
     // note that when a comment is added it will display more than the limit, which
     // is intentional
     dbRefObject.limitToLast(LIMIT + 1).on('child_added', snap => {
@@ -225,14 +226,14 @@ async function makePreviewWithLastMessage(tag, chatId) {
     await tagRefObj.on('value', (snap) => {
         chatName = snap.val().name;
         const last = Object.keys(snap.val().messages).pop();
-        preview = makeChatPreview(chatName, snap.val().messages[last], chatId)
+        preview = makeChatPreview(chatName, snap.val().messages[last], tag, chatId)
 
         const sidebar = document.getElementById('sidebar');
         sidebar.prepend(preview);
     });
 }
 
-function makeChatPreview(name, messageObj, chatId) {
+function makeChatPreview(name, messageObj, tag, chatId) {
     if (document.getElementById(chatId)) {
         oldPreview = document.getElementById(chatId);
         oldPreview.remove();
@@ -251,6 +252,7 @@ function makeChatPreview(name, messageObj, chatId) {
     const msgBody = preview.querySelector('.message-body');
     msgBody.innerText = messageObj.content;
     preview.setAttribute("id", chatId)
+    changeChatOnClick(preview, tag, chatId);
 
     return preview;
 }
@@ -271,5 +273,11 @@ function populateSidebar() {
         makePreviewWithLastMessage(chatTag, chatId)
         
     })
-    
+}
+
+function changeChatOnClick(domElement, tag, chatId) {
+    domElement.addEventListener('click', function() {
+        dbRefObject = getDbRef(tag, chatId);
+        initRef();
+    });
 }
