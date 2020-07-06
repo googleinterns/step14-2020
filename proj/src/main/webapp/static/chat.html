@@ -25,8 +25,23 @@
     </head>
     
     <body onload="init()">
-        <div class="container screen chat-page">
+        <div class="container screen chat-page full-height">
             <div class="row">
+            <div class="col">
+                <aside id="sidebar">
+                    <template id="chat-preview-temp">
+                        <div class="chat-preview">
+                            <p id="chat-name"></p>
+                            <div class="message">
+                                <div class="message-header">
+                                    <img id="pfp">
+                                    <p id="username"></p>
+                                </div>
+                                <pre class="message-body"></pre>
+                            </div>
+                    </template>
+                </aside>
+            </div>
             <div class="col" id="chat-screen"> 
                 <h1> Chat Room </h1>
                 <div class="chat-and-input"> 
