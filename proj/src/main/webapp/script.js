@@ -302,3 +302,23 @@ function getDbRef(tag, chatId) {
     const dbRefObj = firebase.database().ref(path);
     return dbRefObj;
 }
+
+/*
+    Location
+ */
+
+function getLocation() {
+    if(navigator.geolocation){
+        return navigator.geolocation.getCurrentPosition(function(position){
+            return $.get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + 
+                position.coords.latitude + "," + position.coords.longitude + "&sensor=false",
+                function(data) {
+                console.log(data);
+                return data;
+            });
+        });
+    }
+    else{
+        console.log("Error. Geolocation not supported or not enabled");
+    }
+}
