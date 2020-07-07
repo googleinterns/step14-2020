@@ -18,6 +18,15 @@ html important!{
     visibility:hidden;
 }
 
+.display-none {
+    display: none;
+}
+/* just for visualization, can remove later */
+aside {
+    height: 400px;
+    width: 100%;
+}
+
 /* main: welcome page */
 /* view: mobile */
 
