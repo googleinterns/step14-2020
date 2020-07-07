@@ -41,16 +41,17 @@ function addUserToTag(reference){
 function createNewChatWithUser(tag){
     console.log("creating new chat with tag: " + tag);
     var time = new Date().getTime();
+    var messageContent = "Welcome to the " + tag + " chat!";
     var newChat = {
         "chatInfo" : {
             "name" : tag,
             "tag" : tag,
-            "lastMessage" : "Welcome to the " + tag + " chat!",
+            "lastMessage" : messageContent,
             "timestamp" : time
         },
         "messages" : {
             "welcome" : {
-                "content" : "Welcome to the " + tag + " chat!",
+                "content" : messageContent,
                 "timestamp" : time,
                 "senderDisplay" : "Camaraderie",
                 "senderUID" : "admin"
