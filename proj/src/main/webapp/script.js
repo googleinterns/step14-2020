@@ -2,8 +2,6 @@
     Authentication
  */
 
-const MAX_CHAT_SIZE = 200;
-
 // Elements of login container
 const fname = document.getElementById("fname")
 const txtEmail = document.getElementById("email");
@@ -32,7 +30,7 @@ if(btnLogin){
 
 // Adds user to an existing chat when given a reference to the place in the database
 function addUserToTag(reference){
-    var currentUID = firebase.auth().currentUser.uid
+    var currentUID = firebase.auth().currentUser.uid;
     console.log("adding new user to chat room with uid: " + currentUID);
     reference.push(currentUID);
 }
@@ -41,16 +39,17 @@ function addUserToTag(reference){
 function createNewChatWithUser(tag){
     console.log("creating new chat with tag: " + tag);
     var time = new Date().getTime();
+    var messageContent = "Welcome to the " + tag + " chat!";
     var newChat = {
         "chatInfo" : {
             "name" : tag,
             "tag" : tag,
-            "lastMessage" : "Welcome to the " + tag + " chat!",
+            "lastMessage" : messageContent,
             "timestamp" : time
         },
         "messages" : {
             "welcome" : {
-                "content" : "Welcome to the " + tag + " chat!",
+                "content" : messageContent,
                 "timestamp" : time,
                 "senderDisplay" : "Camaraderie",
                 "senderUID" : "admin"
@@ -213,13 +212,26 @@ function appendMessage(payload){
     Realtime Database
  */
 
+var currentUID = null;
 var CHAT_ID = '-MB0ycAOM8VGIXlev5u8'
 var tag = 'test';
 var dbRefObject = getDbRef(tag, CHAT_ID);
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
-function init() {
+function generatePromise(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function init(){
+    generatePromise(1000).then(function(){
+        currentUID = firebase.auth().currentUser.uid;
+    }).finally(function(){
+        initDB();
+    });
+}
+
+function initDB() {
     initRef();
     clickWithEnterKey();
     populateSidebar();
@@ -361,8 +373,8 @@ function populateSidebar() {
     const auth = firebase.auth();
 
     // const iud = auth.currentUser.uid;
-    const iud = "testuserwithdict";
-    const userTagsRef = firebase.database().ref('/users/'+iud+'/tags');
+    const iud = currentUID;
+    const userTagsRef = firebase.database().ref('/users/'+iud+'/allTags');
 
     userTagsRef.orderByKey().on('child_added', snap => {
         const chatTag = snap.key;
