@@ -372,18 +372,24 @@ function changeChatOnClick(domElement, tag, chatId) {
     Location
  */
 
+const API_KEY = "AIzaSyCtEo_jPb_ThnU_HTaYh4U_t-8MLZ9ulBo";
+var position;
+
+function successCallback(pos){
+    position = pos;
+    console.log(pos);
+}
+
+function errorCallback(err){
+    console.log("error");
+}
+
 function getLocation() {
     if(navigator.geolocation){
-        return navigator.geolocation.getCurrentPosition(function(position){
-            return $.get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + 
-                position.coords.latitude + "," + position.coords.longitude + "&sensor=false",
-                function(data) {
-                console.log(data);
-                return data;
-            });
-        });
+        navigator.geolocation.getCurrentPosition(successCallback,errorCallback,{timeout:10000, enableHighAccuracy:false});
     }
     else{
         console.log("Error. Geolocation not supported or not enabled");
     }
+    return;
 }
