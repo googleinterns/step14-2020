@@ -218,6 +218,12 @@ function init() {
 
     const chat = document.getElementById('chatbox');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
+
+    const close = document.getElementById('close-settings');
+    close.addEventListener('click', closeSettings);
+
+    const settings = document.getElementById('settings-button');
+    settings.addEventListener('click', switchToSettings);
 }
 
 // initializes the .on() functions for the database reference
@@ -401,4 +407,20 @@ function addUserInfoToDom(userObj) {
             tagList.appendChild(tagNode);
         }
     }
+}
+
+function switchToSettings() {
+    const settings = document.getElementById('user-profile');
+    const sidebar = document.getElementById('sidebar');
+
+    sidebar.classList.add("display-none");
+    settings.classList.remove("display-none");
+}
+
+function closeSettings() {
+    const settings = document.getElementById('user-profile');
+    const sidebar = document.getElementById('sidebar');
+
+    settings.classList.add("display-none");
+    sidebar.classList.remove("display-none");
 }
