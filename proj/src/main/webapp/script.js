@@ -40,9 +40,22 @@ function addUserToTag(reference){
 // Creates a new chat given a tag and adds the current user as a member
 function createNewChatWithUser(tag){
     console.log("creating new chat with tag: " + tag);
+    var time = new Date().getTime();
     var newChat = {
-        "name" : tag,
-        "tag" : tag,
+        "chatInfo" : {
+            "name" : tag,
+            "tag" : tag,
+            "lastMessage" : "Welcome to the " + tag + " chat!",
+            "timestamp" : time
+        },
+        "messages" : {
+            "welcome" : {
+                "content" : "Welcome to the " + tag + " chat!",
+                "timestamp" : time,
+                "senderDisplay" : "Camaraderie",
+                "senderUID" : "admin"
+            }
+        }
     };
     var currentReference = firebase.database().ref("/chat/" + tag);
     var postKey = currentReference.push(newChat).key;
