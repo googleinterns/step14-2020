@@ -235,6 +235,7 @@ function initRef() {
     chat.innerHTML = '';
     // note that when a comment is added it will display more than the limit, which
     // is intentional
+    dbRefObject.off('child_added');
     dbRefObject.limitToLast(LIMIT + 1).on('child_added', snap => {
         if (!firstChildKey) {
             firstChildKey = snap.key;
