@@ -23,7 +23,7 @@ if(btnLogin){
         const auth = firebase.auth();
 
         const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(user){
-            window.location.replace("chat.html");
+            window.location.replace("static/chat.html");
         });
         promise.catch(e => console.log(e.message));
     });
@@ -208,9 +208,12 @@ var dbRefObject = getDbRef(tag, CHAT_ID);
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
+
+
 function init() {
     initRef();
     clickWithEnterKey();
+    populateProfileSidebar();
     populateSidebar();
 
     const chat = document.getElementById('chatbox');
@@ -344,12 +347,10 @@ function makeChatPreview(name, messageObj, tag, chatId) {
 }
 
 function populateSidebar() {
-    // Initialize auth object
-    const auth = firebase.auth();
-
+    // const auth = firebase.auth();
     // const iud = auth.currentUser.uid;
     const iud = "testuserwithdict";
-    const userTagsRef = firebase.database().ref('/users/'+iud+'/tags');
+    const userTagsRef = firebase.database().ref('/users/'+iud+'/allTags');
 
     userTagsRef.orderByKey().on('child_added', snap => {
         const chatTag = snap.key;
@@ -366,4 +367,38 @@ function changeChatOnClick(domElement, tag, chatId) {
         dbRefObject = getDbRef(tag, chatId);
         initRef();
     });
+}
+
+function populateProfileSidebar() {
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+        const userRef = firebase.database().ref('/users/'+user.uid)
+        userRef.once('value', snap => {
+            const userObj = {};
+            userObj.photo = user.photoUrl;
+            userObj.uid = user.uid;
+            userObj.fname = snap.val().firstName;
+            userObj.lname = snap.val().lastName;
+            userObj.bio = snap.val().bio;  // there is no bio yet
+            userObj.tags = snap.val().allTags;
+            addUserInfoToDom(userObj)
+            })
+        }
+    });
+}
+
+function addUserInfoToDom(userObj) {
+    const profile = document.getElementById('user-profile');
+    profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
+    profile.querySelector("#user-pfp").src = userObj.photo;
+    profile.querySelector("#user-bio").innerText = userObj.bio;
+
+    const tagList = profile.querySelector("#user-tags");
+    for (tag in userObj.tags) {
+        if (userObj.tags.hasOwnProperty(tag)) {
+            const tagNode = document.createElement('li');
+            tagNode.innerText = tag;
+            tagList.appendChild(tagNode);
+        }
+    }
 }
