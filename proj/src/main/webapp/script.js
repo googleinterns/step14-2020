@@ -48,6 +48,7 @@ function createNewChatWithUser(tag){
             "tag" : tag,
             "lastMessage" : messageContent,
             "timestamp" : time,
+            "lastAuthor" : ""
         },
         "messages" : {
             "welcome" : {
