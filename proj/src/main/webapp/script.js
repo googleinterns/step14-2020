@@ -354,9 +354,9 @@ function makeChatPreview(name, messageObj, tag, chatId) {
 
 function populateSidebar() {
     // const auth = firebase.auth();
-    // const iud = auth.currentUser.uid;
-    const iud = "testuserwithdict";
-    const userTagsRef = firebase.database().ref('/users/'+iud+'/allTags');
+    // const uid = auth.currentUser.uid;
+    const uid = "testuserwithdict";
+    const userTagsRef = firebase.database().ref('/users/'+uid+'/allTags');
 
     userTagsRef.orderByKey().on('child_added', snap => {
         const chatTag = snap.key;
