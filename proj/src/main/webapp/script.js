@@ -214,9 +214,9 @@ function appendMessage(payload){
  */
 
 var currentUID = null;
-var CHAT_ID = '-MB0ycAOM8VGIXlev5u8'
+var globalChatId = '-MB0ycAOM8VGIXlev5u8'
 var tag = 'test';
-var dbRefObject = getDbRef(tag, CHAT_ID);
+var dbRefObject = getDbRef(tag, globalChatId);
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
@@ -266,8 +266,8 @@ function initUserChat(){
                 var ChatID = childSnapshot.val();
                 if(key && ChatID){
                     tag = key;
-                    CHAT_ID = ChatID;
-                    dbRefObject = getDbRef(tag, CHAT_ID);
+                    globalChatId = ChatID;
+                    dbRefObject = getDbRef(tag, globalChatId);
                     return true;
                 }
             });
@@ -279,11 +279,10 @@ function initUserChat(){
 }
 // Sets title of page
 function setTitle(){
-    nameRef = firebase.database().ref("/chat/"+tag+"/"+CHAT_ID+"/chatInfo/name");
+    nameRef = firebase.database().ref("/chat/"+tag+"/"+globalChatId+"/chatInfo/name");
     nameRef.once("value").then(function(snapshot){
         var data = snapshot.val();
         var presentableTitle = data.charAt(0).toUpperCase() + data.slice(1);
-        console.log(presentableTitle);
         document.getElementById("big-title").innerText = presentableTitle;
     });
 }
