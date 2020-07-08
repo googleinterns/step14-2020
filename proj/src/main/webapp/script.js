@@ -413,14 +413,14 @@ function switchToSettings() {
     const settings = document.getElementById('user-profile');
     const sidebar = document.getElementById('sidebar');
 
-    sidebar.classList.add("display-none");
-    settings.classList.remove("display-none");
+    settings.style.display="";
+    sidebar.style.display="none"; 
 }
 
 function closeSettings() {
     const settings = document.getElementById('user-profile');
     const sidebar = document.getElementById('sidebar');
 
-    settings.classList.add("display-none");
-    sidebar.classList.remove("display-none");
+    settings.style.display="none";
+    sidebar.style.display=""; 
 }
