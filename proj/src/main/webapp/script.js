@@ -284,7 +284,7 @@ function initRef() {
     // note that when a comment is added it will display more than the limit, which
     // is intentional
     dbRefObject.off('child_added');
-    dbRefObject.limitToLast(LIMIT + 1).on('child_added', snap => {
+    dbRefObject.orderByChild("timestamp").limitToLast(LIMIT + 1).on('child_added', snap => {
         if (!firstChildKey) {
             firstChildKey = snap.key;
         } else {
@@ -312,8 +312,7 @@ function addMoreMessagesAtTheTop() {
     const chat = document.getElementById('chatbox');
     if (chat.scrollTop === 0) {
         const oldScrollHeight = chat.scrollHeight;
-        // because we don't add the last child, add one to the limit
-        dbRefObject.orderByKey().endAt(firstChildKey).limitToLast(LIMIT + 1).once('value', snap => {
+        dbRefObject.orderByChild("timestamp").limitToLast(LIMIT + 1).once("value",snap => {
             firstChildKey = null;
             addMessagesToListElement(snap.val(), chat.firstChild, oldScrollHeight);
         });
