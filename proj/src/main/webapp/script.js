@@ -234,18 +234,49 @@ var firstChildKey;
 
 function init() {
     const auth = firebase.auth();
-
-    clickWithEnterKey();
-    auth.onAuthStateChanged(firebaseUser => {
+    auth.onAuthStateChanged(async firebaseUser => {
         if(firebaseUser){
-            currentUID = auth.currentUser.uid;
-            initRef();
-            populateSidebar();
+            await initUserChat().then(function(){
+                populateSidebar();
+                initRef();
+            });
+
+            clickWithEnterKey();
+        }
+        else{
+            window.location.replace("welcome.html");
         }
     });
 
     const chat = document.getElementById('chatbox');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
+}
+
+
+
+function initUserChat(){
+    currentUID = firebase.auth().currentUser.uid;
+    const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
+
+    // Wraps content function in a promise to ensure it runs before wrest of init
+    return new Promise(function(resolve){
+        var query = firebase.database().ref(userTagsRef).orderByKey();
+        query.once("value").then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+                var key = childSnapshot.key;
+                var ChatID = childSnapshot.val();
+                if(key && ChatID){
+                    tag = key;
+                    CHAT_ID = ChatID;
+                    dbRefObject = getDbRef(tag, CHAT_ID);
+                    return true;
+                }
+            });
+            resolve(1);
+        });
+    });
+
+
 }
 
 // initializes the .on() functions for the database reference
