@@ -219,23 +219,30 @@ var dbRefObject = getDbRef(tag, CHAT_ID);
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
-//temporary fix
-function generatePromise(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+// //temporary fix
+// function generatePromise(ms) {
+//     return new Promise(resolve => setTimeout(resolve, ms));
+// }
 
-function init(){
-    generatePromise(1000).then(function(){
-        currentUID = firebase.auth().currentUser.uid;
-    }).finally(function(){
-        initDB();
-    });
-}
+// function init(){
+//     generatePromise(1000).then(function(){
+//         currentUID = firebase.auth().currentUser.uid;
+//     }).finally(function(){
+//         initDB();
+//     });
+// }
 
-function initDB() {
-    initRef();
+function init() {
+    const auth = firebase.auth();
+
     clickWithEnterKey();
-    populateSidebar();
+    auth.onAuthStateChanged(firebaseUser => {
+        if(firebaseUser){
+            currentUID = auth.currentUser.uid;
+            initRef();
+            populateSidebar();
+        }
+    });
 
     const chat = document.getElementById('chatbox');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
