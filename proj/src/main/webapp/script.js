@@ -220,27 +220,17 @@ var dbRefObject = getDbRef(tag, CHAT_ID);
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
-// //temporary fix
-// function generatePromise(ms) {
-//     return new Promise(resolve => setTimeout(resolve, ms));
-// }
-
-// function init(){
-//     generatePromise(1000).then(function(){
-//         currentUID = firebase.auth().currentUser.uid;
-//     }).finally(function(){
-//         initDB();
-//     });
-// }
-
+// Broad init function
 function init() {
     const auth = firebase.auth();
     auth.onAuthStateChanged(async firebaseUser => {
         if(firebaseUser){
+            // InitUserChat sets information relevant to logged-in user
+            // Must run before enclosed functions
             await initUserChat().then(function(){
                 populateSidebar();
-                populateProfileSidebar();
                 initRef();
+                populateProfileSidebar(firebaseUser);
             });
 
             clickWithEnterKey();
@@ -260,7 +250,6 @@ function init() {
     settings.addEventListener('click', switchToSettings);
 
 }
-
 
 
 function initUserChat(){
@@ -442,22 +431,20 @@ function changeChatOnClick(domElement, tag, chatId) {
     });
 }
 
-function populateProfileSidebar() {
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-        const userRef = firebase.database().ref('/users/'+user.uid)
-        userRef.once('value', snap => {
-            const userObj = {};
-            userObj.photo = user.photoUrl;
-            userObj.uid = user.uid;
-            userObj.fname = snap.val().firstName;
-            userObj.lname = snap.val().lastName;
-            userObj.bio = snap.val().bio;  // there is no bio yet
-            userObj.tags = snap.val().allTags;
-            addUserInfoToDom(userObj)
-            })
-        }
-    });
+function populateProfileSidebar(user) {
+    if (user) {
+    const userRef = firebase.database().ref('/users/'+user.uid)
+    userRef.once('value', snap => {
+        const userObj = {};
+        userObj.photo = user.photoUrl;
+        userObj.uid = user.uid;
+        userObj.fname = snap.val().firstName;
+        userObj.lname = snap.val().lastName;
+        userObj.bio = snap.val().bio;  // there is no bio yet
+        userObj.tags = snap.val().allTags;
+        addUserInfoToDom(userObj)
+        })
+    }
 }
 
 function addUserInfoToDom(userObj) {
