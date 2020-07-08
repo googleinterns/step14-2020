@@ -51,7 +51,7 @@ function createNewChatWithUser(tag){
             "welcome" : {
                 "content" : messageContent,
                 "timestamp" : time,
-                "senderDisplay" : "Camaraderie",
+                "senderDisplay" : "",
                 "senderUID" : "admin"
             }
         }
@@ -219,8 +219,9 @@ var dbRefObject = getDbRef(tag, CHAT_ID);
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
+//temporary fix
 function generatePromise(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function init(){
@@ -398,7 +399,6 @@ function changeChatOnClick(domElement, tag, chatId) {
     Location
  */
 
-const API_KEY = "AIzaSyCtEo_jPb_ThnU_HTaYh4U_t-8MLZ9ulBo";
 var position;
 
 function successCallback(pos){
