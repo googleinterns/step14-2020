@@ -410,9 +410,7 @@ function populateSidebar() {
     // Initialize auth object
     const auth = firebase.auth();
 
-    // const iud = auth.currentUser.uid;
-    const uid = currentUID;
-    const userTagsRef = firebase.database().ref('/users/'+uid+'/allTags');
+    const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
 
     userTagsRef.orderByKey().on('child_added', snap => {
         const chatTag = snap.key;
