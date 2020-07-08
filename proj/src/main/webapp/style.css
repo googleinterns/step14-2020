@@ -18,6 +18,15 @@ html important!{
     visibility:hidden;
 }
 
+.sidebar {
+    height: 400px;
+}
+
+aside {
+    width: 100%;
+    overflow: hidden;
+}
+
 /* main: welcome page */
 /* view: mobile */
 
