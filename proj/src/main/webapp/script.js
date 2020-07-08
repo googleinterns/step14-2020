@@ -21,7 +21,7 @@ if(btnLogin){
         const auth = firebase.auth();
 
         const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(user){
-            window.location.replace("static/chat.html");
+            window.location.replace("chat.html");
         });
         promise.catch(e => console.log(e.message));
     });
@@ -432,7 +432,7 @@ function populateSidebar() {
         // get last message
         makePreviewWithLastMessage(chatTag, chatId)
         
-    })
+    });
 }
 
 function changeChatOnClick(domElement, tag, chatId) {
