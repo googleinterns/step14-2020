@@ -223,6 +223,7 @@ var firstChildKey;
 // Broad init function
 function init() {
     const auth = firebase.auth();
+    
     auth.onAuthStateChanged(async firebaseUser => {
         if(firebaseUser){
             // InitUserChat sets information relevant to logged-in user
@@ -276,11 +277,24 @@ function initUserChat(){
 
 
 }
+// Sets title of page
+function setTitle(){
+    nameRef = firebase.database().ref("/chat/"+tag+"/"+CHAT_ID+"/chatInfo/name");
+    nameRef.once("value").then(function(snapshot){
+        var data = snapshot.val();
+        var presentableTitle = data.charAt(0).toUpperCase() + data.slice(1);
+        console.log(presentableTitle);
+        document.getElementById("big-title").innerText = presentableTitle;
+    });
+}
 
 // initializes the .on() functions for the database reference
 function initRef() {
     const chat = document.getElementById('chatbox');
-    chat.innerHTML = '';
+    chat.innerHTML = '';    
+
+    setTitle();
+
     // note that when a comment is added it will display more than the limit, which
     // is intentional
     dbRefObject.off('child_added');
