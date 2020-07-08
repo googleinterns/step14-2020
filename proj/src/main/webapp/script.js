@@ -413,14 +413,14 @@ function switchToSettings() {
     const settings = document.getElementById('user-profile');
     const sidebar = document.getElementById('sidebar');
 
-    settings.style.display="";
-    sidebar.style.display="none"; 
+    sidebar.style.height = 0;
+    settings.style.height = '400px'; 
 }
 
 function closeSettings() {
     const settings = document.getElementById('user-profile');
     const sidebar = document.getElementById('sidebar');
 
-    settings.style.display="none";
-    sidebar.style.display=""; 
+    settings.style.height = 0;
+    sidebar.style.height = '400px'; 
 }

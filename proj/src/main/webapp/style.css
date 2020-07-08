@@ -18,10 +18,13 @@ html important!{
     visibility:hidden;
 }
 
-/* just for visualization, can remove later */
-aside {
+.sidebar {
     height: 400px;
+}
+
+aside {
     width: 100%;
+    overflow: hidden;
 }
 
 /* main: welcome page */

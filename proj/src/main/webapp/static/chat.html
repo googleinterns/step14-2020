@@ -28,14 +28,14 @@
         <div class="container screen chat-page full-height">
             <div class="row">
 
-            <div class="col">
+            <div class="col sidebar">
 
-                <aside id="user-profile" class="display-none">
+                <aside id="user-profile"  style="height:0">
                     <p id="user-display-name"></p>
                     <img id="user-pfp">
                     <pre id="user-bio"></pre>
                     <ul id="user-tags"></ul>
-                    <button type="button" id="close-settings" >close</button>
+                    <button type="button" id="close-settings">close</button>
                 </aside>
 
                 <aside id="sidebar">
@@ -73,11 +73,11 @@
                     <div class="input-box">
                         <input type="text" id="message-input" />
                         <button type="button" onclick="pushChatMessage()" id="send-button">send</button>
-                    </div>     
+                    </div>
                 </div>
             </div>
 
-            </div> 
+            </div>
         </div>
       <script src="../script.js"></script>
   </body>
