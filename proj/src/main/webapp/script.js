@@ -47,7 +47,7 @@ function createNewChatWithUser(tag){
             "name" : tag,
             "tag" : tag,
             "lastMessage" : messageContent,
-            "timestamp" : time
+            "timestamp" : time,
         },
         "messages" : {
             "welcome" : {
@@ -386,8 +386,6 @@ function changeChatOnClick(domElement, tag, chatId) {
 /*
     Location
  */
-
-const API_KEY = "AIzaSyCtEo_jPb_ThnU_HTaYh4U_t-8MLZ9ulBo";
 var position;
 
 function successCallback(pos){
