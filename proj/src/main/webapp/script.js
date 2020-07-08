@@ -40,9 +40,24 @@ function addUserToTag(reference){
 // Creates a new chat given a tag and adds the current user as a member
 function createNewChatWithUser(tag){
     console.log("creating new chat with tag: " + tag);
+    var time = new Date().getTime();
+    var messageContent = "Welcome to the " + tag + " chat!";
     var newChat = {
-        "name" : tag,
-        "tag" : tag,
+        "chatInfo" : {
+            "name" : tag,
+            "tag" : tag,
+            "lastMessage" : messageContent,
+            "timestamp" : time,
+            "lastAuthor" : ""
+        },
+        "messages" : {
+            "welcome" : {
+                "content" : messageContent,
+                "timestamp" : time,
+                "senderDisplay" : "Camaraderie",
+                "senderUID" : "admin"
+            }
+        }
     };
     var currentReference = firebase.database().ref("/chat/" + tag);
     var postKey = currentReference.push(newChat).key;
@@ -121,7 +136,6 @@ if(btnSignUp){
                 var tag = tagList[ii];
                 var key = await createOrJoinChat(tag)
                 allTags[tag] = key;
-
             }
 
             const user = auth.currentUser;
@@ -134,7 +148,6 @@ if(btnSignUp){
                     lastName : lname.value,
                     allTags : allTags
                 }).then(function(){
-
                     window.location.replace("chat.html");
                 });
             }).catch(function(){
@@ -232,6 +245,7 @@ function initRef() {
     chat.innerHTML = '';
     // note that when a comment is added it will display more than the limit, which
     // is intentional
+    dbRefObject.off('child_added');
     dbRefObject.limitToLast(LIMIT + 1).on('child_added', snap => {
         if (!firstChildKey) {
             firstChildKey = snap.key;
@@ -247,7 +261,9 @@ function pushChatMessage() {
 
     var message = {
         content : messageInput.value,
-        timestamp : new Date().getTime()
+        timestamp : new Date().getTime(),
+        senderDisplay : firebase.auth().currentUser.displayName,
+        senderUID : firebase.auth().currentUser.uid
     }
     // push message to datastore
     dbRefObject.push(message);
@@ -301,7 +317,7 @@ function createMessageWithTemplate(messageObj) {
     const message = messageTemplate.content.cloneNode(true);
 
     const msgHeader = message.querySelector('.message-header');
-    msgHeader.querySelector('#username').innerText = 'name go here';
+    msgHeader.querySelector('#username').innerText = messageObj.senderDisplay;
             
     const msgBody = message.querySelector('.message-body');
     msgBody.innerText = messageObj.content;
@@ -423,4 +439,29 @@ function closeSettings() {
 
     settings.style.height = 0;
     sidebar.style.height = '400px'; 
+}
+
+/*
+    Location
+ */
+var position;
+
+function successCallback(pos){
+    position = pos;
+    console.log(pos);
+}
+
+function errorCallback(err){
+    console.log("error");
+}
+
+function getLocation() {
+    if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(successCallback,errorCallback,{timeout:10000, enableHighAccuracy:false});
+    }
+    else{
+        console.log("Error. Geolocation not supported or not enabled");
+    }
+    return;
+}
 }
