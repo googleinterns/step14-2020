@@ -428,6 +428,35 @@ function addUsernameToMessage(uid, elementId) {
     })
 }
 
+const bioBox = document.getElementById('user-bio');
+const editInputBox = document.getElementById('bio-edit');
+
+bioBox.addEventListener('dblclick', function() {
+    const bioBox = document.getElementById('user-bio');
+    bioBox.hidden = true;
+    const bio = bioBox.innerText;
+
+    const editInputBox = document.getElementById('bio-edit');
+    editInputBox.hidden = false;
+    editInputBox.innerText = bio;
+    editInputBox.value = this.innerText
+
+    editInputBox.focus();
+});
+
+editInputBox.addEventListener('blur', function() {
+        const uid = firebase.auth().currentUser.uid;
+        const userBioRef = firebase.database().ref('/users/'+uid+'/bio');
+        userBioRef.set(this.value);
+
+        this.hidden = true;
+        const bioBox = document.getElementById('user-bio');
+        bioBox.hidden = false;
+        bioBox.innerText = this.value;
+});
+
+
+
 function populateSidebar() {
     // Initialize auth object
     const auth = firebase.auth();
