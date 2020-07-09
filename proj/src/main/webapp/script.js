@@ -2,6 +2,8 @@
     Authentication
  */
 
+const MAX_CHAT_SIZE = 200;
+
 // Elements of login container
 const fname = document.getElementById("fname")
 const txtEmail = document.getElementById("email");
@@ -33,7 +35,7 @@ var keyIdDict = {};
 function addUserToTag(reference, tag){
     var currentUID = firebase.auth().currentUser.uid;
     console.log("adding new user to chat room with uid: " + currentUID);
-    var removalKey = reference.push(currentUID);
+    var removalKey = reference.push(currentUID).key;
     keyIdDict[tag] = removalKey;
 }
 
@@ -68,19 +70,18 @@ function createNewChatWithUser(tag){
 }
 
 // Loops through open chat rooms, adds the user to the first open chat and returns the key
-function findChatAndAddUser(snapshot){
+function findChatAndAddUser(snapshot, tag){
     var key;
     var foundOpenRoom = false;
     snapshot.forEach(function(childSnapshot){
         key = childSnapshot.key;
-        console.log("key1 " + key);
 
         var userSnapshot = childSnapshot.child("users");
         var usersReference = userSnapshot.ref;
 
         // Handled below if spillover is needed
         if(userSnapshot.numChildren() < MAX_CHAT_SIZE){
-            addUserToTag(usersReference);
+            addUserToTag(usersReference, tag);
             foundOpenRoom = true;
             return true;
         }
@@ -93,8 +94,99 @@ function findChatAndAddUser(snapshot){
     }
 }
 
+
+// Create or join chatroom
+function createOrJoinChat(currentTag){
+    var ref = firebase.database().ref("/chat/");
+    return ref.once("value").then(function(snapshot){
+        // Checks to see if tag already exists in database
+        if(snapshot.hasChild(currentTag)){
+
+            // If tag already exists, navigate to users and add users if there is room
+            var query = firebase.database().ref("/chat/" + currentTag + "/").orderByKey();
+            return query.once("value").then(function(snapshot){
+
+                //adds user to chat and returns key
+                return findChatAndAddUser(snapshot, currentTag);
+            });
+        }
+        else{
+            // Create new chat if tag does not exist yet
+           return createNewChatWithUser(currentTag);
+        }
+    }).catch(function(){
+        console.log("unexpected error searching for chat rooms");
+    });
+}
+
+
+// Add sign up event
+if(btnSignUp){
+    btnSignUp.addEventListener("click", e => {
+        const emailVal = txtEmail.value;
+        const passVal = pass.value;
+        var tagList = tagStr.value.split(',');
+
+        // Initialize auth object
+        const auth = firebase.auth();
+        auth.useDeviceLanguage();
+
+        const promise = auth.createUserWithEmailAndPassword(emailVal, passVal).then(async function(){
+            var allTags = {};
+            for(var ii = 0; ii < tagList.length; ii++){
+
+                var tag = tagList[ii];
+                var key = await createOrJoinChat(tag);
+                allTags[tag] = key;
+            }
+
+            const user = auth.currentUser;
+            user.updateProfile({
+                displayName: fname.value + " " + lname.value
+                }).then(function(){
+                console.log("display name updated successfully");
+                firebase.database().ref("users/" + auth.currentUser.uid).set({
+                    firstName : fname.value,
+                    lastName : lname.value,
+                    allTags : allTags,
+                    tagRemovalDict : keyIdDict
+                }).then(function(){
+                    window.location.replace("chat.html");
+                });
+            }).catch(function(){
+                console.log("error updating display name");
+            });
+        });
+
+    });
+}
+
+if(btnLogout){
+    btnLogout.addEventListener("click", e => {
+        firebase.auth().signOut();
+        window.location.replace("welcome.html");
+    });
+}
+
+firebase.auth().onAuthStateChanged(firebaseUser => {
+    if(firebaseUser){
+        console.log(firebaseUser);
+        userTagsRef = firebase.database().ref("users/" + firebaseUser.uid + "/alltags");
+        keyRemovalRef = firebase.database().ref("users/" + firebaseUser.uid + "/tagRemovalDict");
+        if(btnLogout)
+            btnLogout.classList.remove("hidden");
+    }
+    else{
+        console.log("not logged in");
+        if(btnLogout)
+            btnLogout.classList.add("hidden");
+    }
+});
+
+
 // Set by authState listener
 var allTagsRef;
+var keyRemovalRef;
 
 function getExistingTags(){
     var currentTags = {};
@@ -172,95 +264,24 @@ function addUserTags(tagList){
 }
 
 function removeUserFromChatByTag(tag){
-    
-}
-
-// Create or join chatroom
-function createOrJoinChat(currentTag){
-    var ref = firebase.database().ref("/chat/");
-    return ref.once("value").then(function(snapshot){
-        // Checks to see if tag already exists in database
-        if(snapshot.hasChild(currentTag)){
-
-            // If tag already exists, navigate to users and add users if there is room
-            var query = firebase.database().ref("/chat/" + currentTag + "/").orderByKey();
-            return query.once("value").then(function(snapshot){
-
-                //adds user to chat and returns key
-                return findChatAndAddUser(snapshot);
-            });
-        }
-        else{
-            // Create new chat if tag does not exist yet
-           return createNewChatWithUser(currentTag);
-        }
-    }).catch(function(){
-        console.log("unexpected error searching for chat rooms");
-    });
-}
-
-
-// Add sign up event
-if(btnSignUp){
-    btnSignUp.addEventListener("click", e => {
-        const emailVal = txtEmail.value;
-        const passVal = pass.value;
-        var tagList = tagStr.value.split(',');
-
-        // Initialize auth object
-        const auth = firebase.auth();
-        auth.useDeviceLanguage();
-
-        const promise = auth.createUserWithEmailAndPassword(emailVal, passVal).then(async function(){
-            var allTags = {};
-            for(var ii = 0; ii < tagList.length; ii++){
-
-                var tag = tagList[ii];
-                var key = await createOrJoinChat(tag);
-                allTags[tag] = key;
-            }
-
-            const user = auth.currentUser;
-            user.updateProfile({
-                displayName: fname.value + " " + lname.value
-                }).then(function(){
-                console.log("display name updated successfully");
-                firebase.database().ref("users/" + auth.currentUser.uid).set({
-                    firstName : fname.value,
-                    lastName : lname.value,
-                    allTags : allTags,
-                    tagRemovalDict : keyIdDict
-                }).then(function(){
-                    window.location.replace("chat.html");
-                });
-            }).catch(function(){
-                console.log("error updating display name");
-            });
+    // Can't be an invalid ref (will be valid ref if tags exist; this is tag removal function)
+    // Gets tag removal key
+    var removalKey = keyRemovalRef.once("value").then(function(snapshot){
+        var data = snapshot.val();
+        return data[tag];
+    }).then(function(){
+        var chatId = allTagsRef.once("value").then(function(snapshot){
+            var data = snapshot.val();
+            return data[tag];
+        }).then(function(){
+            const chatRef = firebase.database().ref("chat/" + tag + "/" + chatId + "/users");
+            chatRef.remove(removalKey);
+            allTagsRef.remove(tag);
         });
-
     });
+
 }
 
-if(btnLogout){
-    btnLogout.addEventListener("click", e => {
-        firebase.auth().signOut();
-        window.location.replace("welcome.html");
-    });
-}
-
-firebase.auth().onAuthStateChanged(firebaseUser => {
-    if(firebaseUser){
-        console.log(firebaseUser);
-        userTagsRef = firebase.database().ref("users/" + firebaseUser.uid + "/alltags");
-        if(btnLogout)
-            btnLogout.classList.remove("hidden");
-    }
-    else{
-        console.log("not logged in");
-        if(btnLogout)
-            btnLogout.classList.add("hidden");
-    }
-});
 
 /*
     Notifications
