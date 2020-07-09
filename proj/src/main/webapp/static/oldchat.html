@@ -1,0 +1,125 @@
+<!-- old chatroom html -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Chat Room</title>
+
+    <!-- Bootstrap Scripts -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+
+    <!-- Firebase Scripts -->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-messaging.js"></script>
+    <script src="../app.js"></script>
+
+    <!-- Font  -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+    </head>
+    
+    <body onload="init()">
+        <div class="container screen chat-page full-height">
+            <div class="row">
+                <div id="sidebar-container" class="sidebar-expanded d-none d-md-block">
+                <!-- d-* hiddens the Sidebar in smaller devices. Its itens can be kept on the Navbar 'Menu' -->
+                <!-- Bootstrap List Group -->
+                <ul class="list-group">
+                    <!-- Separator with title -->
+                    <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
+                        <small>MAIN MENU</small>
+                    </li>
+                    <!-- /END Separator -->
+                    <!-- Menu with submenu -->
+                    <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="bg-dark list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-start align-items-center">
+                            <span class="fa fa-dashboard fa-fw mr-3"></span>
+                            <span class="menu-collapsed">Dashboard</span>
+                            <span class="submenu-icon ml-auto"></span>
+                        </div>
+                    </a>
+                    <!-- Submenu content -->
+                    <div id='submenu1' class="collapse sidebar-submenu">
+                        <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
+                            <span class="menu-collapsed">l1</span>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
+                            <span class="menu-collapsed">l2</span>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
+                            <span class="menu-collapsed">l3</span>
+                        </a>
+                    </div>
+
+
+                    <!-- Separator without title -->
+                    <li class="list-group-item sidebar-separator menu-collapsed"></li>
+                    <!-- /END Separator -->
+                    <a href="#top" data-toggle="sidebar-colapse" class="bg-dark list-group-item list-group-item-action d-flex align-items-center">
+                        <div class="d-flex w-100 justify-content-start align-items-center">
+                            <span id="collapse-icon" class="fa fa-2x mr-3"></span>
+                            <span id="collapse-text" class="menu-collapsed">Collapse</span>
+                        </div>
+                    </a>
+                </ul><!-- List Group END-->
+            </div><!-- sidebar-container END -->
+
+            <div class="col" id="chat-screen"> 
+                <h1> Chat Room </h1>
+                <div class="chat-and-input"> 
+                    <div class="conversation">
+                        <div id="chatbox" class="chat"></div>
+                        <template id="message-temp">
+                            <div class="message">
+                                <div class="message-header">
+                                <img id="pfp">
+                                <p id="username"></p>
+                            </div>
+                            <pre class="message-body"></pre>
+                        </template>
+                    </div>     
+                     
+                    <div class="input-box">
+                        <input type="text" id="message-input" />
+                        <button type="button" onclick="pushChatMessage()" id="send-button">send</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="new-screen-test">
+                <div id="user-profile"  style="height:0">
+                    <p id="user-display-name"></p>
+                    <img id="user-pfp">
+                    <pre id="user-bio"></pre>
+                    <ul id="user-tags"></ul>
+                    <button type="button" id="close-settings">close</button>
+                </div>
+
+                <div id="sidebar">
+                    <template id="chat-preview-temp">
+                        <div class="chat-preview">
+                            <p id="chat-name"></p>
+                            <div class="message">
+                                <div class="message-header">
+                                    <img id="pfp">
+                                    <p id="username"></p>
+                                </div>
+                                <pre class="message-body"></pre>
+                            </div>
+                    </template>
+                    <button type="button" id="settings-button">settings</button>
+                </div>
+            </div>
+
+            </div>
+        </div>
+      <script src="../script.js"></script>
+  </body>
+</html>
