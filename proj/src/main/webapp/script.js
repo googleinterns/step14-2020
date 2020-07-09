@@ -91,6 +91,18 @@ function findChatAndAddUser(snapshot){
     }
 }
 
+function setUserTags(tags){
+
+}
+
+function addUserTags(tags){
+
+}
+
+function removeUserFromChatByTag(tag){
+
+}
+
 // Create or join chatroom
 function createOrJoinChat(currentTag){
     var ref = firebase.database().ref("/chat/");
@@ -132,7 +144,7 @@ if(btnSignUp){
             for(var ii = 0; ii < tagList.length; ii++){
 
                 var tag = tagList[ii];
-                var key = await createOrJoinChat(tag)
+                var key = await createOrJoinChat(tag);
                 allTags[tag] = key;
             }
 
@@ -274,7 +286,6 @@ function initUserChat(){
             resolve(1);
         });
     });
-
 
 }
 // Sets title of page
