@@ -27,12 +27,14 @@ if(btnLogin){
     });
 }
 
+var keyIdDict = {};
 
 // Adds user to an existing chat when given a reference to the place in the database
-function addUserToTag(reference){
+function addUserToTag(reference, tag){
     var currentUID = firebase.auth().currentUser.uid;
     console.log("adding new user to chat room with uid: " + currentUID);
-    reference.push(currentUID);
+    var removalKey = reference.push(currentUID);
+    keyIdDict[tag] = removalKey;
 }
 
 // Creates a new chat given a tag and adds the current user as a member
@@ -60,7 +62,7 @@ function createNewChatWithUser(tag){
     var currentReference = firebase.database().ref("/chat/" + tag);
     var postKey = currentReference.push(newChat).key;
     currentReference = firebase.database().ref("/chat/" + tag + "/" + postKey + "/users/");
-    addUserToTag(currentReference);
+    addUserToTag(currentReference, tag);
 
     return postKey;
 }
@@ -91,16 +93,86 @@ function findChatAndAddUser(snapshot){
     }
 }
 
-function setUserTags(tags){
+// Set by authState listener
+var allTagsRef;
 
+function getExistingTags(){
+    var currentTags = {};
+    return allTagsRef.once("value").then(function(dataSnapshot){
+        dataSnapshot.forEach(function(tagSnapshot){
+            currentTags[tagSnapshot.key] = tagSnapshot.val();
+        });
+        return currentTags;
+    });
 }
 
-function addUserTags(tags){
+function setUserTags(tagList){
+    if(firebase.auth().currentUser){
 
+        var currentTags = getExistingTags();
+        var allTags = {};
+
+        new Promise(async function(resolve){
+            // If tag is not in existing list of tags, adds user to the chat
+            // If user already has tag, deletes tag from list of current tags (as every remaining
+                // tag will be removed)
+            for(var ii = 0; ii < tagList.length; ii++){
+                var tag = tagList[ii];
+                var key;
+                if(!currentTags.includes(tagList[ii])){
+                    key = await createOrJoinChat(tag);
+                }
+                else{
+                    key = currentTags[tag];
+                    delete currentTags[key];
+                }
+                allTags[tag] = key;
+            }
+
+            for(var ii = 0; ii < currentTags.length; ii++){
+                removeUserFromChatByTag(currentTags[ii]);
+            }
+
+            resolve(1);
+        }).then(function(){
+            var updates = {};
+            updates[allTagsRef] = allTags;
+            allTagsRef.update(updates);
+        });
+    }
+}
+
+function addUserTags(tagList){
+    if(firebase.auth().currentUser){
+
+        var currentTags = getExistingTags();
+        var allTags = {};
+
+        new Promise(async function(resolve){
+            if(currentTags){
+                for(var ii = 0; ii < tagList.length; ii++){
+                    var tag = tagList[ii];
+                    var key;
+                    if(!currentTags.includes(tagList[ii])){
+                        key = await createOrJoinChat(tag);
+                    }
+                    else{
+                        key = currentTags[tag];
+                    }
+                    allTags[tag] = key;
+                }
+            }
+            resolve(1);
+        }).then(function(){
+            var updates = {};
+            updates[allTagsRef] = allTags;
+            allTagsRef.update(updates);
+        });
+    }
 }
 
 function removeUserFromChatByTag(tag){
-
+    
 }
 
 // Create or join chatroom
@@ -156,7 +228,8 @@ if(btnSignUp){
                 firebase.database().ref("users/" + auth.currentUser.uid).set({
                     firstName : fname.value,
                     lastName : lname.value,
-                    allTags : allTags
+                    allTags : allTags,
+                    tagRemovalDict : keyIdDict
                 }).then(function(){
                     window.location.replace("chat.html");
                 });
@@ -178,6 +251,7 @@ if(btnLogout){
 firebase.auth().onAuthStateChanged(firebaseUser => {
     if(firebaseUser){
         console.log(firebaseUser);
+        userTagsRef = firebase.database().ref("users/" + firebaseUser.uid + "/alltags");
         if(btnLogout)
             btnLogout.classList.remove("hidden");
     }
