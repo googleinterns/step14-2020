@@ -407,7 +407,7 @@ function initRef() {
         if (!firstChildKey) {
             firstChildKey = snap.key;
         } else {
-            messageDom = createMessageWithTemplate(snap.val());
+            messageDom = createMessageWithTemplate(snap.key, snap.val());
             chat.appendChild(messageDom);
         }
     });
@@ -445,7 +445,7 @@ function addMessagesToListElement(messages, firstChild, oldScrollHeight) {
             if (!firstChildKey) {
                 firstChildKey = key;
             } else {
-                const messageDom = createMessageWithTemplate(messages[key]);
+                const messageDom = createMessageWithTemplate(key, messages[key]);
                 chat.insertBefore(messageDom, firstChild);
             }
         }
@@ -468,17 +468,20 @@ function clickWithEnterKey() {
     });
 }
 
-function createMessageWithTemplate(messageObj) {
+function createMessageWithTemplate(key, messageObj) {
     const messageTemplate = document.getElementById('message-temp');
-    const message = messageTemplate.content.cloneNode(true);
-
-    const msgHeader = message.querySelector('.message-header');
-    msgHeader.querySelector('#username').innerText = messageObj.senderDisplay;
+    const docFrag = messageTemplate.content.cloneNode(true);
+    const message = docFrag.querySelector('.message')
             
     const msgBody = message.querySelector('.message-body');
     msgBody.innerText = messageObj.content;
+
+    message.id = key;
+    addUsernameToMessage(messageObj.senderUID, key)
     return message;
 }
+
+
 
 function getDbRef(tag, chatId) {
     const path = "/chat/"+tag+"/"+chatId+"/messages";
@@ -487,20 +490,20 @@ function getDbRef(tag, chatId) {
 }
 
 async function makePreviewWithLastMessage(tag, chatId) {
-    var chatName;
-    var preview;
-    const tagRefObj = firebase.database().ref('/chat/'+tag+'/'+chatId)
+    const tagRefObj = firebase.database().ref('/chat/'+tag+'/'+chatId+'/chatInfo')
     await tagRefObj.on('value', (snap) => {
-        chatName = snap.val().name;
-        const last = Object.keys(snap.val().messages).pop();
-        preview = makeChatPreview(chatName, snap.val().messages[last], tag, chatId)
+        const chatName = snap.val().name;
+        const messageContent = snap.val().lastMessage;
+        const uid = snap.val().lastAuthor;
+
+        const preview = makeChatPreview(chatName, messageContent, uid, tag, chatId);
 
         const sidebar = document.getElementById('sidebar');
         sidebar.prepend(preview);
     });
 }
 
-function makeChatPreview(name, messageObj, tag, chatId) {
+function makeChatPreview(name, messageContent, uid, tag, chatId) {
     if (document.getElementById(chatId)) {
         oldPreview = document.getElementById(chatId);
         oldPreview.remove();
@@ -512,16 +515,23 @@ function makeChatPreview(name, messageObj, tag, chatId) {
 
     const chatName = preview.querySelector('#chat-name');
     chatName.innerText = name;
-
-    const msgHeader = preview.querySelector('.message-header');
-    msgHeader.querySelector('#username').innerText = 'name go here';
             
     const msgBody = preview.querySelector('.message-body');
-    msgBody.innerText = messageObj.content;
+    msgBody.innerText = messageContent;
     preview.setAttribute("id", chatId)
     changeChatOnClick(preview, tag, chatId);
+    addUsernameToMessage(uid, chatId);
 
     return preview;
+}
+
+// i can't access two paths at the same time so i need two separate functions :/
+function addUsernameToMessage(uid, elementId) {
+    const userRef = firebase.database().ref('/users/'+uid);
+    userRef.once('value', snap => {
+        const element = document.getElementById(elementId);
+        element.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
+    })
 }
 
 function populateSidebar() {
@@ -619,3 +629,4 @@ function getLocation() {
     }
     return;
 }
+
