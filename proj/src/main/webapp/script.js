@@ -2,8 +2,6 @@
     Authentication
  */
 
-const MAX_CHAT_SIZE = 200;
-
 // Elements of login container
 const fname = document.getElementById("fname")
 const txtEmail = document.getElementById("email");
@@ -23,7 +21,7 @@ if(btnLogin){
         const auth = firebase.auth();
 
         const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(user){
-            window.location.replace("static/chat.html");
+            window.location.replace("chat.html");
         });
         promise.catch(e => console.log(e.message));
     });
@@ -32,7 +30,7 @@ if(btnLogin){
 
 // Adds user to an existing chat when given a reference to the place in the database
 function addUserToTag(reference){
-    var currentUID = firebase.auth().currentUser.uid
+    var currentUID = firebase.auth().currentUser.uid;
     console.log("adding new user to chat room with uid: " + currentUID);
     reference.push(currentUID);
 }
@@ -54,7 +52,7 @@ function createNewChatWithUser(tag){
             "welcome" : {
                 "content" : messageContent,
                 "timestamp" : time,
-                "senderDisplay" : "Camaraderie",
+                "senderDisplay" : "",
                 "senderUID" : "admin"
             }
         }
@@ -215,19 +213,33 @@ function appendMessage(payload){
     Realtime Database
  */
 
-var CHAT_ID = '-MB0ycAOM8VGIXlev5u8'
+var currentUID = null;
+var globalChatId = '-MB0ycAOM8VGIXlev5u8'
 var tag = 'test';
-var dbRefObject = getDbRef(tag, CHAT_ID);
+var dbRefObject = getDbRef(tag, globalChatId);
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
-
-
+// Broad init function
 function init() {
-    initRef();
-    clickWithEnterKey();
-    populateProfileSidebar();
-    populateSidebar();
+    const auth = firebase.auth();
+    
+    auth.onAuthStateChanged(async firebaseUser => {
+        if(firebaseUser){
+            // InitUserChat sets information relevant to logged-in user
+            // Must run before enclosed functions
+            await initUserChat().then(function(){
+                populateSidebar();
+                initRef();
+                populateProfileSidebar(firebaseUser);
+            });
+
+            clickWithEnterKey();
+        }
+        else{
+            window.location.replace("welcome.html");
+        }
+    });
 
     const chat = document.getElementById('chatbox');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
@@ -237,16 +249,55 @@ function init() {
 
     const settings = document.getElementById('settings-button');
     settings.addEventListener('click', switchToSettings);
+
+}
+
+
+function initUserChat(){
+    currentUID = firebase.auth().currentUser.uid;
+    const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
+
+    // Wraps content function in a promise to ensure it runs before wrest of init
+    return new Promise(function(resolve){
+        var query = firebase.database().ref(userTagsRef).orderByKey();
+        query.once("value").then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+                var key = childSnapshot.key;
+                var ChatID = childSnapshot.val();
+                if(key && ChatID){
+                    tag = key;
+                    globalChatId = ChatID;
+                    dbRefObject = getDbRef(tag, globalChatId);
+                    return true;
+                }
+            });
+            resolve(1);
+        });
+    });
+
+
+}
+// Sets title of page
+function setTitle(){
+    nameRef = firebase.database().ref("/chat/"+tag+"/"+globalChatId+"/chatInfo/name");
+    nameRef.once("value").then(function(snapshot){
+        var data = snapshot.val();
+        var presentableTitle = data.charAt(0).toUpperCase() + data.slice(1);
+        document.getElementById("big-title").innerText = presentableTitle;
+    });
 }
 
 // initializes the .on() functions for the database reference
 function initRef() {
     const chat = document.getElementById('chatbox');
-    chat.innerHTML = '';
+    chat.innerHTML = '';    
+
+    setTitle();
+
     // note that when a comment is added it will display more than the limit, which
     // is intentional
     dbRefObject.off('child_added');
-    dbRefObject.limitToLast(LIMIT + 1).on('child_added', snap => {
+    dbRefObject.orderByChild("timestamp").limitToLast(LIMIT + 1).on('child_added', snap => {
         if (!firstChildKey) {
             firstChildKey = snap.key;
         } else {
@@ -274,8 +325,7 @@ function addMoreMessagesAtTheTop() {
     const chat = document.getElementById('chatbox');
     if (chat.scrollTop === 0) {
         const oldScrollHeight = chat.scrollHeight;
-        // because we don't add the last child, add one to the limit
-        dbRefObject.orderByKey().endAt(firstChildKey).limitToLast(LIMIT + 1).once('value', snap => {
+        dbRefObject.orderByChild("timestamp").limitToLast(LIMIT + 1).once("value",snap => {
             firstChildKey = null;
             addMessagesToListElement(snap.val(), chat.firstChild, oldScrollHeight);
         });
@@ -369,10 +419,10 @@ function makeChatPreview(name, messageObj, tag, chatId) {
 }
 
 function populateSidebar() {
-    // const auth = firebase.auth();
-    // const uid = auth.currentUser.uid;
-    const uid = "testuserwithdict";
-    const userTagsRef = firebase.database().ref('/users/'+uid+'/allTags');
+    // Initialize auth object
+    const auth = firebase.auth();
+
+    const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
 
     userTagsRef.orderByKey().on('child_added', snap => {
         const chatTag = snap.key;
@@ -381,7 +431,7 @@ function populateSidebar() {
         // get last message
         makePreviewWithLastMessage(chatTag, chatId)
         
-    })
+    });
 }
 
 function changeChatOnClick(domElement, tag, chatId) {
@@ -391,22 +441,20 @@ function changeChatOnClick(domElement, tag, chatId) {
     });
 }
 
-function populateProfileSidebar() {
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-        const userRef = firebase.database().ref('/users/'+user.uid)
-        userRef.once('value', snap => {
-            const userObj = {};
-            userObj.photo = user.photoUrl;
-            userObj.uid = user.uid;
-            userObj.fname = snap.val().firstName;
-            userObj.lname = snap.val().lastName;
-            userObj.bio = snap.val().bio;  // there is no bio yet
-            userObj.tags = snap.val().allTags;
-            addUserInfoToDom(userObj)
-            })
-        }
-    });
+function populateProfileSidebar(user) {
+    if (user) {
+    const userRef = firebase.database().ref('/users/'+user.uid)
+    userRef.once('value', snap => {
+        const userObj = {};
+        userObj.photo = user.photoUrl;
+        userObj.uid = user.uid;
+        userObj.fname = snap.val().firstName;
+        userObj.lname = snap.val().lastName;
+        userObj.bio = snap.val().bio;  // there is no bio yet
+        userObj.tags = snap.val().allTags;
+        addUserInfoToDom(userObj)
+        })
+    }
 }
 
 function addUserInfoToDom(userObj) {
@@ -444,6 +492,7 @@ function closeSettings() {
 /*
     Location
  */
+
 var position;
 
 function successCallback(pos){
@@ -464,6 +513,7 @@ function getLocation() {
     }
     return;
 }
+
 
 /*
     Chatroom sidebar
