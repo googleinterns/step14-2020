@@ -316,8 +316,6 @@ function createMessageWithTemplate(key, messageObj) {
     const messageTemplate = document.getElementById('message-temp');
     const docFrag = messageTemplate.content.cloneNode(true);
     const message = docFrag.querySelector('.message')
-
-    console.log(messageObj);
             
     const msgBody = message.querySelector('.message-body');
     msgBody.innerText = messageObj.content;
@@ -376,8 +374,6 @@ function addUsernameToMessage(uid, elementId) {
     const userRef = firebase.database().ref('/users/'+uid);
     userRef.once('value', snap => {
         const element = document.getElementById(elementId);
-        console.log(snap.key)
-        console.log(snap.val());
         element.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
     })
 }
