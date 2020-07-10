@@ -220,6 +220,20 @@ var dbRefObject = getDbRef(tag, globalChatId);
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
+// redirect function for index.html
+function indexInit() {
+    const auth = firebase.auth();
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            window.location.replace("static/chat.html");
+        }
+        else {
+            window.location.replace("static/welcome.html");
+        }
+    })
+
+}
+
 // Broad init function
 function init() {
     const auth = firebase.auth();
@@ -237,7 +251,7 @@ function init() {
             clickWithEnterKey();
         }
         else{
-            window.location.replace("static/welcome.html");
+            window.location.replace("welcome.html");
         }
     });
 
