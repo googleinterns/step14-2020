@@ -443,10 +443,8 @@ function initBio() {
 
     bioBox.addEventListener('dblclick', function() {
         this.hidden = true;
-        const bio = this.innerText;
 
         editInputBox.hidden = false;
-        editInputBox.innerText = bio;
         editInputBox.value = this.innerText
 
         editInputBox.focus();
