@@ -144,7 +144,8 @@ if(btnSignUp){
                 firebase.database().ref("users/" + auth.currentUser.uid).set({
                     firstName : fname.value,
                     lastName : lname.value,
-                    allTags : allTags
+                    allTags : allTags,
+                    bio : "I'm a new user! Say hi!"
                 }).then(function(){
                     window.location.replace("chat.html");
                 });
