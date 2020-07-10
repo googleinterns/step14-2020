@@ -1,5 +1,5 @@
-html important!{
-  font-family: 'Montserrat', sans-serif;
+html {
+  font-family: 'Montserrat', sans-serif !important;
 }
 
 .screen {
@@ -31,14 +31,13 @@ aside {
     overflow: hidden;
 }
 
+
+
+
 /* main: welcome page */
 /* view: mobile */
 
-/* NOTE: remove later, using this for organization */
-div {
-  /* box-sizing: border-box;
-  border: 1px solid black; */
-}
+
 
 /* override bootstrap presets */
 .container,
@@ -58,6 +57,11 @@ div {
   align-items:stretch; 
   display: flex;
   flex-wrap: wrap;
+}
+
+/* adds marging-bottom after the div */
+.b-margin {
+  margin-bottom: 5vh;
 }
 
 /* left side */
@@ -100,7 +104,7 @@ h4 {
 
 .sign-up {
   background-color: #333333;
-  height: 100%;
+  height: 97vh;
 }
 
 #chat-image-containter {
@@ -157,7 +161,6 @@ label {
   color: #FFFFFF;
 }
 
-
 .button {
   width: 100%;
   height: 6vmin;
@@ -194,7 +197,11 @@ label {
   width: auto;
 }
 
+
+
 /* website footer */
+
+
 
 footer div {
   border: none;
@@ -215,7 +222,12 @@ footer a:hover {
   color: white;
 }
 
-/* chat page */
+
+
+/* chatroom */
+
+
+
 .full-height {
   height: 100vh;
 }
@@ -298,4 +310,79 @@ footer a:hover {
   font-size:2rem;
   font-weight: normal;
   color: #FFFFFF;
+}
+
+
+
+/* chatroom left navigation */
+
+
+
+#body-row {
+    margin-left:0;
+    margin-right:0;
+}
+#sidebar-container {
+    min-height: 100vh;   
+    background-color: #333;
+    padding: 0;
+}
+
+/* Sidebar sizes when expanded and expanded */
+.sidebar-expanded {
+    width: 230px;
+}
+.sidebar-collapsed {
+    width: 60px;
+}
+
+/* Menu item*/
+#sidebar-container .list-group a {
+    height: 50px;
+    color: white;
+}
+
+/* Submenu item*/
+#sidebar-container .list-group .sidebar-submenu a {
+    height: 45px;
+    padding-left: 30px;
+}
+.sidebar-submenu {
+    font-size: 0.9rem;
+}
+
+/* Separators */
+.sidebar-separator-title {
+    background-color: #4F4F4F;
+    height: 35px;
+}
+.sidebar-separator {
+    background-color: #4F4F4F;
+    height: 25px;
+}
+.logo-separator {
+    background-color: #4F4F4F;    
+    height: 60px;
+}
+
+/* Closed submenu icon */
+#sidebar-container .list-group .list-group-item[aria-expanded="false"] .submenu-icon::after {
+  content: " \f0d7";
+  font-family: FontAwesome;
+  display: inline;
+  text-align: right;
+  padding-left: 10px;
+}
+/* Opened submenu icon */
+#sidebar-container .list-group .list-group-item[aria-expanded="true"] .submenu-icon::after {
+  content: " \f0da";
+  font-family: FontAwesome;
+  display: inline;
+  text-align: right;
+  padding-left: 10px;
+}
+
+.bg-dark {
+  background: #4F4F4F;
+  border: 0;
 }
