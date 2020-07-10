@@ -233,6 +233,7 @@ function init() {
                 populateSidebar();
                 initRef();
                 populateProfileSidebar(firebaseUser);
+                initBio();
             });
 
             clickWithEnterKey();
@@ -319,7 +320,14 @@ function pushChatMessage() {
     }
     // push message to datastore
     dbRefObject.push(message);
+
     messageInput.value = null; // clear the message
+
+    // update chatInfo
+    const chatRef =  dbRefObject.parent.child('chatInfo');
+    chatRef.child('lastAuthor').set(message.senderUID);
+    chatRef.child('lastMessage').set(message.content);
+    chatRef.child('timestamp').set(message.timestamp);
 }
 
 function addMoreMessagesAtTheTop() {
@@ -429,6 +437,34 @@ function addUsernameToMessage(uid, elementId) {
     })
 }
 
+function initBio() {
+    const bioBox = document.getElementById('user-bio');
+    const editInputBox = document.getElementById('bio-edit');
+
+    bioBox.addEventListener('dblclick', function() {
+        this.hidden = true;
+
+        editInputBox.hidden = false;
+        editInputBox.value = this.innerText
+
+        editInputBox.focus();
+    });
+
+    editInputBox.addEventListener('blur', function() {
+        const uid = firebase.auth().currentUser.uid;
+        const userBioRef = firebase.database().ref('/users/'+uid+'/bio');
+        userBioRef.set(this.value);
+
+        this.hidden = true;
+        bioBox.hidden = false;
+        bioBox.innerText = this.value;
+    });
+}
+
+
+
+
+
 function populateSidebar() {
     // Initialize auth object
     const auth = firebase.auth();
@@ -445,9 +481,9 @@ function populateSidebar() {
     });
 }
 
-function changeChatOnClick(domElement, tag, chatId) {
+function changeChatOnClick(domElement, newTag, chatId) {
     domElement.addEventListener('click', function() {
-        dbRefObject = getDbRef(tag, chatId);
+        dbRefObject = getDbRef(newTag, chatId);
         initRef();
     });
 }
