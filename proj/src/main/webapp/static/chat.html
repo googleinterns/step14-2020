@@ -7,7 +7,8 @@
     <title>Chat</title>
     <base target="_self"> 
 
-    <!-- firebase -->
+    <!-- firebase Scripts -->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-auth.js"></script>
@@ -31,11 +32,9 @@
 
     <div class="row" id="body-row">
         <!-- Sidebar -->
-        <div id="sidebar-container" class="sidebar sidebar-expanded d-none d-md-block">
+        <div id="sidebar-container" class="scroll sidebar sidebar-expanded d-none d-md-block">
             <!-- d-* hiddens the Sidebar in smaller devices. Its itens can be kept on the Navbar 'Menu' -->
-
-            <!-- start of scroll -->
-            <!--<div class="scroll" id="profile-info>-->
+        
             <a href="#chats-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between align-items-center">                
                     <!--image icon <span class="fa fa-user fa-fw mr-3"></span>-->
@@ -69,7 +68,6 @@
                     </div>
             </a>
 
-          
             <div id='profile-submenu' class="collapse sidebar-submenu">
             <div id="user-profile"> 
                 <div class="center-h">
@@ -126,8 +124,6 @@
                     </a>
                 </div> 
                 
-                <!-- end of scroll but not the list-->
-                <!--</div>-->
                 <!-- Separator-->
                 <li class="list-group-item sidebar-separator menu-collapsed"></li>
                 <!-- left bottom anchor-->

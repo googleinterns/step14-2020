@@ -95,10 +95,11 @@ ul {
 
 /* infinte scroll */
 /* fix!! TODO */
-/* .scroll {
-    overflow: scroll !important;
+.scroll {
+    overflow: scroll;
+    height:100vh;
     border: 2px dotted red;
-} */
+}
 
 /* chat preview */
 .message pre, .message p{
@@ -156,8 +157,8 @@ a:hover {
 }
 
 .bottom {
-    width: 100%;
-    position: absolute;
+    width: inherit;
+    position: fixed;
     bottom: 0;
 }
 
