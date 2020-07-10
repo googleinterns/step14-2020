@@ -59,6 +59,11 @@ aside {
   flex-wrap: wrap;
 }
 
+/* adds marging-bottom after the div */
+.b-margin {
+  margin-bottom: 5vh;
+}
+
 /* left side */
 .info-graphic {
   display: block;
