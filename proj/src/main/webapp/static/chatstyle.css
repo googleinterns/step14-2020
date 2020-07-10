@@ -4,27 +4,40 @@
 /*}*/
 
 /* container with all child divs aligned horizontally in the center*/
-.center-h{
+body {
+    background-color: #333333;
+}
+
+
+.center-h {
     display: flex;
     justify-content: center;
+    margin: 10px;
 }
 
 #body-row {
-    margin-left:0;
-    margin-right:0;
+    margin-left: 0;
+    margin-right: 0;
+    overflow: hidden;
 }
+
 #sidebar-container {
-    min-height: 100vh;   
-    background-color: #333;
+    min-height: 100vh;
+    background-color: white;
     padding: 0;
 }
 
 /* Sidebar sizes when expanded and expanded */
 .sidebar-expanded {
-    width: 300px;
+    width: 350px;
 }
+
 .sidebar-collapsed {
     width: 60px;
+}
+
+ul {
+    list-style-type: none;
 }
 
 /* profile pictures*/
@@ -35,6 +48,7 @@
     overflow: hidden;
     border-radius: 50%;
 }
+
 #pfp {
     margin: 0 auto;
     height: 100%;
@@ -52,47 +66,94 @@
     height: 45px;
     padding-left: 30px;
 }
+
 .sidebar-submenu {
     font-size: 0.9rem;
 }
 
+/* infinte scroll */
+/* fix!! */
+.scroll {
+    overflow: scroll !important;
+    border: 2px dotted red;
+}
+
 /* Separators */
 .sidebar-separator-title {
-    background-color: #333;
-    height: 35px;
+    background-color: white;
+    height: auto;
+    margin-bottom: -15px;
 }
+
+.info-section {
+    /*border: 0;*/
+    text-align: center;
+    vertical-align: middle;
+    /*line-height: 90px;*/
+}
+
 .sidebar-separator {
-    background-color: #333;
+    background-color: white;
     height: 25px;
+    border-bottom: 0;
 }
-.logo-separator {
-    background-color: #333;    
-    height: 60px;
-}
+
 
 /* Closed submenu icon */
 #sidebar-container .list-group .list-group-item[aria-expanded="false"] .submenu-icon::after {
-  content: " \f0d7";
-  font-family: FontAwesome;
-  display: inline;
-  text-align: right;
-  padding-left: 10px;
-}
-/* Opened submenu icon */
-#sidebar-container .list-group .list-group-item[aria-expanded="true"] .submenu-icon::after {
-  content: " \f0da";
-  font-family: FontAwesome;
-  display: inline;
-  text-align: right;
-  padding-left: 10px;
+    content: " \f0d7";
+    font-family: FontAwesome;
+    display: inline;
+    text-align: right;
+    padding-left: 10px;
 }
 
-/* bottom anchor*/
+/* Opened submenu icon */
+#sidebar-container .list-group .list-group-item[aria-expanded="true"] .submenu-icon::after {
+    content: " \f0da";
+    font-family: FontAwesome;
+    display: inline;
+    text-align: right;
+    padding-left: 10px;
+}
+
+/* left bottom anchor*/
+
 .sidebar {
     position: relative;
 }
 
 .bottom {
-    position:absolute;
-    bottom:0;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
+/* using important tags to override bootstrap presets*/
+
+.bg-gold {
+    background: #D1B280 !important;
+}
+
+.bg-grey {
+    background: #f7f7f7 !important;
+    color: black !important;
+}
+
+/* main chat*/
+#main-chat {
+    height: 90vh;
+}
+
+#message-list {
+    /* fix!! need to come back to this*/
+    max-height: 80%;
+    overflow: scroll;
+}
+
+/*input box*/
+#input-section {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
