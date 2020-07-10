@@ -319,7 +319,14 @@ function pushChatMessage() {
     }
     // push message to datastore
     dbRefObject.push(message);
+
     messageInput.value = null; // clear the message
+
+    // update chatInfo
+    const chatRef =  dbRefObject.parent.child('chatInfo');
+    chatRef.child('lastAuthor').set(message.senderUID);
+    chatRef.child('lastMessage').set(message.content);
+    chatRef.child('timestamp').set(message.timestamp);
 }
 
 function addMoreMessagesAtTheTop() {
@@ -474,9 +481,9 @@ function populateSidebar() {
     });
 }
 
-function changeChatOnClick(domElement, tag, chatId) {
+function changeChatOnClick(domElement, newTag, chatId) {
     domElement.addEventListener('click', function() {
-        dbRefObject = getDbRef(tag, chatId);
+        dbRefObject = getDbRef(newTag, chatId);
         initRef();
     });
 }
