@@ -233,6 +233,7 @@ function init() {
                 populateSidebar();
                 initRef();
                 populateProfileSidebar(firebaseUser);
+                initBio();
             });
 
             clickWithEnterKey();
@@ -436,23 +437,24 @@ function addUsernameToMessage(uid, elementId) {
     })
 }
 
-const bioBox = document.getElementById('user-bio');
-const editInputBox = document.getElementById('bio-edit');
-
-bioBox.addEventListener('dblclick', function() {
+function initBio() {
     const bioBox = document.getElementById('user-bio');
-    bioBox.hidden = true;
-    const bio = bioBox.innerText;
-
     const editInputBox = document.getElementById('bio-edit');
-    editInputBox.hidden = false;
-    editInputBox.innerText = bio;
-    editInputBox.value = this.innerText
 
-    editInputBox.focus();
-});
+    bioBox.addEventListener('dblclick', function() {
+        const bioBox = document.getElementById('user-bio');
+        bioBox.hidden = true;
+        const bio = bioBox.innerText;
 
-editInputBox.addEventListener('blur', function() {
+        const editInputBox = document.getElementById('bio-edit');
+        editInputBox.hidden = false;
+        editInputBox.innerText = bio;
+        editInputBox.value = this.innerText
+
+        editInputBox.focus();
+    });
+
+    editInputBox.addEventListener('blur', function() {
         const uid = firebase.auth().currentUser.uid;
         const userBioRef = firebase.database().ref('/users/'+uid+'/bio');
         userBioRef.set(this.value);
@@ -461,7 +463,10 @@ editInputBox.addEventListener('blur', function() {
         const bioBox = document.getElementById('user-bio');
         bioBox.hidden = false;
         bioBox.innerText = this.value;
-});
+    });
+}
+
+
 
 
 
