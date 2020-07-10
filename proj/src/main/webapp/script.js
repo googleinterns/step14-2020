@@ -442,11 +442,9 @@ function initBio() {
     const editInputBox = document.getElementById('bio-edit');
 
     bioBox.addEventListener('dblclick', function() {
-        const bioBox = document.getElementById('user-bio');
-        bioBox.hidden = true;
-        const bio = bioBox.innerText;
+        this.hidden = true;
+        const bio = this.innerText;
 
-        const editInputBox = document.getElementById('bio-edit');
         editInputBox.hidden = false;
         editInputBox.innerText = bio;
         editInputBox.value = this.innerText
@@ -460,7 +458,6 @@ function initBio() {
         userBioRef.set(this.value);
 
         this.hidden = true;
-        const bioBox = document.getElementById('user-bio');
         bioBox.hidden = false;
         bioBox.innerText = this.value;
     });
