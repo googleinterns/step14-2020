@@ -1,5 +1,5 @@
-html important!{
-  font-family: 'Montserrat', sans-serif;
+html {
+  font-family: 'Montserrat', sans-serif !important;
 }
 
 .screen {

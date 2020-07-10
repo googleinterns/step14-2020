@@ -3,11 +3,37 @@
 /*    border: solid 1px red;*/
 /*}*/
 
+html {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
 /* container with all child divs aligned horizontally in the center*/
 body {
     background-color: #333333;
 }
 
+/* right chat */
+/* title */
+h1 {
+  font-weight: bold;
+  text-align: center;
+  color: #D1B280;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+ /* bootstrap title class */ 
+.display-4 {
+    font-size: 5rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: .15rem;
+}
+
+/* chat space */
+.card {
+    border-radius: 50px;
+    padding: 0 0 20px 0;
+}
 
 .center-h {
     display: flex;
@@ -27,7 +53,7 @@ body {
     padding: 0;
 }
 
-/* Sidebar sizes when expanded and expanded */
+/* sidebar sizes when expanded and expanded */
 .sidebar-expanded {
     width: 350px;
 }
@@ -142,13 +168,17 @@ ul {
 
 /* main chat*/
 #main-chat {
-    height: 90vh;
+    height: 100%;
 }
 
 #message-list {
     /* fix!! need to come back to this*/
-    max-height: 80%;
+    max-height: 100%;
     overflow: scroll;
+}
+
+.card-body li {
+    border: 0;
 }
 
 /*input box*/

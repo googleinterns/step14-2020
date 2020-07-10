@@ -4,15 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="generator" content="Codeply" />
-  <title>working chatroom</title>
+  <title>Chat</title>
   <base target="_self"> 
 
   <!-- font awesome icons -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://kit.fontawesome.com/d691fbec03.js" crossorigin="anonymous"></script>
+
   <!-- bootstrap -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+
   <!-- chatroom styling -->
   <link rel="stylesheet" href="chatstyle.css" />
+
 </head>
 
 <body id="top">
@@ -27,7 +31,7 @@
                 <div class="d-flex w-100 justify-content-between align-items-center">                
                     <!--image icon <span class="fa fa-user fa-fw mr-3"></span>-->
                     <span class="fa fa-user fa-fw mr-3 fa-1x"></span>
-                    <span class="menu-collapsed mr-auto">chats</span>
+                    <span class="menu-collapsed mr-auto"><strong>chats</strong></span>
                     <span class="submenu-icon"></span>
                 </div>
             </a>
@@ -42,7 +46,7 @@
             <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between align-items-center">
                         <span class="fa fa-user fa-fw mr-3 fa-1x"></span>
-                        <span class="menu-collapsed">profile</span>
+                        <span class="menu-collapsed"><strong>profile</strong></span>
                         <span class="submenu-icon ml-auto"></span>
                     </div>
             </a>
@@ -51,7 +55,7 @@
                 <div class="center-h">
                     <div id="image-cropper">
                         <img src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg" id="pfp" class="menu-collapsed" alt="profile picture">
-                    </div>
+                    </div> 
                 </div>
                 <ul class="list-group">
                     <!-- info-section-->
@@ -86,7 +90,7 @@
                 <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-start align-items-center">
                         <span class="fa fa-user fa-fw mr-3 fa-1x"></span>
-                        <span class="menu-collapsed">settings</span>
+                        <span class="menu-collapsed"><strong>settings</strong></span>
                         <span class="submenu-icon ml-auto"></span>
                     </div>
                 </a>
@@ -120,7 +124,7 @@
         <!-- main chat section -->
         <div class="col p-4">
             <div class="card" id="main-chat">
-                <h1 class="display-4 card-header">Chatroom</h1>
+                <h1 class="display-4 card-header" id="big-title"> Chat Room </h1>
                 <!-- chat display-->
                 <div class="card-body" id="message-list">
                     <ul>
