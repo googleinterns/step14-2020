@@ -528,6 +528,7 @@ function getLocation() {
 /*
     Chatroom sidebar
  */ 
+ 
 // Hide submenus
 $('#body-row .collapse').collapse('hide'); 
 
