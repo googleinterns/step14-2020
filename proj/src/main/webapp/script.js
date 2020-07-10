@@ -392,6 +392,7 @@ async function makePreviewWithLastMessage(tag, chatId) {
         const uid = snap.val().lastAuthor;
 
         const preview = await makeChatPreview(chatName, messageContent, uid, tag, chatId);
+
         const sidebar = document.getElementById('chats-submenu');
         sidebar.prepend(preview);
     });
@@ -432,10 +433,13 @@ function populateSidebar() {
 
     const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
     userTagsRef.orderByKey().on('child_added', snap => {
+
         const chatTag = snap.key;
         const chatId = snap.val();
+
         // get last message
         makePreviewWithLastMessage(chatTag, chatId)
+
     });
 }
 
