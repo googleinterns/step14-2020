@@ -528,18 +528,19 @@ function getLocation() {
 /*
     Chatroom sidebar
  */ 
- 
-// Hide submenus
+
+// Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
 $('#body-row .collapse').collapse('hide'); 
 
 // Collapse/Expand icon
 $('#collapse-icon').addClass('fa-angle-double-left'); 
 
-// Collapse click
+// Collapse on click
 $('[data-toggle=sidebar-colapse]').click(function() {
     SidebarCollapse();
 });
 
+// Currently hides the sidebar on smaller and medium screens (TODO: adjust screen for different screen sizes)
 function SidebarCollapse () {
     $('.menu-collapsed').toggleClass('d-none');
     $('.sidebar-submenu').toggleClass('d-none');
