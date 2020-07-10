@@ -237,7 +237,7 @@ function init() {
             clickWithEnterKey();
         }
         else{
-            window.location.replace("static/welcome.html");
+            window.location.replace("/welcome.html");
         }
     });
 
