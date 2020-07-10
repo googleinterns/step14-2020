@@ -33,9 +33,10 @@
         <!-- Sidebar -->
         <div id="sidebar-container" class="sidebar sidebar-expanded d-none d-md-block">
             <!-- d-* hiddens the Sidebar in smaller devices. Its itens can be kept on the Navbar 'Menu' -->
+
             <!-- start of scroll -->
             <!--<div class="scroll" id="profile-info>-->
-            <a href="#submenu1" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
+            <a href="#chats-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between align-items-center">                
                     <!--image icon <span class="fa fa-user fa-fw mr-3"></span>-->
                     <span class="fa fa-user fa-fw mr-3 fa-1x"></span>
@@ -45,11 +46,11 @@
             </a>
 
             <!-- Submenu content -->
-            <div id='submenu1' class="collapse sidebar-submenu">
+            <div id='chats-submenu' class="collapse sidebar-submenu">
                 <!-- chats navigation -->
                     <template id="chat-preview-temp">
-                        <div class="chat-preview">
-                            <p id="chat-name"></p>
+                        <div class="chat-preview list-group-item">
+                            <strong><p id="chat-name"></p></strong>
                             <div class="message">
                                 <div class="message-header">
                                     <img id="pfp">
@@ -60,16 +61,17 @@
                     </template>
             </div> 
         
-            <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
+            <a href="#profile-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between align-items-center">
                         <span class="fa fa-user fa-fw mr-3 fa-1x"></span>
                         <span class="menu-collapsed"><strong>profile</strong></span>
                         <span class="submenu-icon ml-auto"></span>
                     </div>
             </a>
-            
-            <div id='submenu2' class="collapse sidebar-submenu">
-            <div id="user-profile">
+
+          
+            <div id='profile-submenu' class="collapse sidebar-submenu">
+            <div id="user-profile"> 
                 <div class="center-h">
                     <div id="image-cropper">
                         <img id="user-pfp" src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg" id="pfp" class="menu-collapsed" alt="profile picture">
@@ -105,14 +107,14 @@
                 
                 <!-- settings drop down-->
                 
-                <a href="#submenu3" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
+                <a href="#settings-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-start align-items-center">
                         <span class="fa fa-user fa-fw mr-3 fa-1x"></span>
                         <span class="menu-collapsed"><strong>settings</strong></span>
                         <span class="submenu-icon ml-auto"></span>
                     </div>
                 </a>
-                <div id='submenu3' class="collapse sidebar-submenu">
+                <div id='settings-submenu' class="collapse sidebar-submenu">
                     <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
                         <span class="menu-collapsed">edit profile</span>
                     </a>
@@ -145,7 +147,7 @@
                 <h1 class="display-4 card-header" id="big-title"> Chat Room </h1>
                 <!-- chat display-->
                 <div class="card-body" id="message-list">
-                    <!-- template -->
+                    <!-- template for later use -->
                     <!-- <ul>
                         <li class="list-group-item">
                             <div class="d-flex justify-content-between">
@@ -161,7 +163,7 @@
                             <div class="message">
                                 <div class="message-header">
                                 <img id="pfp">
-                                <p id="username"></p>
+                                <strong><p id="username"></p></strong>
                             </div>
                             <pre class="message-body"></pre>
                         </template>
@@ -175,7 +177,7 @@
                             <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
                         </div>
                         <textarea id="message-input" class="form-control type_msg" placeholder="Type your message..."></textarea>
-                        <div class="input-group-append">
+                        <div class="input-group-append" onclick="pushChatMessage()" id="send-button" >
                             <span class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></span>
                         </div>
                     </div>

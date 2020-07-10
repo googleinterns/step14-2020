@@ -94,13 +94,19 @@ ul {
 }
 
 /* infinte scroll */
-/* fix!! */
-.scroll {
+/* fix!! TODO */
+/* .scroll {
     overflow: scroll !important;
     border: 2px dotted red;
+} */
+
+/* chat preview */
+.message pre, .message p{
+    font-family: 'Montserrat', sans-serif;
 }
 
-/* Separators */
+
+/* separators */
 .sidebar-separator-title {
     background-color: white;
     height: auto;
@@ -173,6 +179,10 @@ a:hover {
 /* main chat*/
 #main-chat {
     height: 100%;
+}
+
+#chat-name {
+    margin-bottom: 0px;
 }
 
 #message-list {

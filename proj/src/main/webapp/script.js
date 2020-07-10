@@ -232,7 +232,7 @@ function init() {
             // Must run before enclosed functions
             await initUserChat().then(function(){
                 populateSidebar();
-                initRef();
+                initRef(dbRefObject);
                 populateProfileSidebar(firebaseUser);
                 initBio();
             });
@@ -291,7 +291,7 @@ function setTitle(){
 }
 
 // initializes the .on() functions for the database reference
-function initRef() {
+function initRef(dbRefObject) {
     const chat = document.getElementById('chatbox');
     chat.innerHTML = '';    
 
@@ -381,7 +381,7 @@ function createMessageWithTemplate(key, messageObj) {
     msgBody.innerText = messageObj.content;
 
     message.id = key;
-    addUsernameToMessage(messageObj.senderUID, key)
+    addUsernameToMessage(messageObj.senderUID, message)
     return message;
 }
 
@@ -395,19 +395,19 @@ function getDbRef(tag, chatId) {
 
 async function makePreviewWithLastMessage(tag, chatId) {
     const tagRefObj = firebase.database().ref('/chat/'+tag+'/'+chatId+'/chatInfo')
-    await tagRefObj.on('value', (snap) => {
+    await tagRefObj.on('value', async function (snap) {
         const chatName = snap.val().name;
         const messageContent = snap.val().lastMessage;
         const uid = snap.val().lastAuthor;
 
-        const preview = makeChatPreview(chatName, messageContent, uid, tag, chatId);
+        const preview = await makeChatPreview(chatName, messageContent, uid, tag, chatId);
 
-        const sidebar = document.getElementById('sidebar');
+        const sidebar = document.getElementById('chats-submenu');
         sidebar.prepend(preview);
     });
 }
 
-function makeChatPreview(name, messageContent, uid, tag, chatId) {
+async function makeChatPreview(name, messageContent, uid, tag, chatId) {
     if (document.getElementById(chatId)) {
         oldPreview = document.getElementById(chatId);
         oldPreview.remove();
@@ -419,22 +419,20 @@ function makeChatPreview(name, messageContent, uid, tag, chatId) {
 
     const chatName = preview.querySelector('#chat-name');
     chatName.innerText = name;
-            
     const msgBody = preview.querySelector('.message-body');
     msgBody.innerText = messageContent;
     preview.setAttribute("id", chatId)
     changeChatOnClick(preview, tag, chatId);
-    addUsernameToMessage(uid, chatId);
+    await addUsernameToMessage(uid, preview);
 
     return preview;
 }
 
 // i can't access two paths at the same time so i need two separate functions :/
-function addUsernameToMessage(uid, elementId) {
+async function addUsernameToMessage(uid, preview) {
     const userRef = firebase.database().ref('/users/'+uid);
-    userRef.once('value', snap => {
-        const element = document.getElementById(elementId);
-        element.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
+    await userRef.once('value', snap => {
+        preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
     })
 }
 
@@ -471,21 +469,21 @@ function populateSidebar() {
     const auth = firebase.auth();
 
     const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
-
     userTagsRef.orderByKey().on('child_added', snap => {
+
         const chatTag = snap.key;
         const chatId = snap.val();
 
         // get last message
         makePreviewWithLastMessage(chatTag, chatId)
-        
+
     });
 }
 
 function changeChatOnClick(domElement, newTag, chatId) {
     domElement.addEventListener('click', function() {
-        dbRefObject = getDbRef(newTag, chatId);
-        initRef();
+        var dbRefObject = getDbRef(tag, chatId);
+        initRef(dbRefObject);
     });
 }
 
