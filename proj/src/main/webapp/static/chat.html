@@ -69,45 +69,38 @@
             </a>
             
             <div id='submenu2' class="collapse sidebar-submenu">
+            <div id="user-profile">
                 <div class="center-h">
                     <div id="image-cropper">
-                        <img src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg" id="pfp" class="menu-collapsed" alt="profile picture">
+                        <img id="user-pfp" src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg" id="pfp" class="menu-collapsed" alt="profile picture">
                     </div> 
                 </div>
                 <ul class="list-group">
-                    <!-- info received -->
-                    <div id="user-profile">
-                        <p id="user-display-name"></p>
-                        <img id="user-pfp">
-                        <pre id="user-bio"></pre>
-                        <ul id="user-tags"></ul>
-                        <button type="button" id="close-settings">close</button>
-                    </div>
-                    <!-- TODO template into this info-section-->
                     <li class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
-                        <p>name</p>
-                        <p class="ml-auto">lilly</p>
+                        <p><strong>name</strong></p>
+                        <p class="ml-auto" id="user-display-name">lilly</p>
                     </li>
                     <li class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
-                        <p>email</p>
+                        <p><strong>email</strong></p>
                         <p class="ml-auto">lilly@email.com</p>
                     </li>
                     <li class="info-section list-group-item menu-collapsed justify-content-start ">
                         <div>
-                            <p class="text-left">bio</p>
+                            <p class="text-left"><strong>bio</strong></p>
                         </div>
                         <div>
-                            <p class="text-left">hey! i'm lilly, an incoming freshman at NYC. i play tennis and piano. please feel free to message me i love getting to know my fellow interns :) </p>
+                            <p id="user-bio" class="text-left">hey! i'm lilly, an incoming freshman at NYC. i play tennis and piano. please feel free to message me i love getting to know my fellow interns :) </p>
                         </div>
                     </li>
                     <li class="info-section list-group-item menu-collapsed justify-content-start ">
                         <div>
-                            <p class="text-left">tags</p>
+                            <p class="text-left"><strong>tags</strong></p>
                         </div>
                         <div>
-                            <p class="text-left">intern, sophmore, memes, music, art, coffee, cooking</p>
+                            <p id="user-tags" class="text-left"></p>
                         </div>
                     </li>
+            </div>
             </div>
                 
                 <!-- settings drop down-->

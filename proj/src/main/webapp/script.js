@@ -483,22 +483,6 @@ function addUserInfoToDom(userObj) {
     }
 }
 
-function switchToSettings() {
-    const settings = document.getElementById('user-profile');
-    const sidebar = document.getElementById('sidebar');
-
-    sidebar.style.height = 0;
-    settings.style.height = '400px'; 
-}
-
-function closeSettings() {
-    const settings = document.getElementById('user-profile');
-    const sidebar = document.getElementById('sidebar');
-
-    settings.style.height = 0;
-    sidebar.style.height = '400px'; 
-}
-
 /*
     Location
  */
