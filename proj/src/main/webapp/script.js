@@ -166,6 +166,7 @@ if(btnLogout){
     btnLogout.addEventListener("click", e => {
         firebase.auth().signOut();
         window.location.replace("welcome.html");
+        console.log("You logged out")
     });
 }
 
@@ -236,7 +237,7 @@ function init() {
             // Must run before enclosed functions
             await initUserChat().then(function(){
                 populateSidebar();
-                initRef();
+                initRef(dbRefObject);
                 populateProfileSidebar(firebaseUser);
                 initBio();
             });
@@ -244,7 +245,7 @@ function init() {
             clickWithEnterKey();
         }
         else{
-            window.location.replace("welcome.html");
+            window.location.replace("/static/welcome.html");
         }
     });
 
@@ -295,7 +296,7 @@ function setTitle(){
 }
 
 // initializes the .on() functions for the database reference
-function initRef() {
+function initRef(dbRefObject) {
     const chat = document.getElementById('chatbox');
     chat.innerHTML = '';    
 
@@ -385,7 +386,7 @@ function createMessageWithTemplate(key, messageObj) {
     msgBody.innerText = messageObj.content;
 
     message.id = key;
-    addUsernameToMessage(messageObj.senderUID, key)
+    addUsernameToMessage(messageObj.senderUID, message)
     return message;
 }
 
@@ -399,19 +400,19 @@ function getDbRef(tag, chatId) {
 
 async function makePreviewWithLastMessage(tag, chatId) {
     const tagRefObj = firebase.database().ref('/chat/'+tag+'/'+chatId+'/chatInfo')
-    await tagRefObj.on('value', (snap) => {
+    await tagRefObj.on('value', async function (snap) {
         const chatName = snap.val().name;
         const messageContent = snap.val().lastMessage;
         const uid = snap.val().lastAuthor;
 
-        const preview = makeChatPreview(chatName, messageContent, uid, tag, chatId);
+        const preview = await makeChatPreview(chatName, messageContent, uid, tag, chatId);
 
-        const sidebar = document.getElementById('sidebar');
+        const sidebar = document.getElementById('chats-submenu');
         sidebar.prepend(preview);
     });
 }
 
-function makeChatPreview(name, messageContent, uid, tag, chatId) {
+async function makeChatPreview(name, messageContent, uid, tag, chatId) {
     if (document.getElementById(chatId)) {
         oldPreview = document.getElementById(chatId);
         oldPreview.remove();
@@ -423,22 +424,20 @@ function makeChatPreview(name, messageContent, uid, tag, chatId) {
 
     const chatName = preview.querySelector('#chat-name');
     chatName.innerText = name;
-            
     const msgBody = preview.querySelector('.message-body');
     msgBody.innerText = messageContent;
     preview.setAttribute("id", chatId)
     changeChatOnClick(preview, tag, chatId);
-    addUsernameToMessage(uid, chatId);
+    await addUsernameToMessage(uid, preview);
 
     return preview;
 }
 
 // i can't access two paths at the same time so i need two separate functions :/
-function addUsernameToMessage(uid, elementId) {
+async function addUsernameToMessage(uid, preview) {
     const userRef = firebase.database().ref('/users/'+uid);
-    userRef.once('value', snap => {
-        const element = document.getElementById(elementId);
-        element.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
+    await userRef.once('value', snap => {
+        preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
     })
 }
 
@@ -472,21 +471,21 @@ function initBio() {
 
 function populateSidebar() {
     const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
-
     userTagsRef.orderByKey().on('child_added', snap => {
+
         const chatTag = snap.key;
         const chatId = snap.val();
 
         // get last message
         makePreviewWithLastMessage(chatTag, chatId)
-        
+
     });
 }
 
 function changeChatOnClick(domElement, newTag, chatId) {
     domElement.addEventListener('click', function() {
-        dbRefObject = getDbRef(newTag, chatId);
-        initRef();
+        var dbRefObject = getDbRef(tag, chatId);
+        initRef(dbRefObject);
     });
 }
 
@@ -522,22 +521,6 @@ function addUserInfoToDom(userObj) {
     }
 }
 
-function switchToSettings() {
-    const settings = document.getElementById('user-profile');
-    const sidebar = document.getElementById('sidebar');
-
-    sidebar.style.height = 0;
-    settings.style.height = '400px'; 
-}
-
-function closeSettings() {
-    const settings = document.getElementById('user-profile');
-    const sidebar = document.getElementById('sidebar');
-
-    settings.style.height = 0;
-    sidebar.style.height = '400px'; 
-}
-
 /*
     Location
  */
@@ -563,3 +546,37 @@ function getLocation() {
     return;
 }
 
+
+/*
+    Chatroom sidebar
+ */ 
+
+// Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
+$('#body-row .collapse').collapse('hide'); 
+
+// Collapse/Expand icon
+$('#collapse-icon').addClass('fa-angle-double-left'); 
+
+// Collapse on click
+$('[data-toggle=sidebar-colapse]').click(function() {
+    SidebarCollapse();
+});
+
+// Currently hides the sidebar on smaller and medium screens (TODO: adjust screen for different screen sizes)
+function SidebarCollapse () {
+    $('.menu-collapsed').toggleClass('d-none');
+    $('.sidebar-submenu').toggleClass('d-none');
+    $('.submenu-icon').toggleClass('d-none');
+    $('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
+    
+    // Treating d-flex/d-none on separators with title
+    var SeparatorTitle = $('.sidebar-separator-title');
+    if ( SeparatorTitle.hasClass('d-flex') ) {
+        SeparatorTitle.removeClass('d-flex');
+    } else {
+        SeparatorTitle.addClass('d-flex');
+    }
+    
+    // Collapse/Expand icon
+    $('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
+}

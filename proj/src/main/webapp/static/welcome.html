@@ -31,7 +31,7 @@
       <div class="row fullscreen">
         <!-- page:signup and signin   desktop:left    mobile:full screen -->
         <div class="col-sm-8 info-graphic">
-          <div class="header">
+          <div class="header b-margin">
             <h1>camaraderie</h1>
             <h4>a spirit of friendly good-fellowship</h4>
           </div>
@@ -42,29 +42,29 @@
             <div class="inblock-center-container">
               <h3 class="center-text"> meet friends <br> create communities</h3>
               <!-- hide button on desktop -->
-              <button type="button" name="button" class="button">begin</button>
+              <!-- <button type="button" name="button" class="button">begin</button> -->
             </div> 
           </div>
         </div>
         <!-- sign up   desktop:right    mobile:full screen -->        
         <div class="col-sm-4 sign-up">
-          <div class="header">
-            <h1 id="sign-in-title">sign in</h1>
-            <h4>welcome back friend</h4>
-          </div> 
           <div class="row justify-content-md-center">
-            <form>
+            <div class="header b-margin">
+                <h1 id="sign-in-title">sign in</h1>
+                <h4>welcome back friend</h4>
+            </div> 
+            <form class="b-margin">
               <input type="text" id="fname" name="fname" class="hidden">
               <input type="text" id="lname" name="lname" class="hidden">
               <label for="email">email:</label><br>
               <input type="text" id="email" name="email" class="input" required><br>
               <label for="password">password:</label><br>
-              <input type="password" id="pass" name="password" class="input" required><br>
-              <button type="button" name="button" class="button" id="btnLogin">sign in</button>
-              <button type="button" name="button" class="hidden button" id="btnLogout">Logout</button>
+              <input type="password" id="pass" name="password" class="input b-margin" required><br>
+              <button type="button" name="button" class="button" id="btnLogin">login</button>
+              <button type="button" name="button" class="hidden button" id="btnLogout">logout</button>
             </form>
-            <h4>or sign up with</h4>
-            <div class="sign-un-icons justify-content-md-center">
+            <h4 class="b-margin">or sign up with</h4>
+            <div class="sign-un-icons justify-content-md-center b-margin">
                 <div class="col-sm-6 sign-up-icon-container">
                     <a href="./signup.html">
                         <img id="mail-svg"src="./images/mail.svg" alt="Sign up with an email">
