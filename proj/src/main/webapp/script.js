@@ -171,8 +171,10 @@ if(btnLogout){
 firebase.auth().onAuthStateChanged(firebaseUser => {
     if(firebaseUser){
         console.log(firebaseUser);
-        userTagsRef = firebase.database().ref("users/" + firebaseUser.uid + "/alltags");
-        keyRemovalRef = firebase.database().ref("users/" + firebaseUser.uid + "/tagRemovalDict");
+        abridgedTagsRef = "/users/" + firebaseUser.uid + "/allTags";
+        abridgedTagRemovalRef = "/users/" + firebaseUser.uid + "/tagRemovalDict";
+        allTagsRef = firebase.database().ref(abridgedTagsRef);
+        tagRemovalRef = firebase.database().ref(abridgedTagRemovalRef);
         if(btnLogout)
             btnLogout.classList.remove("hidden");
     }
@@ -184,13 +186,17 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
 });
 
 
-// Set by authState listener
+/* Set by authState listener    */
 var allTagsRef;
-var keyRemovalRef;
+var abridgedTagsRef;
+var tagRemovalRef;
+var abridgedTagRemovalRef;
+/*                              */
 
-function getExistingTags(){
+function getExistingTags(ref){
     var currentTags = {};
-    return allTagsRef.once("value").then(function(dataSnapshot){
+    console.log(ref.toString());
+    return ref.once("value").then(function(dataSnapshot){
         dataSnapshot.forEach(function(tagSnapshot){
             currentTags[tagSnapshot.key] = tagSnapshot.val();
         });
@@ -198,11 +204,23 @@ function getExistingTags(){
     });
 }
 
-function setUserTags(tagList){
+function removeAllCurrentTags(currentTags){
+    return new Promise(async function(resolve){
+        for(var remainingTag in currentTags){
+            await removeUserFromChatByTag(remainingTag);
+        }
+
+        resolve(1);
+    });
+
+}
+
+async function setUserTags(tagList){
     if(firebase.auth().currentUser){
 
-        var currentTags = getExistingTags();
+        var currentTags = await getExistingTags(allTagsRef);
         var allTags = {};
+        keyIdDict = await getExistingTags(tagRemovalRef);
 
         new Promise(async function(resolve){
             // If tag is not in existing list of tags, adds user to the chat
@@ -211,72 +229,98 @@ function setUserTags(tagList){
             for(var ii = 0; ii < tagList.length; ii++){
                 var tag = tagList[ii];
                 var key;
-                if(!currentTags.includes(tagList[ii])){
+                if(!currentTags.hasOwnProperty(tagList[ii]) && !allTags.hasOwnProperty(tagList[ii])){
                     key = await createOrJoinChat(tag);
                 }
                 else{
                     key = currentTags[tag];
-                    delete currentTags[key];
+                    delete currentTags[tag];
                 }
                 allTags[tag] = key;
             }
 
-            for(var ii = 0; ii < currentTags.length; ii++){
-                removeUserFromChatByTag(currentTags[ii]);
-            }
+            await removeAllCurrentTags(currentTags);
 
             resolve(1);
         }).then(function(){
             var updates = {};
-            updates[allTagsRef] = allTags;
-            allTagsRef.update(updates);
+            updates[abridgedTagsRef] = allTags;
+            firebase.database().ref().update(updates).then(function(){
+                // After updating tags, update tag removal keys
+                var tagRemovalUpdates = {};
+                tagRemovalUpdates[abridgedTagRemovalRef] = keyIdDict;
+                firebase.database().ref().update(tagRemovalUpdates);
+                console.log("chats changed successfully");
+            });
         });
     }
 }
 
-function addUserTags(tagList){
+async function addUserTags(tagList){
     if(firebase.auth().currentUser){
 
-        var currentTags = getExistingTags();
+        var currentTags = await getExistingTags(allTagsRef);
         var allTags = {};
+        keyIdDict = await getExistingTags(tagRemovalRef);
+
+        for(var property in currentTags){
+            allTags[property] = currentTags[property];
+        }
 
         new Promise(async function(resolve){
-            if(currentTags){
-                for(var ii = 0; ii < tagList.length; ii++){
-                    var tag = tagList[ii];
-                    var key;
-                    if(!currentTags.includes(tagList[ii])){
-                        key = await createOrJoinChat(tag);
-                    }
-                    else{
-                        key = currentTags[tag];
-                    }
+            for(var ii = 0; ii < tagList.length; ii++){
+                var tag = tagList[ii];
+                var key;
+                if(!allTags.hasOwnProperty(tagList[ii])){
+                    key = await createOrJoinChat(tag);
                     allTags[tag] = key;
                 }
             }
+
             resolve(1);
         }).then(function(){
             var updates = {};
-            updates[allTagsRef] = allTags;
-            allTagsRef.update(updates);
+            updates[abridgedTagsRef] = allTags;
+            firebase.database().ref().update(updates).then(function(){
+
+                // After updating tags, update tag removal keys
+                var tagRemovalUpdates = {};
+                tagRemovalUpdates[abridgedTagRemovalRef] = keyIdDict;
+                firebase.database().ref().update(tagRemovalUpdates);
+                console.log("tags added successfully");
+            });
         });
     }
 }
 
-function removeUserFromChatByTag(tag){
+async function removeUserFromChatByTag(tag){
     // Can't be an invalid ref (will be valid ref if tags exist; this is tag removal function)
     // Gets tag removal key
-    var removalKey = keyRemovalRef.once("value").then(function(snapshot){
+    // tagRemovalRef = ref@ "/users/" + firebaseUser.uid + "/tagRemovalDict"
+
+    var removalKey;
+    var chatId;
+    await tagRemovalRef.once("value").then(function(snapshot){
+        //Gets removal key to remove specific user from chat
         var data = snapshot.val();
-        return data[tag];
-    }).then(function(){
-        var chatId = allTagsRef.once("value").then(function(snapshot){
-            var data = snapshot.val();
-            return data[tag];
-        }).then(function(){
-            const chatRef = firebase.database().ref("chat/" + tag + "/" + chatId + "/users");
-            chatRef.remove(removalKey);
-            allTagsRef.remove(tag);
+        removalKey = data[tag];
+    }).then(async function(){
+        // allTagsRef = ref@ "/users/" + firebaseUser.uid + "/allTags";
+        await allTagsRef.once("value").then(function(snapshot2){
+            // Gets chatId to remove user from
+            var data2 = snapshot2.val();
+            chatId = data2[tag];
+        }).finally(function(){
+            // Removes user from chat
+            var chatRef = firebase.database().ref("/chat/" + tag + "/" + chatId + "/users/" + removalKey);
+            chatRef.remove();
+
+            // Removes tag removal key from user 
+            var allTagsWithTagRef = firebase.database().ref(abridgedTagsRef + "/" + tag);
+            allTagsWithTagRef.remove();
+
+            // Removes tag removal key as well
+            delete keyIdDict[tag];
         });
     });
 
@@ -480,7 +524,6 @@ function createMessageWithTemplate(key, messageObj) {
     addUsernameToMessage(messageObj.senderUID, key)
     return message;
 }
-
 
 
 function getDbRef(tag, chatId) {
