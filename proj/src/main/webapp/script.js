@@ -31,7 +31,6 @@ function appendMessage(payload){
     messagesElement.appendChild(dataElement);
 }
 
-
 /*
     Chatroom sidebar
  */ 
