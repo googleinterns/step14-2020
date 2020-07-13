@@ -382,6 +382,9 @@ function init() {
     
     auth.onAuthStateChanged(async firebaseUser => {
         if(firebaseUser){
+
+            clickWithEnterKey();
+
             // InitUserChat sets information relevant to logged-in user
             // Must run before enclosed functions
             await initUserChat().then(function(){
@@ -390,8 +393,6 @@ function init() {
                 populateProfileSidebar(firebaseUser);
                 initBio();
             });
-
-            clickWithEnterKey();
         }
         else{
             window.location.replace("/static/welcome.html");
