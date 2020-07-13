@@ -21,8 +21,7 @@ html {
 .sidebar {
     height: 400px;
     position: absolute;
-    left: 100;
-    top: 100;
+    left: 1top: 100;
     background: red;
 }
 
@@ -33,11 +32,8 @@ aside {
 
 
 
-
 /* main: welcome page */
 /* view: mobile */
-
-
 
 /* override bootstrap presets */
 .container,
@@ -135,7 +131,6 @@ h4 {
   justify-content: center;
   padding-left: 5%;
   padding-right: 5%;
-  /* in the wrong div: max-width: 500px; */
 }
 
 #sign-in-title {
@@ -201,8 +196,6 @@ label {
 
 /* website footer */
 
-
-
 footer div {
   border: none;
   display: inline-block;
@@ -222,6 +215,7 @@ footer a:hover {
   color: white;
 }
 
+<<<<<<< HEAD
 
 
 /* chatroom */
@@ -386,3 +380,5 @@ footer a:hover {
     background: #4F4F4F;
     border: 0;
 }
+=======
+>>>>>>> 2c39a75eeacf6c9c67b615114caffc69de80ca1f

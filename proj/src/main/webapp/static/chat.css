@@ -93,12 +93,12 @@ ul {
     font-size: 0.9rem;
 }
 
+
 /* infinte scroll */
-/* fix!! TODO */
-/* .scroll {
-    overflow: scroll !important;
-    border: 2px dotted red;
-} */
+.scroll {
+    overflow: scroll;
+    height:100vh;
+}
 
 /* chat preview */
 .message pre, .message p{
@@ -122,8 +122,9 @@ ul {
 
 .sidebar-separator {
     background-color: white;
-    height: 25px;
-    border-bottom: 0;
+    border-top: 1px solid rgba(0,0,0,.125);
+    height: 75px;
+    border: 0;
 }
 
 
@@ -156,8 +157,8 @@ a:hover {
 }
 
 .bottom {
-    width: 100%;
-    position: absolute;
+    width: inherit;
+    position: fixed;
     bottom: 0;
 }
 
