@@ -430,10 +430,8 @@ function initUserChat(){
 // Sets title of page
 function setTitle(dbRefObj){
     nameRef = dbRefObj.parent.child('chatInfo');
-    console.log(nameRef.toString());
     nameRef.once("value").then(function(snapshot){
         var data = snapshot.child("name").val();
-        console.log(data);
         var presentableTitle = data.charAt(0).toUpperCase() + data.slice(1);
         document.getElementById("big-title").innerText = presentableTitle;
     });
