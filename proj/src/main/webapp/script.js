@@ -589,9 +589,6 @@ async function addUsernameToMessage(uid, preview) {
         if(snap.val()){
             preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
         }
-        else{
-            preview.querySelector('#username').innerText = "Camaraderie";
-        }
     })
 }
 
