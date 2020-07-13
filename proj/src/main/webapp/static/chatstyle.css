@@ -93,12 +93,11 @@ ul {
     font-size: 0.9rem;
 }
 
+
 /* infinte scroll */
-/* fix!! TODO */
 .scroll {
     overflow: scroll;
     height:100vh;
-    border: 2px dotted red;
 }
 
 /* chat preview */
@@ -123,8 +122,9 @@ ul {
 
 .sidebar-separator {
     background-color: white;
-    height: 25px;
-    border-bottom: 0;
+    border-top: 1px solid rgba(0,0,0,.125);
+    height: 75px;
+    border: 0;
 }
 
 
