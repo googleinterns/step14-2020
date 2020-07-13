@@ -139,7 +139,7 @@ if(btnSignUp){
             var allTags = {};
             for(var ii = 0; ii < tagList.length; ii++){
 
-                if(tagList[ii].charAt(ii) == ' '){
+                while(tagList[ii].charAt(ii) == ' '){
                     tagList[ii] = tagList[ii].substr(1);
                 }
 
