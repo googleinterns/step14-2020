@@ -467,7 +467,9 @@ function pushChatMessage() {
         senderUID : firebase.auth().currentUser.uid
     }
     // push message to datastore
-    dbRefObject.push(message);
+    if(message.content.length > 0){
+        dbRefObject.push(message);
+    }
 
     messageInput.value = null; // clear the message
 
