@@ -9,6 +9,7 @@
 
     <!-- firebase Scripts -->
     <!-- the core Firebase JS SDK is always required and must be listed first -->
+
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-auth.js"></script>
@@ -25,30 +26,26 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
 
     <!-- chatroom styling -->
-    <link rel="stylesheet" href="chatstyle.css" />
+    <link rel="stylesheet" href="chat.css" />
 </head>
 
 <body onload="init()" id="top">
 
     <div class="row" id="body-row">
-        <!-- Sidebar -->
-        <div id="sidebar-container" class="sidebar sidebar-expanded d-none d-md-block">
-            <!-- d-* hiddens the Sidebar in smaller devices. Its itens can be kept on the Navbar 'Menu' -->
-
-            <!-- start of scroll -->
-            <!--<div class="scroll" id="profile-info>-->
+        <!-- sidebar -->
+        <div id="sidebar-container" class="scroll sidebar sidebar-expanded d-none d-md-block">
+            <!-- d-* hiddens the Sidebar in smaller devices. -->
+    
             <a href="#chats-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between align-items-center">                
-                    <!--image icon <span class="fa fa-user fa-fw mr-3"></span>-->
                     <span class="fa fa-user fa-fw mr-3 fa-1x"></span>
                     <span class="menu-collapsed mr-auto"><strong>chats</strong></span>
                     <span class="submenu-icon"></span>
                 </div>
             </a>
 
-            <!-- Submenu content -->
+            <!-- submenu content for navigating between chats -->
             <div id='chats-submenu' class="collapse sidebar-submenu">
-                <!-- chats navigation -->
                     <template id="chat-preview-temp">
                         <div class="chat-preview list-group-item">
                             <strong><p id="chat-name"></p></strong>
@@ -71,12 +68,11 @@
                     </div>
             </a>
 
-          
             <div id='profile-submenu' class="collapse sidebar-submenu">
             <div id="user-profile"> 
                 <div class="center-h">
                     <div id="image-cropper">
-                        <img id="user-pfp" src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg" id="pfp" class="menu-collapsed" alt="profile picture">
+                        <img id="user-pfp" src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg" class="menu-collapsed" alt="profile picture">
                     </div> 
                 </div>
                 <ul class="list-group">
@@ -93,7 +89,8 @@
                             <p class="text-left"><strong>bio</strong></p>
                         </div>
                         <div>
-                            <p id="user-bio" class="text-left">hey! i'm lilly, an incoming freshman at NYC. i play tennis and piano. please feel free to message me i love getting to know my fellow interns :) </p>
+                            <pre id="user-bio" class="text-left">hey! i'm lilly, an incoming freshman at NYC. i play tennis and piano. please feel free to message me i love getting to know my fellow interns :) </pre>
+                            <textarea id="bio-edit" style="width:100%; height:100%;" hidden></textarea>
                         </div>
                     </li>
                     <li class="info-section list-group-item menu-collapsed justify-content-start ">
@@ -108,7 +105,6 @@
             </div>
                 
                 <!-- settings drop down-->
-                
                 <a href="#settings-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-start align-items-center">
                         <span class="fa fa-user fa-fw mr-3 fa-1x"></span>
@@ -128,10 +124,9 @@
                     </a>
                 </div> 
                 
-                <!-- end of scroll but not the list-->
-                <!--</div>-->
-                <!-- Separator-->
+                <!-- separator to prevent overlapping at the bottom of the scroll bar-->
                 <li class="list-group-item sidebar-separator menu-collapsed"></li>
+                
                 <!-- left bottom anchor-->
                 <div class="bottom">
                     <a href="#top" data-toggle="sidebar-colapse" class="bg-light bg-gold list-group-item list-group-item-action d-flex align-items-center">
@@ -143,6 +138,7 @@
                 </div>
             </ul>
         </div>
+
         <!-- main chat section -->
         <div class="col p-4">
             <div class="card" id="main-chat">
@@ -173,6 +169,7 @@
                     </div> 
                 </div>
                 <!-- end of messages-->
+
                 <!-- chat input box-->
                 <div class="card-footer" id="input-section">
                     <div class="input-group">
@@ -186,16 +183,17 @@
                     </div>
                 </div>
                 <!-- end of input box-->
+
             </div>
         </div>
         <!-- end of main chat section -->
+
     </div>
     <!-- end of body-row -->
 
   <!-- scripts -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-  <!-- <script src="./sudoscript.js"></script>   -->
   <script src="../script.js"></script>
   <script src="../db.js"></script>
 </body>
