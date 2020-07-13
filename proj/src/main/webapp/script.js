@@ -69,8 +69,6 @@ function createNewChatWithUser(tag){
     return postKey;
 }
 
-MAX_CHAT_SIZE = 200;
-
 // Loops through open chat rooms, adds the user to the first open chat and returns the key
 function findChatAndAddUser(snapshot, tag){
     var key;
@@ -436,10 +434,12 @@ function initUserChat(){
 
 }
 // Sets title of page
-function setTitle(){
-    nameRef = firebase.database().ref("/chat/"+tag+"/"+globalChatId+"/chatInfo/name");
+function setTitle(dbRefObj){
+    nameRef = dbRefObj.parent.child('chatInfo');
+    console.log(nameRef.toString());
     nameRef.once("value").then(function(snapshot){
-        var data = snapshot.val();
+        var data = snapshot.child("name").val();
+        console.log(data);
         var presentableTitle = data.charAt(0).toUpperCase() + data.slice(1);
         document.getElementById("big-title").innerText = presentableTitle;
     });
@@ -448,9 +448,9 @@ function setTitle(){
 // initializes the .on() functions for the database reference
 function initRef(dbRefObject) {
     const chat = document.getElementById('chatbox');
-    chat.innerHTML = '';    
+    chat.innerHTML = '';
 
-    setTitle();
+    setTitle(dbRefObject);
 
     // note that when a comment is added it will display more than the limit, which
     // is intentional
@@ -633,7 +633,7 @@ function populateSidebar() {
 
 function changeChatOnClick(domElement, newTag, chatId) {
     domElement.addEventListener('click', function() {
-        var dbRefObject = getDbRef(tag, chatId);
+        var dbRefObject = getDbRef(newTag, chatId);
         initRef(dbRefObject);
     });
 }
