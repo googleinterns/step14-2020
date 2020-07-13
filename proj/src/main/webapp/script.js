@@ -426,7 +426,7 @@ async function makeChatPreview(name, messageContent, uid, tag, chatId) {
     chatName.innerText = name;
     const msgBody = preview.querySelector('.message-body');
     msgBody.innerText = messageContent;
-    preview.setAttribute("id", chatId)
+    preview.setAttribute("id", chatId);
     changeChatOnClick(preview, tag, chatId);
     await addUsernameToMessage(uid, preview);
 
@@ -482,7 +482,7 @@ function populateSidebar() {
     });
 }
 
-function changeChatOnClick(domElement, newTag, chatId) {
+function changeChatOnClick(domElement, tag, chatId) {
     domElement.addEventListener('click', function() {
         var dbRefObject = getDbRef(tag, chatId);
         initRef(dbRefObject);
