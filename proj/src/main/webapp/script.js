@@ -585,8 +585,10 @@ async function makeChatPreview(name, messageContent, uid, tag, chatId) {
 // i can't access two paths at the same time so i need two separate functions :/
 async function addUsernameToMessage(uid, preview) {
     const userRef = firebase.database().ref('/users/'+uid);
-    await userRef.once('value', snap => {
-        preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
+    await userRef.once("value", snap => {
+        if(snap.val()){
+            preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
+        }
     })
 }
 
