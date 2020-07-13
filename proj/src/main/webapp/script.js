@@ -69,6 +69,8 @@ function createNewChatWithUser(tag){
     return postKey;
 }
 
+MAX_CHAT_SIZE = 200;
+
 // Loops through open chat rooms, adds the user to the first open chat and returns the key
 function findChatAndAddUser(snapshot, tag){
     var key;
@@ -114,8 +116,8 @@ function createOrJoinChat(currentTag){
             // Create new chat if tag does not exist yet
            return createNewChatWithUser(currentTag);
         }
-    }).catch(function(){
-        console.log("unexpected error searching for chat rooms");
+    }).catch(function(err){
+        console.log("unexpected error searching for chat rooms:", err);
     });
 }
 
@@ -126,12 +128,15 @@ if(btnSignUp){
         const emailVal = txtEmail.value;
         const passVal = pass.value;
         var tagList = tagStr.value.split(',');
+        for(var ii = 0; ii < tagList.length; ii++){
+            tagList[ii] = tagList[ii].trim();
+        }
 
         // Initialize auth object
         const auth = firebase.auth();
         auth.useDeviceLanguage();
 
-        const promise = auth.createUserWithEmailAndPassword(emailVal, passVal).then(async function(){
+        auth.createUserWithEmailAndPassword(emailVal, passVal).then(async function(){
             var allTags = {};
             for(var ii = 0; ii < tagList.length; ii++){
 
@@ -149,12 +154,13 @@ if(btnSignUp){
                     firstName : fname.value,
                     lastName : lname.value,
                     allTags : allTags,
-                    tagRemovalDict : keyIdDict
+                    tagRemovalDict : keyIdDict,
+                    bio : "I'm a new user! Say hi!"
                 }).then(function(){
                     window.location.replace("chat.html");
                 });
-            }).catch(function(){
-                console.log("error updating display name");
+            }).catch(function(err){
+                console.log("error updating display name:", err);
             });
         });
 
@@ -165,6 +171,7 @@ if(btnLogout){
     btnLogout.addEventListener("click", e => {
         firebase.auth().signOut();
         window.location.replace("welcome.html");
+        console.log("You logged out")
     });
 }
 
@@ -381,14 +388,15 @@ function init() {
             // Must run before enclosed functions
             await initUserChat().then(function(){
                 populateSidebar();
-                initRef();
+                initRef(dbRefObject);
                 populateProfileSidebar(firebaseUser);
+                initBio();
             });
 
             clickWithEnterKey();
         }
         else{
-            window.location.replace("welcome.html");
+            window.location.replace("/static/welcome.html");
         }
     });
 
@@ -438,7 +446,7 @@ function setTitle(){
 }
 
 // initializes the .on() functions for the database reference
-function initRef() {
+function initRef(dbRefObject) {
     const chat = document.getElementById('chatbox');
     chat.innerHTML = '';    
 
@@ -468,7 +476,14 @@ function pushChatMessage() {
     }
     // push message to datastore
     dbRefObject.push(message);
+
     messageInput.value = null; // clear the message
+
+    // update chatInfo
+    const chatRef =  dbRefObject.parent.child('chatInfo');
+    chatRef.child('lastAuthor').set(message.senderUID);
+    chatRef.child('lastMessage').set(message.content);
+    chatRef.child('timestamp').set(message.timestamp);
 }
 
 function addMoreMessagesAtTheTop() {
@@ -521,7 +536,7 @@ function createMessageWithTemplate(key, messageObj) {
     msgBody.innerText = messageObj.content;
 
     message.id = key;
-    addUsernameToMessage(messageObj.senderUID, key)
+    addUsernameToMessage(messageObj.senderUID, message)
     return message;
 }
 
@@ -534,19 +549,19 @@ function getDbRef(tag, chatId) {
 
 async function makePreviewWithLastMessage(tag, chatId) {
     const tagRefObj = firebase.database().ref('/chat/'+tag+'/'+chatId+'/chatInfo')
-    await tagRefObj.on('value', (snap) => {
+    await tagRefObj.on('value', async function (snap) {
         const chatName = snap.val().name;
         const messageContent = snap.val().lastMessage;
         const uid = snap.val().lastAuthor;
 
-        const preview = makeChatPreview(chatName, messageContent, uid, tag, chatId);
+        const preview = await makeChatPreview(chatName, messageContent, uid, tag, chatId);
 
-        const sidebar = document.getElementById('sidebar');
+        const sidebar = document.getElementById('chats-submenu');
         sidebar.prepend(preview);
     });
 }
 
-function makeChatPreview(name, messageContent, uid, tag, chatId) {
+async function makeChatPreview(name, messageContent, uid, tag, chatId) {
     if (document.getElementById(chatId)) {
         oldPreview = document.getElementById(chatId);
         oldPreview.remove();
@@ -558,45 +573,68 @@ function makeChatPreview(name, messageContent, uid, tag, chatId) {
 
     const chatName = preview.querySelector('#chat-name');
     chatName.innerText = name;
-            
     const msgBody = preview.querySelector('.message-body');
     msgBody.innerText = messageContent;
     preview.setAttribute("id", chatId)
     changeChatOnClick(preview, tag, chatId);
-    addUsernameToMessage(uid, chatId);
+    await addUsernameToMessage(uid, preview);
 
     return preview;
 }
 
 // i can't access two paths at the same time so i need two separate functions :/
-function addUsernameToMessage(uid, elementId) {
+async function addUsernameToMessage(uid, preview) {
     const userRef = firebase.database().ref('/users/'+uid);
-    userRef.once('value', snap => {
-        const element = document.getElementById(elementId);
-        element.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
+    await userRef.once('value', snap => {
+        preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
     })
 }
 
+function initBio() {
+    const bioBox = document.getElementById('user-bio');
+    const editInputBox = document.getElementById('bio-edit');
+
+    bioBox.addEventListener('dblclick', function() {
+        this.hidden = true;
+
+        editInputBox.hidden = false;
+        editInputBox.value = this.innerText
+
+        editInputBox.focus();
+    });
+
+    editInputBox.addEventListener('blur', function() {
+        const uid = firebase.auth().currentUser.uid;
+        const userBioRef = firebase.database().ref('/users/'+uid+'/bio');
+        userBioRef.set(this.value);
+
+        this.hidden = true;
+        bioBox.hidden = false;
+        bioBox.innerText = this.value;
+    });
+}
+
+
+
+
+
 function populateSidebar() {
-    // Initialize auth object
-    const auth = firebase.auth();
-
     const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
-
     userTagsRef.orderByKey().on('child_added', snap => {
+
         const chatTag = snap.key;
         const chatId = snap.val();
 
         // get last message
         makePreviewWithLastMessage(chatTag, chatId)
-        
+
     });
 }
 
-function changeChatOnClick(domElement, tag, chatId) {
+function changeChatOnClick(domElement, newTag, chatId) {
     domElement.addEventListener('click', function() {
-        dbRefObject = getDbRef(tag, chatId);
-        initRef();
+        var dbRefObject = getDbRef(tag, chatId);
+        initRef(dbRefObject);
     });
 }
 
@@ -632,22 +670,6 @@ function addUserInfoToDom(userObj) {
     }
 }
 
-function switchToSettings() {
-    const settings = document.getElementById('user-profile');
-    const sidebar = document.getElementById('sidebar');
-
-    sidebar.style.height = 0;
-    settings.style.height = '400px'; 
-}
-
-function closeSettings() {
-    const settings = document.getElementById('user-profile');
-    const sidebar = document.getElementById('sidebar');
-
-    settings.style.height = 0;
-    sidebar.style.height = '400px'; 
-}
-
 /*
     Location
  */
@@ -673,3 +695,37 @@ function getLocation() {
     return;
 }
 
+
+/*
+    Chatroom sidebar
+ */ 
+
+// Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
+$('#body-row .collapse').collapse('hide'); 
+
+// Collapse/Expand icon
+$('#collapse-icon').addClass('fa-angle-double-left'); 
+
+// Collapse on click
+$('[data-toggle=sidebar-colapse]').click(function() {
+    SidebarCollapse();
+});
+
+// Currently hides the sidebar on smaller and medium screens (TODO: adjust screen for different screen sizes)
+function SidebarCollapse () {
+    $('.menu-collapsed').toggleClass('d-none');
+    $('.sidebar-submenu').toggleClass('d-none');
+    $('.submenu-icon').toggleClass('d-none');
+    $('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
+    
+    // Treating d-flex/d-none on separators with title
+    var SeparatorTitle = $('.sidebar-separator-title');
+    if ( SeparatorTitle.hasClass('d-flex') ) {
+        SeparatorTitle.removeClass('d-flex');
+    } else {
+        SeparatorTitle.addClass('d-flex');
+    }
+    
+    // Collapse/Expand icon
+    $('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
+}
