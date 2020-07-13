@@ -180,18 +180,15 @@ function getDbRef(tag, chatId) {
 async function makePreviewWithLastMessage(tag, chatId) {
     const tagRefObj = firebase.database().ref('/chat/'+tag+'/'+chatId+'/chatInfo')
     await tagRefObj.on('value', async function (snap) {
-        const chatName = snap.val().name;
-        const messageContent = snap.val().lastMessage;
-        const uid = snap.val().lastAuthor;
 
-        const preview = await makeChatPreview(chatName, messageContent, uid, tag, chatId);
+        const preview = await makeChatPreview(snap.val(), tag, chatId);
 
         const sidebar = document.getElementById('chats-submenu');
         sidebar.prepend(preview);
     });
 }
 
-async function makeChatPreview(name, messageContent, uid, tag, chatId) {
+async function makeChatPreview(chatInfoObj, tag, chatId) {
     if (document.getElementById(chatId)) {
         oldPreview = document.getElementById(chatId);
         oldPreview.remove();
@@ -202,12 +199,16 @@ async function makeChatPreview(name, messageContent, uid, tag, chatId) {
     const preview = docFrag.querySelector(".chat-preview")
 
     const chatName = preview.querySelector('#chat-name');
-    chatName.innerText = name;
+    chatName.innerText = chatInfoObj.name;
     const msgBody = preview.querySelector('.message-body');
-    msgBody.innerText = messageContent;
+    msgBody.innerText = chatInfoObj.lastMessage;
+
+    const timestamp = preview.querySelector('#timestamp');
+    timestamp.innerText = new Date(chatInfoObj.timestamp).toLocaleString();
+    
     preview.setAttribute("id", chatId)
     changeChatOnClick(preview, tag, chatId);
-    await addUsernameToMessage(uid, preview);
+    await addUsernameToMessage(chatInfoObj.lastAuthor, preview);
 
     return preview;
 }
