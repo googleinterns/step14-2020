@@ -65,6 +65,8 @@ function createNewChatWithUser(tag){
     return postKey;
 }
 
+MAX_CHAT_SIZE = 200;
+
 // Loops through open chat rooms, adds the user to the first open chat and returns the key
 function findChatAndAddUser(snapshot){
     var key;
@@ -110,8 +112,8 @@ function createOrJoinChat(currentTag){
             // Create new chat if tag does not exist yet
            return createNewChatWithUser(currentTag);
         }
-    }).catch(function(){
-        console.log("unexpected error searching for chat rooms");
+    }).catch(function(err){
+        console.log("unexpected error searching for chat rooms:", err);
     });
 }
 
@@ -122,12 +124,15 @@ if(btnSignUp){
         const emailVal = txtEmail.value;
         const passVal = pass.value;
         var tagList = tagStr.value.split(',');
+        for(var ii = 0; ii < tagList.length; ii++){
+            tagList[ii] = tagList[ii].trim();
+        }
 
         // Initialize auth object
         const auth = firebase.auth();
         auth.useDeviceLanguage();
 
-        const promise = auth.createUserWithEmailAndPassword(emailVal, passVal).then(async function(){
+        auth.createUserWithEmailAndPassword(emailVal, passVal).then(async function(){
             var allTags = {};
             for(var ii = 0; ii < tagList.length; ii++){
 
@@ -149,8 +154,8 @@ if(btnSignUp){
                 }).then(function(){
                     window.location.replace("chat.html");
                 });
-            }).catch(function(){
-                console.log("error updating display name");
+            }).catch(function(err){
+                console.log("error updating display name:", err);
             });
         });
 
@@ -459,9 +464,6 @@ function initBio() {
 
 
 function populateSidebar() {
-    // Initialize auth object
-    const auth = firebase.auth();
-
     const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
     userTagsRef.orderByKey().on('child_added', snap => {
 
