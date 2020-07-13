@@ -252,12 +252,6 @@ function init() {
     const chat = document.getElementById('chatbox');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
 
-    const close = document.getElementById('close-settings');
-    close.addEventListener('click', closeSettings);
-
-    const settings = document.getElementById('settings-button');
-    settings.addEventListener('click', switchToSettings);
-
 }
 
 
