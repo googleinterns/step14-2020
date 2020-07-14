@@ -431,10 +431,10 @@ function pushChatMessage() {
     // prevent blank messages
     if (messageInput.value.trim().length != 0){
         var message = {
-        content : messageInput.value,
-        timestamp : new Date().getTime(),
-        senderDisplay : firebase.auth().currentUser.displayName,
-        senderUID : firebase.auth().currentUser.uid
+            content : messageInput.value,
+            timestamp : new Date().getTime(),
+            senderDisplay : firebase.auth().currentUser.displayName,
+            senderUID : firebase.auth().currentUser.uid
         }
         // push message to datastore
         dbRefObject.push(message);
