@@ -221,6 +221,7 @@ footer a:hover {
   color: white;
 }
 
+/* hide scroll button for desktop bc there is nothing to scroll to */
 @media only screen and (min-width: 600px) {
     .mobile {
         visibility: hidden;
@@ -230,7 +231,7 @@ footer a:hover {
 /* welcome screen mobile view */
 @media only screen and (max-width: 600px) {
     [class*="col-"] {
-        width: 100vh;
+        width: 100vw;
         height:100vh;
         padding: 0 0 0 0;
     }
@@ -255,5 +256,6 @@ footer a:hover {
 
     .button {
         height: 5vh;
+        width: 250px;
     }
 }
