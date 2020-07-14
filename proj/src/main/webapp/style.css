@@ -126,13 +126,6 @@ h4 {
   justify-content: center;
 }
 
-.inblock-center-container {
-  width: 55%;
-  min-width: 555px;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
 /* right side of welcome page */
 .sign-up {
   justify-content: center;
@@ -221,10 +214,19 @@ footer a:hover {
   color: white;
 }
 
-/* hide scroll button for desktop bc there is nothing to scroll to */
+/* styling for desktop and tablets only */
 @media only screen and (min-width: 600px) {
     .mobile {
         visibility: hidden;
+    }
+    /* hide scroll button for desktop bc there is nothing to scroll to */
+
+
+    .inblock-center-container {
+        width: 55%;
+        min-width: 555px;
+        max-width: 600px;
+        margin: 0 auto;
     }
 }
 
@@ -256,6 +258,18 @@ footer a:hover {
 
     .button {
         height: 5vh;
-        width: 250px;
+        /* width: 250px; */
+    }
+
+    .inblock-center-container {
+        width: 65%;
+        margin: 0 auto;
+    }
+
+    #info-message{
+        font-size: 3vw;
+        margin-bottom: 8vh;        
+        font-weight: lighter;
+        text-align: center;
     }
 }

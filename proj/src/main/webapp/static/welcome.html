@@ -28,7 +28,8 @@
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-messaging.js"></script>
 
   </head>
-  <body onload="getLocation()">
+  <!-- onload="getLocation()" -->
+  <body> 
     <div class="container screen">
       <div class="row fullscreen">
         <!-- page:signup and signin   desktop:left    mobile:full screen -->
@@ -42,7 +43,7 @@
               <img id="chat-image"src="./images/friendsChatting.svg" alt="Friends chatting icon" class="b-margin-3">
             </div>
             <div class="inblock-center-container">
-              <h3 class="center-text"> spend less time finding chat rooms <br> and more time making friends</h3>
+              <h3 class="center-text" id="info-message"> spend less time finding chat rooms <br> and more time making friends</h3>
               <button type="button" name="button" class="button mobile">begin</button>
             </div> 
           </div>
