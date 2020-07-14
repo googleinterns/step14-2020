@@ -49,6 +49,7 @@
                     <template id="chat-preview-temp">
                         <div class="chat-preview list-group-item">
                             <strong><p id="chat-name"></p></strong>
+                            <span id=timestamp></span>
                             <div class="message">
                                 <div class="message-header">
                                     <img id="pfp">
@@ -161,6 +162,7 @@
                                 <div class="message-header">
                                 <img id="pfp">
                                 <strong><p id="username"></p></strong>
+                                <span id=timestamp></span>
                             </div>
                             <pre class="message-body"></pre>
                         </template>
@@ -193,5 +195,6 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
   <script src="../script.js"></script>
+  <script src="../db.js"></script>
 </body>
 </html>
