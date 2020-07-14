@@ -471,6 +471,10 @@ function pushChatMessage() {
     // push message to datastore
     dbRefObject.push(message);
 
+    // scroll down chat history to show recent message
+    var chatHistory = document.getElementById("message-list");
+    element.scrollTop = element.scrollHeight;
+
     messageInput.value = null; // clear the message
 
     // update chatInfo
