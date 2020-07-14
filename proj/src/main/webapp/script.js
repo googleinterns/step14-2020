@@ -139,10 +139,6 @@ if(btnSignUp){
             var allTags = {};
             for(var ii = 0; ii < tagList.length; ii++){
 
-                while(tagList[ii].charAt(ii) == ' '){
-                    tagList[ii] = tagList[ii].substr(1);
-                }
-
                 var tag = tagList[ii];
                 var key = await createOrJoinChat(tag);
                 allTags[tag] = key;
@@ -631,7 +627,7 @@ function populateSidebar() {
 
 function changeChatOnClick(domElement, tag, chatId) {
     domElement.addEventListener('click', function() {
-        var dbRefObject = getDbRef(newTag, chatId);
+        var dbRefObject = getDbRef(tag, chatId);
         initRef(dbRefObject);
     });
 }
