@@ -217,8 +217,14 @@ async function setUserTags(tagList){
 
         const abridgedTagsRef = "/users/" + firebaseUser.uid + "/allTags";
         const abridgedTagRemovalRef = "/users/" + firebaseUser.uid + "/tagRemovalDict";
-        const allTagsRef = firebase.database().ref(abridgedTagsRef);
-        const tagRemovalRef = firebase.database().ref(abridgedTagRemovalRef);
+        
+        var allTagsRef;
+        var tagRemovalRef;
+        await new Promise(function(resolve){
+            allTagsRef = firebase.database().ref(abridgedTagsRef);
+            tagRemovalRef = firebase.database().ref(abridgedTagRemovalRef);
+            resolve(1);
+        });
 
         var currentTags = await getExistingTags(allTagsRef);
         var allTags = {};
@@ -262,7 +268,15 @@ async function addUserTags(tagList){
     if(firebase.auth().currentUser){
 
         const abridgedTagsRef = "/users/" + firebaseUser.uid + "/allTags";
-        const allTagsRef = firebase.database().ref(abridgedTagsRef);
+        const abridgedTagRemovalRef = "/users/" + firebaseUser.uid + "/tagRemovalDict";
+
+        var allTagsRef;
+        var tagRemovalRef;
+        await new Promise(function(resolve){
+            allTagsRef = firebase.database().ref(abridgedTagsRef);
+            tagRemovalRef = firebase.database().ref(abridgedTagRemovalRef);
+            resolve(1);
+        });
 
         var currentTags = await getExistingTags(allTagsRef);
         var allTags = {};
