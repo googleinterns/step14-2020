@@ -217,8 +217,14 @@ async function setUserTags(tagList){
 
         const abridgedTagsRef = "/users/" + firebaseUser.uid + "/allTags";
         const abridgedTagRemovalRef = "/users/" + firebaseUser.uid + "/tagRemovalDict";
-        const allTagsRef = firebase.database().ref(abridgedTagsRef);
-        const tagRemovalRef = firebase.database().ref(abridgedTagRemovalRef);
+        
+        var allTagsRef;
+        var tagRemovalRef;
+        await new Promise(function(resolve){
+            allTagsRef = firebase.database().ref(abridgedTagsRef);
+            tagRemovalRef = firebase.database().ref(abridgedTagRemovalRef);
+            resolve(1);
+        });
 
         var currentTags = await getExistingTags(allTagsRef);
         var allTags = {};
@@ -262,7 +268,15 @@ async function addUserTags(tagList){
     if(firebase.auth().currentUser){
 
         const abridgedTagsRef = "/users/" + firebaseUser.uid + "/allTags";
-        const allTagsRef = firebase.database().ref(abridgedTagsRef);
+        const abridgedTagRemovalRef = "/users/" + firebaseUser.uid + "/tagRemovalDict";
+
+        var allTagsRef;
+        var tagRemovalRef;
+        await new Promise(function(resolve){
+            allTagsRef = firebase.database().ref(abridgedTagsRef);
+            tagRemovalRef = firebase.database().ref(abridgedTagRemovalRef);
+            resolve(1);
+        });
 
         var currentTags = await getExistingTags(allTagsRef);
         var allTags = {};
@@ -396,11 +410,10 @@ function initUserChat(){
 
 }
 // Sets title of page
-function setTitle(){
-    nameRef = firebase.database().ref("/chat/"+tag+"/"+globalChatId+"/chatInfo/name");
+function setTitle(dbRefObj){
+    nameRef = dbRefObj.parent.child('chatInfo');
     nameRef.once("value").then(function(snapshot){
-        var data = snapshot.val();
-        console.log(data);
+        var data = snapshot.child("name").val();
         var presentableTitle = data.charAt(0).toUpperCase() + data.slice(1);
         document.getElementById("big-title").innerText = presentableTitle;
     });
@@ -409,9 +422,9 @@ function setTitle(){
 // initializes the .on() functions for the database reference
 function initRef(dbRefObject) {
     const chat = document.getElementById('chatbox');
-    chat.innerHTML = '';    
+    chat.innerHTML = '';
 
-    setTitle();
+    setTitle(dbRefObject);
 
     // note that when a comment is added it will display more than the limit, which
     // is intentional
@@ -436,7 +449,9 @@ function pushChatMessage() {
         senderUID : firebase.auth().currentUser.uid
     }
     // push message to datastore
-    dbRefObject.push(message);
+    if(message.content.length > 0){
+        dbRefObject.push(message);
+    }
 
     messageInput.value = null; // clear the message
 
@@ -551,9 +566,11 @@ async function makeChatPreview(chatInfoObj, tag, chatId) {
 // i can't access two paths at the same time so i need two separate functions :/
 async function addUsernameToMessage(uid, preview) {
     const userRef = firebase.database().ref('/users/'+uid);
-    await userRef.once('value', snap => {
-        preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
-    })
+    await userRef.once("value", snap => {
+        if(snap.val()){
+            preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
+        }
+    });
 }
 
 function initBio() {
