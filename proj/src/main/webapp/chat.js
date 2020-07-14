@@ -624,7 +624,9 @@ function populateProfileSidebar(user) {
 function addUserInfoToDom(userObj) {
     const profile = document.getElementById('user-profile');
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
-    profile.querySelector("#user-pfp").src = userObj.photo;
+    if (userObj.photo != null) {
+        profile.querySelector("#user-pfp").src = userObj.photo;
+    }
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
     const tagList = profile.querySelector("#user-tags");
