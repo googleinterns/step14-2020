@@ -473,7 +473,7 @@ function pushChatMessage() {
 
     // scroll down chat history to show recent message
     var chatHistory = document.getElementById("message-list");
-    element.scrollTop = element.scrollHeight;
+    chatHistory.scrollTop = chatHistory.scrollHeight;
 
     messageInput.value = null; // clear the message
 
