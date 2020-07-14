@@ -64,7 +64,3 @@ function SidebarCollapse () {
     // Collapse/Expand icon
     $('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
 }
-
-    // scroll down chat history to show recent message
-    var chatHistory = document.getElementById("message-list");
-    chatHistory.scrollTop = chatHistory.scrollHeight;
