@@ -428,28 +428,29 @@ function initRef(dbRefObject) {
 
 function pushChatMessage() {
     const messageInput = document.getElementById('message-input');
-
-    var message = {
+    // prevent blank messages
+    if (messageInput.value.trim().length != 0){
+        var message = {
         content : messageInput.value,
         timestamp : new Date().getTime(),
         senderDisplay : firebase.auth().currentUser.displayName,
         senderUID : firebase.auth().currentUser.uid
+        }
+        // push message to datastore
+        dbRefObject.push(message);
+
+        // scroll down chat history to show recent message
+        var chatHistory = document.getElementById("message-list");
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+
+        // update chatInfo
+        const chatRef =  dbRefObject.parent.child('chatInfo');
+        chatRef.child('lastAuthor').set(message.senderUID);
+        chatRef.child('lastMessage').set(message.content);
+        chatRef.child('timestamp').set(message.timestamp);
     }
-    // push message to datastore
-    dbRefObject.push(message);
-
-    // scroll down chat history to show recent message
-    var chatHistory = document.getElementById("message-list");
-    chatHistory.scrollTop = chatHistory.scrollHeight;
-
     // clear the message
     messageInput.value = null; 
-
-    // update chatInfo
-    const chatRef =  dbRefObject.parent.child('chatInfo');
-    chatRef.child('lastAuthor').set(message.senderUID);
-    chatRef.child('lastMessage').set(message.content);
-    chatRef.child('timestamp').set(message.timestamp);
 }
 
 function addMoreMessagesAtTheTop() {
