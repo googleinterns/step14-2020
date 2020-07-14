@@ -431,6 +431,7 @@ function initUserChat(){
 // Sets title of page
 function setTitle(){
     nameRef = firebase.database().ref("/chat/"+tag+"/"+globalChatId+"/chatInfo/name");
+    console.log(nameRef);
     nameRef.once("value").then(function(snapshot){
         var data = snapshot.val();
         var presentableTitle = data.charAt(0).toUpperCase() + data.slice(1);
@@ -442,7 +443,6 @@ function setTitle(){
 function initRef(dbRefObject) {
     const chat = document.getElementById('chatbox');
     chat.innerHTML = '';    
-
     setTitle();
 
     // note that when a comment is added it will display more than the limit, which
@@ -647,7 +647,10 @@ function populateProfileSidebar(user) {
 function addUserInfoToDom(userObj) {
     const profile = document.getElementById('user-profile');
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
-    profile.querySelector("#user-pfp").src = userObj.photo;
+    if (userObj.photo != null) {
+        profile.querySelector("#user-pfp").src = userObj.photo;
+
+    }
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
     const tagList = profile.querySelector("#user-tags");
@@ -697,7 +700,7 @@ $('#body-row .collapse').collapse('hide');
 $('#collapse-icon').addClass('fa-angle-double-left'); 
 
 // Collapse on click
-$('[data-toggle=sidebar-colapse]').click(function() {
+$('[data-toggle = sidebar-colapse]').click(function() {
     SidebarCollapse();
 });
 
