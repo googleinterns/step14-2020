@@ -428,6 +428,7 @@ function initUserChat(){
     });
 
 }
+
 // Sets title of page
 function setTitle(){
     nameRef = firebase.database().ref("/chat/"+tag+"/"+globalChatId+"/chatInfo/name");
@@ -607,7 +608,6 @@ function initBio() {
     });
 }
 
-
 function populateSidebar() {
     const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
     userTagsRef.orderByKey().on('child_added', snap => {
@@ -637,7 +637,7 @@ function populateProfileSidebar(user) {
         userObj.uid = user.uid;
         userObj.fname = snap.val().firstName;
         userObj.lname = snap.val().lastName;
-        userObj.bio = snap.val().bio;  // there is no bio yet
+        userObj.bio = snap.val().bio;  
         userObj.tags = snap.val().allTags;
         addUserInfoToDom(userObj)
         })
