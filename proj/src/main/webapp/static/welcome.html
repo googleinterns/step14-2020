@@ -28,8 +28,8 @@
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-messaging.js"></script>
 
   </head>
-  <!-- onload="getLocation()" -->
-  <body> 
+  
+  <body onload="getLocation()"> 
     <div class="container screen">
       <div class="row fullscreen">
         <!-- page:signup and signin   desktop:left    mobile:full screen -->
@@ -44,16 +44,16 @@
             </div>
             <div class="inblock-center-container">
               <h3 class="center-text" id="info-message"> spend less time finding chat rooms <br> and more time making friends</h3>
-              <button type="button" name="button" class="button mobile">begin</button>
+              <a href="#signin-screen"><button type="button" name="button" class="button mobile">begin</button></a>
             </div> 
           </div>
         </div>
         <!-- sign up   desktop:right    mobile:full screen -->        
-        <div class="mobile-screen col-sm-4 sign-up">
+        <div class="mobile-screen col-sm-4 sign-up" id="signin-screen">
           <div class="row justify-content-md-center">
             <div class="header b-margin">
                 <h1 id="sign-in-title">sign in</h1>
-                <h4>welcome back friend</h4>
+                <h4 class="m-text">welcome back friend</h4>
             </div> 
             <form class="b-margin">
               <input type="text" id="fname" name="fname" class="hidden">
@@ -65,14 +65,14 @@
               <button type="button" name="button" class="button" id="btnLogin">login</button>
               <button type="button" name="button" class="hidden button" id="btnLogout">logout</button>
             </form>
-            <h4 class="b-margin-3">or sign up with</h4>
-            <div class="sign-un-icons justify-content-md-center b-margin">
-                <div class="col-sm-6 sign-up-icon-container">
+            <h4 class="b-margin-3 m-text">or sign up with</h4>
+            <div class="signin-icons justify-content-md-center b-margin">
+                <div class="col-xs-6 sign-up-icon-container">
                     <a href="./signup.html">
                         <img id="mail-svg"src="./images/mail.svg" alt="Sign up with an email">
                     </a>
                 </div>
-                <div class="col-sm-6 sign-up-icon-container">
+                <div class="col-xs-6 sign-up-icon-container">
                     <img id="gmail-svg"src="./images/gmail.svg" alt="Sign up with a Google account">
                 </div>
             </div>
