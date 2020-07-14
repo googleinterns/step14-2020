@@ -437,7 +437,12 @@ function pushChatMessage() {
     // push message to datastore
     dbRefObject.push(message);
 
-    messageInput.value = null; // clear the message
+    // scroll down chat history to show recent message
+    var chatHistory = document.getElementById("message-list");
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+    // clear the message
+    messageInput.value = null; 
 
     // update chatInfo
     const chatRef =  dbRefObject.parent.child('chatInfo');
@@ -581,10 +586,6 @@ function initBio() {
     });
 }
 
-
-
-
-
 function populateSidebar() {
     const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
     userTagsRef.orderByKey().on('child_added', snap => {
@@ -624,7 +625,9 @@ function populateProfileSidebar(user) {
 function addUserInfoToDom(userObj) {
     const profile = document.getElementById('user-profile');
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
-    profile.querySelector("#user-pfp").src = userObj.photo;
+    if (userObj.photo != null) {
+        profile.querySelector("#user-pfp").src = userObj.photo;
+    }
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
     const tagList = profile.querySelector("#user-tags");
