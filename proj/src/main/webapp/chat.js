@@ -356,7 +356,7 @@ function init() {
             await initUserChat().then(function(){
                 populateSidebar();
                 initRef(dbRefObject);
-                populateProfileSidebar(firebaseUser);
+                populateProfileSidebar(firebaseUser.uid);
                 initBio();
             });
         }
@@ -493,6 +493,9 @@ function createMessageWithTemplate(key, messageObj) {
     const messageTemplate = document.getElementById('message-temp');
     const docFrag = messageTemplate.content.cloneNode(true);
     const message = docFrag.querySelector('.message')
+
+    const msgHeader = message.querySelector('.message-header');
+    loadProfileOfSender(msgHeader, messageObj.senderUID);
             
     const msgBody = message.querySelector('.message-body');
     msgBody.innerText = messageObj.content;
@@ -501,11 +504,17 @@ function createMessageWithTemplate(key, messageObj) {
     timestamp.innerText = new Date(messageObj.timestamp).toLocaleString();
 
     message.id = key;
+    message.dataset.userId = messageObj.senderUID;
     addUsernameToMessage(messageObj.senderUID, message)
     return message;
 }
 
-
+// onclick for messages
+function loadProfileOfSender(domElement, uid) {
+    domElement.addEventListener('click', function() {
+        populateProfileSidebar(uid);
+    })
+}
 
 function getDbRef(tag, chatId) {
     const path = "/chat/"+tag+"/"+chatId+"/messages";
@@ -605,20 +614,18 @@ function changeChatOnClick(domElement, tag, chatId) {
     });
 }
 
-function populateProfileSidebar(user) {
-    if (user) {
-    const userRef = firebase.database().ref('/users/'+user.uid)
+function populateProfileSidebar(uid) {
+    const userRef = firebase.database().ref('/users/'+uid)
     userRef.once('value', snap => {
         const userObj = {};
-        userObj.photo = user.photoUrl;
-        userObj.uid = user.uid;
+        userObj.photo = snap.val().photo;
+        userObj.uid = uid;
         userObj.fname = snap.val().firstName;
         userObj.lname = snap.val().lastName;
         userObj.bio = snap.val().bio;  // there is no bio yet
         userObj.tags = snap.val().allTags;
         addUserInfoToDom(userObj)
-        })
-    }
+    })
 }
 
 function addUserInfoToDom(userObj) {
@@ -628,6 +635,7 @@ function addUserInfoToDom(userObj) {
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
     const tagList = profile.querySelector("#user-tags");
+    tagList.innerHTML = '';
     for (tag in userObj.tags) {
         if (userObj.tags.hasOwnProperty(tag)) {
             const tagNode = document.createElement('li');
