@@ -11,29 +11,31 @@ body {
 }
 
 #messages {
-    width:75%;
+  width:75%;
 }
 
 .hidden{
-    visibility:hidden;
+  visibility:hidden;
 }
 
 .sidebar {
-    height: 400px;
-    position: absolute;
-    left: 1top: 100;
-    background: red;
+  height: 400px;
+  position: absolute;
+  left: 1top: 100;
+  background: red;
 }
 
 aside {
-    width: 100%;
-    overflow: hidden;
+  width: 100%;
+  overflow: hidden;
 }
 
 
 
 /* main: welcome page */
 /* view: mobile */
+
+
 
 /* override bootstrap presets */
 .container,
@@ -197,8 +199,6 @@ label {
   width: auto;
 }
 
-
-
 /* website footer */
 
 footer div {
@@ -219,4 +219,41 @@ footer a,
 footer a:hover {
   font-weight: lighter;
   color: white;
+}
+
+@media only screen and (max-width: 600px) {
+    .mobile{
+        display:hidden;
+    }
+}
+
+/* welcome screen mobile view */
+@media only screen and (max-width: 600px) {
+    [class*="col-"] {
+        width: 100vh;
+        height:100vh;
+        padding: 0 0 0 0;
+    }
+
+    h1{
+        font-size: 9vw;
+        margin-top: 15vh
+    }
+
+    h3 {
+        font-size: 5vw;
+    }
+
+    h4 {
+        font-size: 3vw;
+        margin-bottom: 8vh;
+    }
+
+    .inblock-center-container {
+        width: 55%;
+    }
+
+    .button {
+        height: 5vh;
+    }
 }
