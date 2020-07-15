@@ -382,7 +382,7 @@ function initUserChat(){
             snapshot.forEach(function(childSnapshot) {
                 var key = childSnapshot.key;
                 var ChatID = childSnapshot.val();
-                if(key && ChatID){
+                if (key && ChatID) {
                     tag = key;
                     globalChatId = ChatID;
                     dbRefObject = getDbRef(tag, globalChatId);
@@ -400,7 +400,6 @@ function setTitle(){
     nameRef = firebase.database().ref("/chat/"+tag+"/"+globalChatId+"/chatInfo/name");
     nameRef.once("value").then(function(snapshot){
         var data = snapshot.val();
-        console.log(data);
         var presentableTitle = data.charAt(0).toUpperCase() + data.slice(1);
         document.getElementById("big-title").innerText = presentableTitle;
     });
@@ -451,6 +450,14 @@ function pushChatMessage() {
     }
     // clear the message
     messageInput.value = null; 
+
+    // update chatInfo
+    const chatRef =  dbRefObject.parent.child('chatInfo');
+    chatRef.update({
+        'lastAuthor': message.senderUID,
+        'lastMessage': message.content,
+        'timestamp': message.timestamp
+    });
 }
 
 function addMoreMessagesAtTheTop() {
@@ -532,7 +539,7 @@ async function makePreviewWithLastMessage(tag, chatId) {
 async function makeChatPreview(chatInfoObj, tag, chatId) {
     if (document.getElementById(chatId)) {
         oldPreview = document.getElementById(chatId);
-        oldPreview.remove();
+        oldPreview.parentNode.removeChild(oldPreview);
     }
 
     const previewTemplate = document.getElementById('chat-preview-temp');
@@ -601,7 +608,7 @@ function populateSidebar() {
 
 function changeChatOnClick(domElement, tag, chatId) {
     domElement.addEventListener('click', function() {
-        var dbRefObject = getDbRef(tag, chatId);
+        dbRefObject = getDbRef(tag, chatId);
         initRef(dbRefObject);
     });
 }
