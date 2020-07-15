@@ -1,3 +1,5 @@
+/* compatible with phones, tablets, and computers*/
+
 body {
   font-family: 'Montserrat', sans-serif !important;
 }
@@ -235,7 +237,8 @@ footer a:hover {
   color: white;
 }
 
-/* styling for desktop and tablets only */
+/* styling for desktop and tablets bigger than ipad pro */
+/* 1024px width or higher*/
 @media only screen and (min-width: 600px) {
     .mobile {
         visibility: hidden;
@@ -251,7 +254,8 @@ footer a:hover {
     }
 }
 
-/* welcome screen mobile view */
+/* mobile view */
+/* under 600px*/
 @media only screen and (max-width: 600px) {
     [class*="mobile-screen"] {
         width: 100vw;
@@ -350,7 +354,8 @@ footer a:hover {
         margin-bottom: 3vh;
     }
 
-    h5 a, h5 a:visited {
+    h5 a, 
+    h5 a:visited {
         font-size: 1.5rem;
         text-decoration: underline; 
     }
@@ -362,5 +367,55 @@ footer a:hover {
 
     .hide-on-mobile {
         display:none;
+    }
+}
+
+/* tablet view */
+@media screen and (min-device-width: 600px) and (max-device-width: 1024px) { 
+    .hide-on-mobile .header {
+        margin-top: 7.5vh;
+        margin-bottom: 13vh;
+    }
+
+    .inblock-center-container {
+        width: 80%;
+        min-width: 0;
+        max-width: 600px;
+    }
+
+    label, textarea {
+        font-size: 1.5rem;
+
+    }
+
+    #tags {
+        height: 8vh;
+        font-size: 1.5rem;
+    }
+
+    #tag-info {
+        font-size: 1.25rem;
+    }
+
+    h3 {
+        font-size: 2rem;
+    }
+
+    h4 {
+        font-size: 2.5rem;
+    }
+
+    h5 a, 
+    h5 a:visited {
+        font-size: 1.5rem;
+        text-decoration: underline; 
+    }
+    
+    img {
+        width: 100%;
+    }
+
+    #chat-image-containter {
+        width: 60%;
     }
 }
