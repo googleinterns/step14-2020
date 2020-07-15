@@ -427,17 +427,29 @@ function initRef(dbRefObject) {
 
 function pushChatMessage() {
     const messageInput = document.getElementById('message-input');
+    // prevent blank messages
+    if (messageInput.value.trim().length != 0){
+        var message = {
+            content : messageInput.value,
+            timestamp : new Date().getTime(),
+            senderDisplay : firebase.auth().currentUser.displayName,
+            senderUID : firebase.auth().currentUser.uid
+        }
+        // push message to datastore
+        dbRefObject.push(message);
 
-    var message = {
-        content : messageInput.value,
-        timestamp : new Date().getTime(),
-        senderDisplay : firebase.auth().currentUser.displayName,
-        senderUID : firebase.auth().currentUser.uid
+        // scroll down chat history to show recent message
+        var chatHistory = document.getElementById("message-list");
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+
+        // update chatInfo
+        const chatRef =  dbRefObject.parent.child('chatInfo');
+        chatRef.child('lastAuthor').set(message.senderUID);
+        chatRef.child('lastMessage').set(message.content);
+        chatRef.child('timestamp').set(message.timestamp);
     }
-    // push message to datastore
-    dbRefObject.push(message);
-
-    messageInput.value = null; // clear the message
+    // clear the message
+    messageInput.value = null; 
 
     // update chatInfo
     const chatRef =  dbRefObject.parent.child('chatInfo');
@@ -635,10 +647,6 @@ function initBio() {
     });
 }
 
-
-
-
-
 function populateSidebar() {
     const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
     userTagsRef.orderByKey().on('child_added', snap => {
@@ -680,7 +688,9 @@ function addUserInfoToDom(userObj) {
             friendRequestButton(userObj.uid);
     }
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
-    profile.querySelector("#user-pfp").src = userObj.photo;
+    if (userObj.photo != null) {
+        profile.querySelector("#user-pfp").src = userObj.photo;
+    }
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
     const tagList = profile.querySelector("#user-tags");

@@ -1,4 +1,4 @@
-html {
+body {
   font-family: 'Montserrat', sans-serif !important;
 }
 
@@ -11,29 +11,31 @@ html {
 }
 
 #messages {
-    width:75%;
+  width:75%;
 }
 
 .hidden{
-    visibility:hidden;
+  visibility:hidden;
 }
 
 .sidebar {
-    height: 400px;
-    position: absolute;
-    left: 1top: 100;
-    background: red;
+  height: 400px;
+  position: absolute;
+  left: 1top: 100;
+  background: red;
 }
 
 aside {
-    width: 100%;
-    overflow: hidden;
+  width: 100%;
+  overflow: hidden;
 }
 
 
 
 /* main: welcome page */
 /* view: mobile */
+
+
 
 /* override bootstrap presets */
 .container,
@@ -60,6 +62,10 @@ aside {
   margin-bottom: 5vh;
 }
 
+.b-margin-3 {
+  margin-bottom: 3vh;
+}
+
 /* left side */
 .info-graphic {
   display: block;
@@ -72,34 +78,29 @@ aside {
 /* title font */
 h1 {
   font-weight: bold;
-  font-size: 9vmin;
+  font-size: 8vmin;
   text-align: center;
   color: #333333;
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  margin-top: 5vh;
 }
 
 /* black subtitle font */
 h3 {
-  font-size: 3.5vmin;
-  font-weight: bold;
-  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  font-size: 3rem;
   display: inline-block;
 }
 
 /* light golden subtitle font */
 h4 {
-  font-size: 3vmin;
+  font-size: 4rem;
   font-weight: lighter;
   text-align: center;
   color: #D1B280;
+  margin-bottom: 10vh;
 }
 
 .full-screen {
-  height: 97vh;
-}
-
-.sign-up {
-  background-color: #333333;
   height: 97vh;
 }
 
@@ -120,23 +121,25 @@ h4 {
   justify-content: center;
 }
 
-.inblock-center-container {
-  width: 50%;
-  max-width: 450px;
-  margin: 0 auto;
-}
-
 /* right side of welcome page */
 .sign-up {
   justify-content: center;
   padding-left: 5%;
   padding-right: 5%;
+  background-color: #333333;
+}
+
+#sign-up-col {
+    max-width: 475px;
+    margin: 0 auto;
 }
 
 #sign-in-title {
   color: white;
-  text-shadow: 0px 4px 4px rgba(255, 255, 255, 0.2);
+  text-shadow: 0px 4px 4px rgba(255, 255, 255, 0.25);
 }
+
+
 
 .input {
   display: inline-flex;
@@ -192,8 +195,6 @@ label {
   width: auto;
 }
 
-
-
 /* website footer */
 
 footer div {
@@ -201,12 +202,14 @@ footer div {
   display: inline-block;
   height: 3vh;
   width: 100vw;
+  position: absolute;
   bottom: 0;
   left: 0;
   text-align: center;
   background: grey;
   font-weight: lighter;
   color: white;
+  padding-top: .75vh;
 }
 
 footer a,
@@ -215,3 +218,94 @@ footer a:hover {
   color: white;
 }
 
+/* styling for desktop and tablets only */
+@media only screen and (min-width: 600px) {
+    .mobile {
+        visibility: hidden;
+    }
+    /* hide scroll button for desktop bc there is nothing to scroll to */
+
+
+    .inblock-center-container {
+        width: 55%;
+        min-width: 555px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}
+
+/* welcome screen mobile view */
+@media only screen and (max-width: 600px) {
+    [class*="mobile-screen"] {
+        width: 100vw;
+        height:100vh;
+        padding: 0 0 0 0;
+    }
+
+    h1 {
+        font-size: 11vw;
+        margin-top: 15vh
+    }
+
+    h3 {
+        font-size: 5vw;
+    }
+
+    h4 {
+        font-size: 3vw;
+        margin-bottom: 8vh;
+    }
+
+    .inblock-center-container {
+        width: 55%;
+    }
+
+    .button {
+        height: 5vh;
+        font-size: 2rem;
+    }
+
+    .inblock-center-container {
+        width: 65%;
+        margin: 0 auto;
+    }
+
+    #info-message{
+        font-size: 3vw;
+        margin-bottom: 8vh;        
+        font-weight: lighter;
+        text-align: center;
+    }
+
+    form {
+        padding: 0 10% 0 10%;
+    }
+
+    img {
+        width: 50%;
+        height: auto;
+    }
+
+    #sign-up-icon-container {
+        padding: 0 -10px 0 -10px;
+    }
+
+    #signin-icons {
+        margin: 0 10% 0 10%;
+    }
+
+    /* mobile text */
+    .m-text {
+        font-size: 2rem;
+    }
+
+
+    form label, 
+    form .input {
+        font-size: 1.5rem;
+    }
+
+    footer div {
+        font-size: x-small;
+    }
+}
