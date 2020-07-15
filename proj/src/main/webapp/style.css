@@ -128,7 +128,8 @@ h5 a:visited {
 }
 
 /* right side of welcome page */
-.sign-up {
+.sign-up,
+.sign-in {
   justify-content: center;
   padding-left: 5%;
   padding-right: 5%;
@@ -324,5 +325,38 @@ footer a:hover {
 
     footer div {
         font-size: x-small;
+    }
+
+    /*  adjustments for sign up page */
+    .sign-up h4 {
+        margin-bottom: 4vh;
+    }
+
+    .sign-up h1 {
+        margin-top: margin-top: 10vh;
+    }
+
+    #tag-info {
+        font-size: 1.25rem;
+    }
+
+    #tags {
+        height: 8vh;
+        font-size: 1.5rem;
+    }
+
+    .sign-up button {
+        margin-top: 5vh;
+        margin-bottom: 3vh;
+    }
+
+    h5 a, h5 a:visited {
+        font-size: 1.5rem;
+        text-decoration: underline; 
+    }
+
+    .sign-up-col {
+        background-color: #333333;
+        height:auto;
     }
 }
