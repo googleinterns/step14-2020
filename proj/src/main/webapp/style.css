@@ -151,7 +151,8 @@ h4 {
   color: #FFFFFF;
 }
 
-label {
+label, 
+textarea {
   font-size:2rem;
   font-weight: lighter;
   color: #FFFFFF;
@@ -191,6 +192,17 @@ label {
   vertical-align: middle;
   height: 90%;
   width: auto;
+}
+
+#tag-info {
+    color: #D1B280;
+    font-size: 1.75rem;
+}
+
+#tags {
+    height: 10vh;
+    text-align: left;
+    font-size: 2rem;
 }
 
 /* website footer */
@@ -299,7 +311,8 @@ footer a:hover {
 
 
     form label, 
-    form .input {
+    form .input,
+    textarea {
         font-size: 1.5rem;
     }
 
