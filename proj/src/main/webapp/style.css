@@ -104,11 +104,6 @@ h4 {
   height: 97vh;
 }
 
-.sign-up {
-  background-color: #333333;
-  height: 97vh;
-}
-
 #chat-image-containter {
   width: 50%;
   height: auto;
@@ -131,12 +126,20 @@ h4 {
   justify-content: center;
   padding-left: 5%;
   padding-right: 5%;
+  background-color: #333333;
+}
+
+#sign-up-col {
+    max-width: 475px;
+    margin: 0 auto;
 }
 
 #sign-in-title {
   color: white;
   text-shadow: 0px 4px 4px rgba(255, 255, 255, 0.25);
 }
+
+
 
 .input {
   display: inline-flex;
