@@ -396,7 +396,7 @@ function initUserChat(){
             snapshot.forEach(function(childSnapshot) {
                 var key = childSnapshot.key;
                 var ChatID = childSnapshot.val();
-                if(key && ChatID){
+                if (key && ChatID) {
                     tag = key;
                     globalChatId = ChatID;
                     dbRefObject = getDbRef(tag, globalChatId);
@@ -441,12 +441,26 @@ function initRef(dbRefObject) {
 
 function pushChatMessage() {
     const messageInput = document.getElementById('message-input');
+    // prevent blank messages
+    if (messageInput.value.trim().length != 0){
+        var message = {
+            content : messageInput.value,
+            timestamp : new Date().getTime(),
+            senderDisplay : firebase.auth().currentUser.displayName,
+            senderUID : firebase.auth().currentUser.uid
+        }
+        // push message to datastore
+        dbRefObject.push(message);
 
-    var message = {
-        content : messageInput.value,
-        timestamp : new Date().getTime(),
-        senderDisplay : firebase.auth().currentUser.displayName,
-        senderUID : firebase.auth().currentUser.uid
+        // scroll down chat history to show recent message
+        var chatHistory = document.getElementById("message-list");
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+
+        // update chatInfo
+        const chatRef =  dbRefObject.parent.child('chatInfo');
+        chatRef.child('lastAuthor').set(message.senderUID);
+        chatRef.child('lastMessage').set(message.content);
+        chatRef.child('timestamp').set(message.timestamp);
     }
     // push message to datastore
     if(message.content.length > 0){
@@ -457,9 +471,11 @@ function pushChatMessage() {
 
     // update chatInfo
     const chatRef =  dbRefObject.parent.child('chatInfo');
-    chatRef.child('lastAuthor').set(message.senderUID);
-    chatRef.child('lastMessage').set(message.content);
-    chatRef.child('timestamp').set(message.timestamp);
+    chatRef.update({
+        'lastAuthor': message.senderUID,
+        'lastMessage': message.content,
+        'timestamp': message.timestamp
+    });
 }
 
 function addMoreMessagesAtTheTop() {
@@ -541,7 +557,7 @@ async function makePreviewWithLastMessage(tag, chatId) {
 async function makeChatPreview(chatInfoObj, tag, chatId) {
     if (document.getElementById(chatId)) {
         oldPreview = document.getElementById(chatId);
-        oldPreview.remove();
+        oldPreview.parentNode.removeChild(oldPreview);
     }
 
     const previewTemplate = document.getElementById('chat-preview-temp');
@@ -597,10 +613,6 @@ function initBio() {
     });
 }
 
-
-
-
-
 function populateSidebar() {
     const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
     userTagsRef.orderByKey().on('child_added', snap => {
@@ -616,7 +628,7 @@ function populateSidebar() {
 
 function changeChatOnClick(domElement, tag, chatId) {
     domElement.addEventListener('click', function() {
-        var dbRefObject = getDbRef(tag, chatId);
+        dbRefObject = getDbRef(tag, chatId);
         initRef(dbRefObject);
     });
 }
@@ -640,7 +652,9 @@ function populateProfileSidebar(user) {
 function addUserInfoToDom(userObj) {
     const profile = document.getElementById('user-profile');
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
-    profile.querySelector("#user-pfp").src = userObj.photo;
+    if (userObj.photo != null) {
+        profile.querySelector("#user-pfp").src = userObj.photo;
+    }
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
     const tagList = profile.querySelector("#user-tags");

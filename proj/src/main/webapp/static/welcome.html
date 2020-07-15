@@ -1,75 +1,78 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Welcome</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+    <title>camaraderie</title>
+
+    <!-- Styling -->
     <!-- Bootstrap: Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <!-- Bootstrap: jQuery library -->
+    <!-- Bootstrap: jQuery library --> 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Bootstrap: Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="../style.css">
     <!-- Font  -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
 
+    <!-- Firebase and other functionality scripts -->
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
-
     <!-- TODO: Add SDKs for Firebase products that you want to use
         https://firebase.google.com/docs/web/setup#available-libraries -->
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
-
     <script src="../app.js"></script>
-
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-messaging.js"></script>
+
   </head>
-  <body onload="getLocation()">
+  
+  <body onload="getLocation()"> 
     <div class="container screen">
       <div class="row fullscreen">
         <!-- page:signup and signin   desktop:left    mobile:full screen -->
-        <div class="col-sm-8 info-graphic">
-          <div class="header b-margin">
+        <div class="mobile-screen col-sm-8 info-graphic d-flex justify-content-center text-center">
+          <div class="header b-margin border border-warning">
             <h1>camaraderie</h1>
-            <h4>a spirit of friendly good-fellowship</h4>
+            <h4>meet friends • engage in communities</h4>
           </div>
           <div class="center-info">
             <div id="chat-image-containter">
-              <img id="chat-image"src="./images/friendsChatting.svg" alt="Friends chatting icon">
+              <img id="chat-image"src="./images/friendsChatting.svg" alt="Friends chatting icon" class="b-margin-3">
             </div>
             <div class="inblock-center-container">
-              <h3 class="center-text"> meet friends <br> create communities</h3>
-              <!-- hide button on desktop -->
-              <!-- <button type="button" name="button" class="button">begin</button> -->
+              <h3 class="center-text" id="info-message"> spend less time finding chat rooms <br> and more time making friends</h3>
+              <a href="#signin-screen"><button type="button" name="button" class="button mobile">begin</button></a>
             </div> 
           </div>
         </div>
         <!-- sign up   desktop:right    mobile:full screen -->        
-        <div class="col-sm-4 sign-up">
-          <div class="row justify-content-md-center">
+        <div class="mobile-screen col-sm-4 sign-up" id="signin-screen">
+          <div class="row justify-content-md-center" id="sign-up-col">
             <div class="header b-margin">
                 <h1 id="sign-in-title">sign in</h1>
-                <h4>welcome back friend</h4>
+                <h4 class="m-text">welcome back friend</h4>
             </div> 
             <form class="b-margin">
               <input type="text" id="fname" name="fname" class="hidden">
               <input type="text" id="lname" name="lname" class="hidden">
               <label for="email">email:</label><br>
-              <input type="text" id="email" name="email" class="input" required><br>
+              <input type="text" id="email" name="email" class="input b-margin-3" required><br>
               <label for="password">password:</label><br>
               <input type="password" id="pass" name="password" class="input b-margin" required><br>
               <button type="button" name="button" class="button" id="btnLogin">login</button>
               <button type="button" name="button" class="hidden button" id="btnLogout">logout</button>
             </form>
-            <h4 class="b-margin">or sign up with</h4>
-            <div class="sign-un-icons justify-content-md-center b-margin">
-                <div class="col-sm-6 sign-up-icon-container">
+            <h4 class="b-margin-3 m-text">or sign up with</h4>
+            <div class="signin-icons justify-content-md-center b-margin">
+                <div class="col-xs-6 sign-up-icon-container">
                     <a href="./signup.html">
                         <img id="mail-svg"src="./images/mail.svg" alt="Sign up with an email">
                     </a>
                 </div>
-                <div class="col-sm-6 sign-up-icon-container">
+                <div class="col-xs-6 sign-up-icon-container">
                     <img id="gmail-svg"src="./images/gmail.svg" alt="Sign up with a Google account">
                 </div>
             </div>
@@ -79,7 +82,7 @@
 
   <footer>
     <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-  <footer>
+  </footer>
       <script src="../script.js"></script>
   </body>
 </html>
