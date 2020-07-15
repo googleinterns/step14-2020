@@ -355,7 +355,7 @@ footer a:hover {
         text-decoration: underline; 
     }
 
-    .sign-up-col {
+    #sign-up-col {
         background-color: #333333;
         height:auto;
     }
