@@ -516,6 +516,51 @@ function loadProfileOfSender(domElement, uid) {
     })
 }
 
+function friendRequestButton(uid) {
+    const currUserRef = firebase.database().ref('/users/'+currentUID+'/friend-requests/'+uid);
+    const otherUserRef = firebase.database().ref('/users/'+uid+'/friend-requests/'+currentUID);
+
+    const buttonHouse = document.getElementById('button-house');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.id = 'friend-request';
+
+    currUserRef.off();
+    currUserRef.on('value', function(snap) {
+        switch (snap.val()) {
+            case 'sent':
+                // cancel friend request
+                button.innerText = 'cancel friend request';
+                button.addEventListener('click', function() {
+                    currUserRef.remove();
+                    otherUserRef.remove();
+                })
+                break;
+            case 'received':
+                // accept or deny
+                button.innerText = 'accept friend request';
+                button.addEventListener('click', function() {
+                    currUserRef.remove();
+                    otherUserRef.remove();
+
+                    const currFriendRef = firebase.database().ref('/users/'+currentUID+'/friends/'+uid);
+                    const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUID);
+                    currFriendRef.set(true);
+                    otherFriendRef.set(true);
+                });
+                break;
+            default:
+                // send request
+                button.innerText = 'send friend request';
+                button.addEventListener('click', function() {
+                    currUserRef.set('sent');
+                    otherUserRef.set('received');
+                });
+        }
+        buttonHouse.append(button);
+    });
+}
+
 function getDbRef(tag, chatId) {
     const path = "/chat/"+tag+"/"+chatId+"/messages";
     const dbRefObj = firebase.database().ref(path);
@@ -630,6 +675,10 @@ function populateProfileSidebar(uid) {
 
 function addUserInfoToDom(userObj) {
     const profile = document.getElementById('user-profile');
+    profile.querySelector("#button-house").innerHTML = '';
+    if (userObj.uid !== currentUID) {
+            friendRequestButton(userObj.uid);
+    }
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
     profile.querySelector("#user-pfp").src = userObj.photo;
     profile.querySelector("#user-bio").innerText = userObj.bio;
