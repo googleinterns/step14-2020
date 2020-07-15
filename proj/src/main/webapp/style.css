@@ -100,6 +100,12 @@ h4 {
   margin-bottom: 10vh;
 }
 
+h5 a, 
+h5 a:visited {
+  color: #D1B280;    
+  font-size:2.5rem;
+}
+
 .full-screen {
   height: 97vh;
 }
