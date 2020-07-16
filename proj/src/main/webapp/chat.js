@@ -126,6 +126,8 @@ $('#pass, #passconf').on('keyup', function (){
         if ($('#pass').val() == $('#passconf').val()){
             console.log("passwords match")
             $('#btnSignUp').prop('disabled', false);
+            $('#pass').css('border-bottom','2px solid #d1b280');
+            $('#passconf').css('border-bottom','2px solid #d1b280');
         }else{
             // disable sign up button
             $('#btnSignUp').prop('disabled', true);
