@@ -50,8 +50,7 @@ function errorCallback(err){
 function getLocation() {
     if(navigator.geolocation){
         navigator.geolocation.getCurrentPosition(successCallback,errorCallback,{timeout:10000, enableHighAccuracy:false});
-    }
-    else{
+    } else{
         console.log("Error. Geolocation not supported or not enabled");
     }
     return;
@@ -71,8 +70,7 @@ $('#pass').on('keyup', function(){
     // enables sign up button if the pw requirements are met
     if (goodPassword === true) {
         $('#btnSignUp').prop('disabled', false);
-    } 
-    else{
+    } else{
         $('#btnSignUp').prop('disabled', true);
     }
 });
@@ -81,8 +79,7 @@ function passwordLength(password){
     if (password.value.length > 7){
         $('#pwLength').addClass('alert-success');
         goodPassword = true; 
-    } 
-    else{
+    } else{
         $('#pwLength').removeClass('alert-success');
         goodPassword = false;
     }
@@ -93,8 +90,7 @@ function containsNumber(password){
     if(password.value.match(number)){
         $('#pwNumber').addClass('alert-success');
         goodPassword = true;
-    } 
-    else{
+    } else{
         $('#pwNumber').removeClass('alert-success');
         goodPassword = false;
     }
