@@ -574,6 +574,9 @@ function friendRequestButton(uid) {
                     const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUID);
                     currFriendRef.set(true);
                     otherFriendRef.set(true);
+
+                    deny.hidden = true;
+                    deny.onclick = null;
                 };
 
                 deny = document.getElementById('deny');
@@ -587,12 +590,29 @@ function friendRequestButton(uid) {
                 deny.hidden = false;
                 break;
             default:
-                // send request
-                button.innerText = 'send friend request';
-                button.onclick = function() {
-                    currUserRef.set('sent');
-                    otherUserRef.set('received');
-                };
+                // check if already friends, then send request
+                const currFriendRef = firebase.database().ref('/users/'+currentUID+'/friends/'+uid);
+                const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUID);
+
+                currFriendRef.off();
+                currFriendRef.on('value', function(snap) {
+                    if (snap.val()) {
+                        // already friends, unfriend button
+                        button.innerText = 'unfriend';
+                        button.onclick = function() {
+                            currFriendRef.remove();
+                            otherFriendRef.remove();
+                        };
+                    } else {
+                        // not friends, send request
+                        button.innerText = 'send friend request';
+                        button.onclick = function() {
+                            currUserRef.set('sent');
+                            otherUserRef.set('received');
+                        };
+                    }
+                })
+                
         }
         button.hidden = false;
     });
