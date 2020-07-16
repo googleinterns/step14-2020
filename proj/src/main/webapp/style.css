@@ -139,13 +139,14 @@ h5 a:visited {
 }
 
 #sign-up-col {
-    max-width: 475px;
-    margin: 0 auto;
+  max-width: 475px;
+  margin: 0 auto;
 }
 
 #sign-in-title {
   color: white;
   text-shadow: 0px 4px 4px rgba(255, 255, 255, 0.25);
+  font-size: 7vmin;
 }
 
 .input {
@@ -165,6 +166,23 @@ textarea {
   font-size:2rem;
   font-weight: lighter;
   color: #FFFFFF;
+}
+
+#welcome {
+  margin-bottom: 3vh;
+}
+
+.alert {
+  margin-top: 3px;
+  margin-bottom: 0;
+  padding: 10px;
+  border-radius: 0;
+}
+
+.alert-secondary {
+  color: #4F4F4F;
+  background-color: lightgray;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .button {
@@ -247,9 +265,7 @@ footer a:hover {
 
 
     .inblock-center-container {
-        width: 55%;
-        min-width: 555px;
-        max-width: 600px;
+        width: 450px;
         margin: 0 auto;
     }
 }
@@ -275,10 +291,6 @@ footer a:hover {
     h4 {
         font-size: 3vw;
         margin-bottom: 8vh;
-    }
-
-    .inblock-center-container {
-        width: 55%;
     }
 
     .button {
