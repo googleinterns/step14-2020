@@ -21,3 +21,4 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://arringtonh-step-2020-d.firebaseio.com"
 });
+
