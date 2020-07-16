@@ -120,6 +120,22 @@ function createOrJoinChat(currentTag){
     });
 }
 
+// Checks for password confirmation
+$('#pass, #passconf').on('keyup', function (){
+    if ((pass.value.length != 0) && (passconf.value.length != 0)){
+        if ($('#pass').val() == $('#passconf').val()){
+            console.log("passwords match")
+            $('#btnSignUp').prop('disabled', false);
+        }else{
+            // disable sign up button
+            $('#btnSignUp').prop('disabled', true);
+            // underline the inputs in red
+            $('#pass').css('border-bottom','2px solid #fa8072');
+            $('#passconf').css('border-bottom','2px solid #fa8072');
+            console.log("password dose not match");
+        }
+    }
+});
 
 // Add sign up event
 if(btnSignUp){
