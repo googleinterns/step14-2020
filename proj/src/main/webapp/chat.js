@@ -575,6 +575,16 @@ function friendRequestButton(uid) {
                     currFriendRef.set(true);
                     otherFriendRef.set(true);
                 };
+
+                deny = document.getElementById('deny');
+                deny.onclick = function () {
+                    currUserRef.remove();
+                    otherUserRef.remove();
+
+                    deny.hidden = true;
+                    deny.onclick = null;
+                };
+                deny.hidden = false;
                 break;
             default:
                 // send request
