@@ -1,3 +1,5 @@
+/* compatible with phones, tablets, and computers*/
+
 body {
   font-family: 'Montserrat', sans-serif !important;
 }
@@ -87,7 +89,7 @@ h1 {
 
 /* black subtitle font */
 h3 {
-  font-size: 3rem;
+  font-size: 3.5rem;
   display: inline-block;
 }
 
@@ -128,7 +130,8 @@ h5 a:visited {
 }
 
 /* right side of welcome page */
-.sign-up {
+.sign-up,
+.sign-in {
   justify-content: center;
   padding-left: 5%;
   padding-right: 5%;
@@ -234,7 +237,8 @@ footer a:hover {
   color: white;
 }
 
-/* styling for desktop and tablets only */
+/* styling for desktop and tablets bigger than ipad pro */
+/* 1024px width or higher*/
 @media only screen and (min-width: 600px) {
     .mobile {
         visibility: hidden;
@@ -250,7 +254,8 @@ footer a:hover {
     }
 }
 
-/* welcome screen mobile view */
+/* mobile view */
+/* under 600px*/
 @media only screen and (max-width: 600px) {
     [class*="mobile-screen"] {
         width: 100vw;
@@ -324,5 +329,93 @@ footer a:hover {
 
     footer div {
         font-size: x-small;
+    }
+
+    /*  adjustments for sign up page */
+    .sign-up h4 {
+        margin-bottom: 4vh;
+    }
+
+    .sign-up h1 {
+        margin-top: 12vh;
+    }
+
+    #tag-info {
+        font-size: 1.25rem;
+    }
+
+    #tags {
+        height: 8vh;
+        font-size: 1.5rem;
+    }
+
+    .sign-up button {
+        margin-top: 5vh;
+        margin-bottom: 3vh;
+    }
+
+    h5 a, 
+    h5 a:visited {
+        font-size: 1.5rem;
+        text-decoration: underline; 
+    }
+
+    #sign-up-col {
+        background-color: #333333;
+        height:auto;
+    }
+
+    .hide-on-mobile {
+        display:none;
+    }
+}
+
+/* tablet view */
+@media screen and (min-device-width: 600px) and (max-device-width: 1024px) { 
+    .hide-on-mobile .header {
+        margin-top: 7.5vh;
+        margin-bottom: 13vh;
+    }
+
+    .inblock-center-container {
+        width: 80%;
+        min-width: 0;
+        max-width: 600px;
+    }
+
+    label, textarea {
+        font-size: 1.5rem;
+
+    }
+
+    #tags {
+        height: 8vh;
+        font-size: 1.5rem;
+    }
+
+    #tag-info {
+        font-size: 1.25rem;
+    }
+
+    h3 {
+        font-size: 2rem;
+    }
+
+    h4 {
+        font-size: 2.5rem;
+    }
+
+    h5 a, 
+    h5 a:visited {
+        font-size: 1.5rem;
+        text-decoration: underline; 
+    }
+    
+    img {
+        width: 100%;
+    }
+
+    #chat-image-containter {
+        width: 60%;
     }
 }
