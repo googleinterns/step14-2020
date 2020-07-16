@@ -100,6 +100,12 @@ h4 {
   margin-bottom: 10vh;
 }
 
+h5 a, 
+h5 a:visited {
+  color: #D1B280;    
+  font-size:2.5rem;
+}
+
 .full-screen {
   height: 97vh;
 }
@@ -139,8 +145,6 @@ h4 {
   text-shadow: 0px 4px 4px rgba(255, 255, 255, 0.25);
 }
 
-
-
 .input {
   display: inline-flex;
   outline: none;
@@ -153,7 +157,8 @@ h4 {
   color: #FFFFFF;
 }
 
-label {
+label, 
+textarea {
   font-size:2rem;
   font-weight: lighter;
   color: #FFFFFF;
@@ -193,6 +198,17 @@ label {
   vertical-align: middle;
   height: 90%;
   width: auto;
+}
+
+#tag-info {
+    color: #D1B280;
+    font-size: 1.75rem;
+}
+
+#tags {
+    height: 10vh;
+    text-align: left;
+    font-size: 2rem;
 }
 
 /* website footer */
@@ -301,7 +317,8 @@ footer a:hover {
 
 
     form label, 
-    form .input {
+    form .input,
+    textarea {
         font-size: 1.5rem;
     }
 
