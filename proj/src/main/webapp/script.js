@@ -62,11 +62,23 @@ function getLocation() {
 */ 
 // Check if the password meets the password requirement 
 $('#pass').click(function(){
+    // activates the password requirments 
     showRequirements();
+    $('#pass').on('keyup', function(){
+        number();
+    });
 });
 
 function showRequirements(){
     console.log("show requirements");
+}
+
+// Checks if the password contains a number
+function number(){
+    var number = /^[0-9]/;
+    if($('pass').value.match(letterNumber)){
+        console.log("password includes a number")
+    } 
 }
 
 // Check for password confirmation
