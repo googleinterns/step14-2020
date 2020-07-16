@@ -77,8 +77,7 @@ $('#pass').on('keyup', function(){
 // Checks if the password contains a number
 function number(){
     var number = /^[0-9]/;
-    const password = document.getElementById("pass");
-
+    var password = document.getElementById("pass");
     if(password.value.match(number)){
         $('#pwNumber').addClass('alert-success');
         console.log("number")
