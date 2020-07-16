@@ -124,7 +124,6 @@ function createOrJoinChat(currentTag){
 $('#pass, #passconf').on('keyup', function (){
     if ((pass.value.length != 0) && (passconf.value.length != 0)){
         if ($('#pass').val() == $('#passconf').val()){
-            console.log("passwords match")
             $('#btnSignUp').prop('disabled', false);
             $('#pass').css('border-bottom','2px solid #d1b280');
             $('#passconf').css('border-bottom','2px solid #d1b280');
@@ -134,7 +133,6 @@ $('#pass, #passconf').on('keyup', function (){
             // underline the inputs in red
             $('#pass').css('border-bottom','2px solid #fa8072');
             $('#passconf').css('border-bottom','2px solid #fa8072');
-            console.log("password dose not match");
         }
     }
 });
