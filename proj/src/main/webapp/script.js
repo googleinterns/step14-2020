@@ -57,10 +57,39 @@ function getLocation() {
     return;
 }
 
+/*
+    Setting password 
+*/ 
+// Check if the password meets the password requirement 
+$('#pass').click(function(){
+    showRequirements();
+});
+
+function showRequirements(){
+    console.log("show requirements");
+}
+
+// Check for password confirmation
+$('#pass, #passconf').on('keyup', function(){
+    if ((pass.value.length != 0) && (passconf.value.length != 0)){
+        if ($('#pass').val() == $('#passconf').val()){
+            $('#btnSignUp').prop('disabled', false);
+            $('#pass').css('border-bottom','2px solid #d1b280');
+            $('#passconf').css('border-bottom','2px solid #d1b280');
+        }else{
+            // disable sign up button
+            $('#btnSignUp').prop('disabled', true);
+            // underline the inputs in red
+            $('#pass').css('border-bottom','3px solid #fa8072');
+            $('#passconf').css('border-bottom','3px solid #fa8072');
+        }
+    }
+})
+
 
 /*
     Chatroom sidebar
- */ 
+*/ 
 
 // Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
 $('#body-row .collapse').collapse('hide'); 
