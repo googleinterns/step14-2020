@@ -60,25 +60,32 @@ function getLocation() {
 /*
     Setting password 
 */ 
-// Check if the password meets the password requirement 
 $('#pass').click(function(){
     // activates the password requirments 
     showRequirements();
-    $('#pass').on('keyup', function(){
-        number();
-    });
 });
 
 function showRequirements(){
     console.log("show requirements");
 }
 
+// Check if the password meets the password requirement 
+$('#pass').on('keyup', function(){
+    number();
+});
+
 // Checks if the password contains a number
 function number(){
     var number = /^[0-9]/;
-    if($('pass').value.match(letterNumber)){
-        console.log("password includes a number")
+    const password = document.getElementById("pass");
+
+    if(password.value.match(number)){
+        $('#pwNumber').addClass('alert-success');
+        console.log("number")
     } 
+    else{
+        $('#pwNumber').removeClass('alert-success');
+    }
 }
 
 // Check for password confirmation
