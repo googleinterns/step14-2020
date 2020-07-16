@@ -60,44 +60,55 @@ function getLocation() {
 /*
     Setting password 
 */ 
-$('#pass').click(function(){
-    // activates the password requirments 
-    showRequirements();
-});
-
-function showRequirements(){
-    console.log("show requirements");
-}
 
 // Check if the password meets the password requirement 
 $('#pass').on('keyup', function(){
     const password = document.getElementById("pass");
-    containsNumber();
-    containsSymbol();
-});
-
-// function passwordLength(){
-//     if 
-// }
-
-function containsNumber(){
-    var number = /[0-9]/;
-    if(password.value.match(number)){
-        $('#pwNumber').addClass('alert-success');
+    var goodPassword = false;
+    passwordLength(password, goodPassword);
+    containsNumber(password, goodPassword);
+    containsSymbol(password, goodPassword);
+    // enables sign up button if the pw requirements are met
+    if (goodPassword === true) {
+        $('#btnSignUp').prop('disabled', false);
     } 
     else{
-        $('#pwNumber').removeClass('alert-success');
+        $('#btnSignUp').prop('disabled', true);
+    }
+});
+
+function passwordLength(password){
+    if (password.value.length > 7){
+        $('#pwLength').addClass('alert-success');
+        goodPassword = true; 
+    } 
+    else{
+        $('#pwLength').removeClass('alert-success');
+        goodPassword = false;
     }
 }
 
-function containsSymbol(){
+function containsNumber(password){
+    var number = /[0-9]/;
+    if(password.value.match(number)){
+        $('#pwNumber').addClass('alert-success');
+        goodPassword = true;
+    } 
+    else{
+        $('#pwNumber').removeClass('alert-success');
+        goodPassword = false;
+    }
+}
+
+function containsSymbol(password){
     var symbol = /[$-/:-?{-~!"^_`\[\]]/;
     // const password = document.getElementById("pass");
     if(password.value.match(symbol)){
         $('#pwSymbol').addClass('alert-success');
-    } 
-    else{
+        goodPassword = true;
+    } else{
         $('#pwSymbol').removeClass('alert-success');
+        goodPassword = false;
     }
 }
 
@@ -108,7 +119,7 @@ $('#pass, #passconf').on('keyup', function(){
             $('#btnSignUp').prop('disabled', false);
             $('#pass').css('border-bottom','2px solid #d1b280');
             $('#passconf').css('border-bottom','2px solid #d1b280');
-        }else{
+        } else{
             // disable sign up button
             $('#btnSignUp').prop('disabled', true);
             // underline the inputs in red
