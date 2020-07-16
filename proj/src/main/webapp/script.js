@@ -71,13 +71,17 @@ function showRequirements(){
 
 // Check if the password meets the password requirement 
 $('#pass').on('keyup', function(){
+    const password = document.getElementById("pass");
     containsNumber();
     containsSymbol();
 });
 
+// function passwordLength(){
+//     if 
+// }
+
 function containsNumber(){
     var number = /[0-9]/;
-    const password = document.getElementById("pass");
     if(password.value.match(number)){
         $('#pwNumber').addClass('alert-success');
     } 
@@ -88,7 +92,7 @@ function containsNumber(){
 
 function containsSymbol(){
     var symbol = /[$-/:-?{-~!"^_`\[\]]/;
-    const password = document.getElementById("pass");
+    // const password = document.getElementById("pass");
     if(password.value.match(symbol)){
         $('#pwSymbol').addClass('alert-success');
     } 
