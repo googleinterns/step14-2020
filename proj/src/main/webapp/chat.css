@@ -1,10 +1,7 @@
-html {
-  font-family: 'Montserrat', sans-serif !important;
-}
-
 /* container with all child divs aligned horizontally in the center*/
 body {
     background-color: #333333;
+    font-family: 'Montserrat', sans-serif !important;
 }
 
 /* right chat */
