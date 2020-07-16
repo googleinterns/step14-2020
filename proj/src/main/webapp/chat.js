@@ -532,10 +532,7 @@ function friendRequestButton(uid) {
     const currUserRef = firebase.database().ref('/users/'+currentUID+'/friend-requests/'+uid);
     const otherUserRef = firebase.database().ref('/users/'+uid+'/friend-requests/'+currentUID);
 
-    const buttonHouse = document.getElementById('button-house');
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.id = 'friend-request';
+    const button = document.getElementById('friend-request');
 
     currUserRef.off();
     currUserRef.on('value', function(snap) {
@@ -543,15 +540,15 @@ function friendRequestButton(uid) {
             case 'sent':
                 // cancel friend request
                 button.innerText = 'cancel friend request';
-                button.addEventListener('click', function() {
+                button.onclick = function() {
                     currUserRef.remove();
                     otherUserRef.remove();
-                })
+                };
                 break;
             case 'received':
                 // accept or deny
                 button.innerText = 'accept friend request';
-                button.addEventListener('click', function() {
+                button.onclick = function() {
                     currUserRef.remove();
                     otherUserRef.remove();
 
@@ -559,17 +556,17 @@ function friendRequestButton(uid) {
                     const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUID);
                     currFriendRef.set(true);
                     otherFriendRef.set(true);
-                });
+                };
                 break;
             default:
                 // send request
                 button.innerText = 'send friend request';
-                button.addEventListener('click', function() {
+                button.onclick = function() {
                     currUserRef.set('sent');
                     otherUserRef.set('received');
-                });
+                };
         }
-        buttonHouse.append(button);
+        button.hidden = false;
     });
 }
 
@@ -683,10 +680,12 @@ function populateProfileSidebar(uid) {
 
 function addUserInfoToDom(userObj) {
     const profile = document.getElementById('user-profile');
-    profile.querySelector("#button-house").innerHTML = '';
     if (userObj.uid !== currentUID) {
             friendRequestButton(userObj.uid);
+    } else {
+        document.getElementById('friend-request').hidden = true;
     }
+
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
     if (userObj.photo != null) {
         profile.querySelector("#user-pfp").src = userObj.photo;
