@@ -63,6 +63,9 @@ function getLocation() {
 // Check if the password meets the password requirement with every character
 $('#pass').on('keyup', function(){
     meetRequirements();
+    pwLength.hidden = false;
+    pwNumber.hidden = false;
+    pwSymbol.hidden = false;
 });
 
 // Check if the password is strong enough 
