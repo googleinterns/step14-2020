@@ -60,28 +60,39 @@ function getLocation() {
     Setting password 
 */ 
 
-// Check if the password meets the password requirement 
+// Check if the password meets the password requirement with every character
 $('#pass').on('keyup', function(){
+    meetRequirements();
+});
+
+// Check if the password is strong enough 
+function meetRequirements(){
     const password = document.getElementById("pass");
     var goodPassword = false;
-    passwordLength(password, goodPassword);
-    containsNumber(password, goodPassword);
-    containsSymbol(password, goodPassword);
-    // enables sign up button if the pw requirements are met
-    if (goodPassword === true) {
-        $('#btnSignUp').prop('disabled', false);
+    passwordLength(password);
+    containsNumber(password);
+    containsSymbol(password);
+
+    /* returns true or false so that the sign up button is enables with a 
+    strong password and matching confirmation password **/
+    var goodPassword = [passwordLength,containsNumber,containsSymbol].every(function(handler){return handler(password)})
+    if (goodPassword){
+        console.log("good password");
+        return true;
     } else{
-        $('#btnSignUp').prop('disabled', true);
+        console.log("bad password");
+        return false;
     }
-});
+}
 
 function passwordLength(password){
     if (password.value.length > 7){
         $('#pwLength').addClass('alert-success');
-        goodPassword = true; 
+        return true;
     } else{
         $('#pwLength').removeClass('alert-success');
-        goodPassword = false;
+        console.log("too short");
+        return false;
     }
 }
 
@@ -89,10 +100,11 @@ function containsNumber(password){
     var number = /[0-9]/;
     if(password.value.match(number)){
         $('#pwNumber').addClass('alert-success');
-        goodPassword = true;
+        return true;
     } else{
         $('#pwNumber').removeClass('alert-success');
-        goodPassword = false;
+        console.log("no number");
+        return false;
     }
 }
 
@@ -101,16 +113,18 @@ function containsSymbol(password){
     // const password = document.getElementById("pass");
     if(password.value.match(symbol)){
         $('#pwSymbol').addClass('alert-success');
-        goodPassword = true;
+        return true;
     } else{
         $('#pwSymbol').removeClass('alert-success');
-        goodPassword = false;
+        console.log("no symbol");
+        return false;        
     }
 }
 
-// Check for password confirmation
+/* Check for password confirmation 
+    enable button if and only if the password meets the requiremetns and match **/
 $('#pass, #passconf').on('keyup', function(){
-    if ((pass.value.length != 0) && (passconf.value.length != 0)){
+    if ((pass.value.length != 0) && (passconf.value.length != 0) && meetRequirements){
         if ($('#pass').val() == $('#passconf').val()){
             $('#btnSignUp').prop('disabled', false);
             $('#pass').css('border-bottom','2px solid #d1b280');
