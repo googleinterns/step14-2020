@@ -75,11 +75,7 @@ function meetRequirements(){
     /* returns true or false so that the sign up button is enables with a 
     strong password and matching confirmation password **/
     var goodPassword = [passwordLength,containsNumber,containsSymbol].every(function(handler){return handler(password)})
-    if (goodPassword){
-        return true;
-    } else{
-        return false;
-    }
+    return goodPassword;
 }
 
 function passwordLength(password){
