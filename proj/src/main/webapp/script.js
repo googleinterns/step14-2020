@@ -72,10 +72,6 @@ $('#pass').on('keyup', function(){
 function meetRequirements(){
     const password = document.getElementById("pass");
     var goodPassword = false;
-    passwordLength(password);
-    containsNumber(password);
-    containsSymbol(password);
-
     /* returns true or false so that the sign up button is enables with a 
     strong password and matching confirmation password **/
     var goodPassword = [passwordLength,containsNumber,containsSymbol].every(function(handler){return handler(password)})
