@@ -77,10 +77,8 @@ function meetRequirements(){
     strong password and matching confirmation password **/
     var goodPassword = [passwordLength,containsNumber,containsSymbol].every(function(handler){return handler(password)})
     if (goodPassword){
-        console.log("good password");
         return true;
     } else{
-        console.log("bad password");
         return false;
     }
 }
@@ -91,7 +89,6 @@ function passwordLength(password){
         return true;
     } else{
         $('#pwLength').removeClass('alert-success');
-        console.log("too short");
         return false;
     }
 }
@@ -103,7 +100,6 @@ function containsNumber(password){
         return true;
     } else{
         $('#pwNumber').removeClass('alert-success');
-        console.log("no number");
         return false;
     }
 }
@@ -121,6 +117,7 @@ function containsSymbol(password){
     }
 }
 
+
 /* Check for password confirmation 
     enable button if and only if the password meets the requiremetns and match **/
 $('#pass, #passconf').on('keyup', function(){
@@ -129,12 +126,14 @@ $('#pass, #passconf').on('keyup', function(){
             $('#btnSignUp').prop('disabled', false);
             $('#pass').css('border-bottom','2px solid #d1b280');
             $('#passconf').css('border-bottom','2px solid #d1b280');
+            noMatch.hidden = true;
         } else{
             // disable sign up button
             $('#btnSignUp').prop('disabled', true);
             // underline the inputs in red
-            $('#pass').css('border-bottom','3px solid #fa8072');
-            $('#passconf').css('border-bottom','3px solid #fa8072');
+            $('#pass').css('border-bottom','2px solid #fa8072');
+            $('#passconf').css('border-bottom','2px solid #fa8072');
+            noMatch.hidden = false;
         }
     }
 })

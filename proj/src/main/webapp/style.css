@@ -191,7 +191,8 @@ textarea {
     border-color: #d6e9c6;
 }
 
-#pwSymbol {
+#pwSymbol,
+#noMatch {
     margin-bottom: 8px;
 }
 
