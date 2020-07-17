@@ -65,16 +65,16 @@
               <label for="password">strong password:</label><br> 
               <input type="password" id="pass" name="password" class="input" required><br>
               <!-- password tests -->
-                <div class="alert alert-secondary" role="alert" id="pwLength">
-                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" hidden></span>
+                <div class="alert alert-secondary" role="alert" id="pwLength" hidden>
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                      At least 8 characters—the more characters, the better 
                 </div>
-                <div class="alert alert-secondary" role="alert" id="pwNumber">
-                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" hidden></span>
+                <div class="alert alert-secondary" role="alert" id="pwNumber" hidden>
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                      At least one number (0-9)
                 </div>
-                <div class="alert alert-secondary" role="alert" id="pwSymbol">
-                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" hidden></span>
+                <div class="alert alert-secondary" role="alert" id="pwSymbol" hidden> 
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                      A least one symbol (*.!@#$%^&(){}[]:;<>,.?/~_+-=|\) 
                 </div>
               <label for="password">confirm password:</label><br>
@@ -87,7 +87,7 @@
               <label id="tag-info"> tags are an essential part of the experience. write a tag for whatever you are interested, the sky is the limit.</label>
               <textarea class="form-control" rows="3" id="tags" name="tags" class="input b-margin" placeholder="music, marvel, intern, nyc, cats" required></textarea><br>
  
-              <button type="button" name="button" class="button" id="btnSignUp">join</button>
+              <button type="button" name="button" class="button" id="btnSignUp" disabled>join</button>
             </form>
             <h5 class="text-center"><a href="./welcome.html">already have an account? sign in</a></h5>
             </div>

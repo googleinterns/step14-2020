@@ -115,7 +115,6 @@ function containsSymbol(password){
         return true;
     } else{
         $('#pwSymbol').removeClass('alert-success');
-        console.log("no symbol");
         return false;        
     }
 }
