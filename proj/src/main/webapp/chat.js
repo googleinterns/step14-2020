@@ -102,7 +102,6 @@ function createOrJoinChat(currentTag){
     return ref.once("value").then(function(snapshot){
         // Checks to see if tag already exists in database
         if(snapshot.hasChild(currentTag)){
-
             // If tag already exists, navigate to users and add users if there is room
             var query = firebase.database().ref("/chat/" + currentTag + "/").orderByKey();
             return query.once("value").then(function(snapshot){
@@ -231,8 +230,8 @@ function removeAllCurrentTags(currentTags, allTagsRef, tagRemovalRef, abridgedTa
 async function setUserTags(tagList){
     if(firebase.auth().currentUser){
 
-        const abridgedTagsRef = "/users/" + firebaseUser.uid + "/allTags";
-        const abridgedTagRemovalRef = "/users/" + firebaseUser.uid + "/tagRemovalDict";
+        const abridgedTagsRef = "/users/" + currentUID + "/allTags";
+        const abridgedTagRemovalRef = "/users/" + currentUID + "/tagRemovalDict";
         
         var allTagsRef;
         var tagRemovalRef;
@@ -263,7 +262,7 @@ async function setUserTags(tagList){
                 allTags[tag] = key;
             }
 
-            await removeAllCurrentTags(currentTags);
+            await removeAllCurrentTags(currentTags, allTagsRef, tagRemovalRef, abridgedTagsRef);
 
             resolve(1);
         }).then(function(){
@@ -283,8 +282,8 @@ async function setUserTags(tagList){
 async function addUserTags(tagList){
     if(firebase.auth().currentUser){
 
-        const abridgedTagsRef = "/users/" + firebaseUser.uid + "/allTags";
-        const abridgedTagRemovalRef = "/users/" + firebaseUser.uid + "/tagRemovalDict";
+        const abridgedTagsRef = "/users/" + currentUID + "/allTags";
+        const abridgedTagRemovalRef = "/users/" + currentUID + "/tagRemovalDict";
 
         var allTagsRef;
         var tagRemovalRef;
@@ -397,7 +396,6 @@ function init() {
 
     const chat = document.getElementById('chatbox');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
-
 }
 
 
@@ -477,10 +475,6 @@ function pushChatMessage() {
         chatRef.child('lastAuthor').set(message.senderUID);
         chatRef.child('lastMessage').set(message.content);
         chatRef.child('timestamp').set(message.timestamp);
-    }
-    // push message to datastore
-    if(message.content.length > 0){
-        dbRefObject.push(message);
     }
 
     messageInput.value = null; // clear the message
@@ -758,13 +752,56 @@ function addUserInfoToDom(userObj) {
     }
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
-    const tagList = profile.querySelector("#user-tags");
-    tagList.innerHTML = '';
+    const tagContainer = profile.querySelector(".tag-container");
+    tagContainer.innerHTML = '';
+    if (userObj.uid == currentUID) {
+        // creating it here because i clear the contents of tag-container
+        const tagInput = document.createElement('input');
+        tagInput.id = "tag-input";
+        tagInput.addEventListener('keyup', function (event) {
+            if (event.keyCode == 13 && !userObj.tags.hasOwnProperty(this.value)) {
+                
+                addTag(this.value);
+                
+                tagList = Object.keys(userObj.tags);
+                tagList.push(this.value);
+                addUserTags(tagList);                
+
+                this.value = "";
+            }
+        });
+
+        tagContainer.append(tagInput)
+    }
     for (tag in userObj.tags) {
         if (userObj.tags.hasOwnProperty(tag)) {
-            const tagNode = document.createElement('li');
-            tagNode.innerText = tag;
-            tagList.appendChild(tagNode);
+            addTag(tag);
+
+            document.getElementById(tag).onclick = function() {
+                delete userObj.tags[tag];
+                setUserTags(userObj.tags);
+
+                this.parentNode.remove();
+            };
         }
     }
 }
+
+/* 
+    add and remove tags!
+*/
+function addTag(tag) {
+  const tagTemplate = document.getElementById('tag-template');
+  const docFrag = tagTemplate.content.cloneNode(true);
+  const tagContainer = docFrag.querySelector(".tag");
+
+  const label = tagContainer.querySelector('.label');
+  label.innerText = tag;
+
+  const close = tagContainer.querySelector('i');
+  close.id = tag;
+
+  const tagInput = document.getElementById('tag-input')
+  document.querySelector('.tag-container').insertBefore(tagContainer, tagInput)
+}
+
