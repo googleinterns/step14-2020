@@ -10,6 +10,8 @@ var firebaseConfig = {
 };
 
 // Initialize Firebase
+firebase = require('firebase')
 firebase.initializeApp(firebaseConfig);
 
+exports.firebaseConfig = firebaseConfig;
 

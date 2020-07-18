@@ -5,3 +5,4 @@ npm install firebase-admin --save
 npm install --save-dev firebaes-functions
 npm install --save-dev firebase-functions-test
 npm install --save-dev mocha
+npm install --save-dev chai
