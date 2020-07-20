@@ -740,10 +740,14 @@ function populateProfileSidebar(uid) {
 
 function addUserInfoToDom(userObj) {
     const profile = document.getElementById('user-profile');
+    const tagContainer = profile.querySelector(".tag-container");
+    tagContainer.innerHTML = '';
+
     if (userObj.uid !== currentUID) {
             friendRequestButton(userObj.uid);
     } else {
         document.getElementById('friend-request').hidden = true;
+        addTagsToDom(currentUID);
     }
 
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
@@ -752,40 +756,44 @@ function addUserInfoToDom(userObj) {
     }
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
-    const tagContainer = profile.querySelector(".tag-container");
-    tagContainer.innerHTML = '';
-    if (userObj.uid == currentUID) {
-        // creating it here because i clear the contents of tag-container
-        const tagInput = document.createElement('input');
-        tagInput.id = "tag-input";
-        tagInput.addEventListener('keyup', function (event) {
-            if (event.keyCode == 13 && !userObj.tags.hasOwnProperty(this.value)) {
-                
-                addTag(this.value);
-                
-                tagList = Object.keys(userObj.tags);
-                tagList.push(this.value);
-                addUserTags(tagList);                
-
-                this.value = "";
-            }
-        });
-
-        tagContainer.append(tagInput)
-    }
     for (tag in userObj.tags) {
         if (userObj.tags.hasOwnProperty(tag)) {
             addTag(tag);
-
-            document.getElementById(tag).onclick = function() {
-                delete userObj.tags[tag];
-                setUserTags(userObj.tags);
-
-                this.parentNode.remove();
-            };
         }
     }
 }
+
+// adds tag input
+function addTagsToDom(uid) {
+    tagsRef = firebase.database().ref('/users/'+uid+'/allTags');
+    tagContainer = document.querySelector('.tag-container');
+
+    const tagInput = document.createElement('input');
+    tagInput.id = "tag-input";
+    tagContainer.append(tagInput);
+    tagInput.addEventListener('keyup', function(event) {
+        if (event.keyCode === 13) {
+            tagsRef.once('value', function(snap) {
+                var tags;
+                if (snap.val()) {
+                    tags = Object.keys(snap.val());
+                } else {
+                    tags = [];
+                }
+                const newTag = tagInput.value;
+                if (!tags.includes(newTag)) {
+                    tags.push(newTag);
+                    addTag(newTag);
+                    addUserTags(tags);
+                }
+                tagInput.value = '';
+            });
+        }
+    });
+}
+
+// remove tag onclick
+
 
 /* 
     add and remove tags!
@@ -800,6 +808,16 @@ function addTag(tag) {
 
   const close = tagContainer.querySelector('i');
   close.id = tag;
+  close.onclick = function() {
+        const tagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
+        tagsRef.once('value', function(snap) {
+            const tagObj = snap.val();
+            delete tagObj[tag];
+            const tags = Object.keys(tagObj);
+            setUserTags(tags);
+            close.parentNode.remove();
+        })
+    };
 
   const tagInput = document.getElementById('tag-input')
   document.querySelector('.tag-container').insertBefore(tagContainer, tagInput)
