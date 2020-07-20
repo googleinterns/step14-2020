@@ -633,6 +633,39 @@ function friendRequestButton(uid) {
     });
 }
 
+function blockButton(uid) {
+    const currUserRef = firebase.database().ref('/users/'+currentUID+'/blocked/'+uid);
+    const button = document.getElementById('block');
+
+    currUserRef.off();
+    currUserRef.on('value', function(snap) {
+        if (snap.val()) {
+            // user is blocked
+            button.innerText = 'unblock user';
+            button.onclick = function() {
+                currUserRef.remove();
+                button.onclick = null;
+            }
+        } else {
+            // user not blocked
+            button.onclick = function() {
+                currUserRef.set(true);
+                // remove from each others' friend lists
+                const currFriendRef = firebase.database().ref('/users/'+currentUID+'/friends/'+uid);
+                const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUID);
+
+                currFriendRef.once('value', function(snap) {
+                    if (snap.val()) {
+                        currFriendRef.remove();
+                        otherFriendRef.remove();
+                    }
+                })
+                button.onclick = null;
+            }
+        }
+    })
+}
+
 function getDbRef(tag, chatId) {
     const path = "/chat/"+tag+"/"+chatId+"/messages";
     const dbRefObj = firebase.database().ref(path);
