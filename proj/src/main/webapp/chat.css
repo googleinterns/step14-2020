@@ -68,15 +68,6 @@ ul {
     border-radius: 50%;
 }
 
-/* profile pictures for messages*/
-#image-cropper-pfp {
-    width: 75px;
-    height: 75px;
-    position: relative;
-    overflow: hidden;
-    border-radius: 50%;
-}
-
 #user-pfp {
     margin: 0 auto;
     height: 100%;
@@ -184,6 +175,27 @@ a:hover {
 }
 
 /* main chat*/
+.col-1 {
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+}
+
+.message {
+    border-bottom: 2px #D1B280 dotted;
+}
+
+/* profile pictures for messages*/
+#image-cropper-pfp {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 12px auto 0px auto;
+}
+
+
 #main-chat {
     height: 100%;
 }
@@ -197,6 +209,10 @@ a:hover {
     overflow: scroll;
     display: flex;
     flex-direction: column-reverse;
+}
+
+.text-muted {
+    font-size: .8rem;
 }
 
 .card-body li {
