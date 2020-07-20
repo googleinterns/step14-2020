@@ -664,6 +664,7 @@ function blockButton(uid) {
             }
         }
     })
+    button.hidden = false;
 }
 
 function getDbRef(tag, chatId) {
@@ -780,8 +781,10 @@ function addUserInfoToDom(userObj) {
     const profile = document.getElementById('user-profile');
     if (userObj.uid !== currentUID) {
             friendRequestButton(userObj.uid);
+
     } else {
         document.getElementById('friend-request').hidden = true;
+        document.getElementById('block').hidden = true;
         initBio();
     }
 
