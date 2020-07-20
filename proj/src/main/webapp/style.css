@@ -310,15 +310,15 @@ footer a:hover {
     }
 
     .inblock-center-container {
-        width: 65%;
+        width: 200px;
         margin: 0 auto;
     }
 
     #info-message{
         font-size: 3vw;
         margin-bottom: 8vh;        
-        font-weight: lighter;
-        text-align: center;
+        font-weight: bold;
+        text-align: left;
     }
 
     form {

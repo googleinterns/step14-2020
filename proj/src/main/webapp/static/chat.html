@@ -146,16 +146,25 @@
                 <!-- chat display-->
                 <div class="card-body" id="message-list">
                     <!-- template for later use -->
-                    <!-- <ul>
-                        <li class="list-group-item">
-                            <div class="d-flex justify-content-between">
-                                <span>name</span>
-                                <span>time</span>
+                    <ul>
+                        <div class="row">
+                            <div class="col-1">
+                                <div id="image-cropper-pfp">
+                                    <img id="user-pfp" src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg" class="menu-collapsed" alt="profile picture">
+                                </div> 
                             </div>
-                            <div>message</div>
-                        </li>
-                    </ul> -->
-                    <div class="conversation">
+                            <div calss="col-11">
+                                <li class="list-group-item">
+                                    <div class=" justify-content-between">
+                                        <span><strong>name</strong></span>
+                                        <span class="text-muted">time</span>
+                                    </div>
+                                    <div>message</div>
+                                </li>
+                            </div>
+                        </div>
+                    </ul>
+                    <!-- <div class="conversation">
                         <div id="chatbox" class="chat"></div>
                         <template id="message-temp">
                             <div class="message">
@@ -166,7 +175,7 @@
                             </div>
                             <pre class="message-body"></pre>
                         </template>
-                    </div> 
+                    </div>  -->
                 </div>
                 <!-- end of messages-->
 

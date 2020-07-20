@@ -666,3 +666,4 @@ function addUserInfoToDom(userObj) {
         }
     }
 }
+
