@@ -706,14 +706,13 @@ function initBio() {
 
 function populateSidebar() {
     const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
-    userTagsRef.orderByKey().on('child_added', snap => {
-
-        const chatTag = snap.key;
-        const chatId = snap.val();
-
-        // get last message
-        makePreviewWithLastMessage(chatTag, chatId)
-
+    userTagsRef.orderByKey().on('value', snap => {
+        const sidebar = document.getElementById('chats-submenu');
+        sidebar.innerHTML = '';
+        for (tag in snap.val()) {
+            chatId = snap.val()[tag];
+            makePreviewWithLastMessage(tag, chatId)
+        }
     });
 }
 
