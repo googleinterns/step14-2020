@@ -57,6 +57,7 @@ h1 {
 
 ul {
     list-style-type: none;
+    padding: 0;
 }
 
 /* profile pictures*/
@@ -181,7 +182,7 @@ a:hover {
     text-align: center;
 }
 
-.message {
+#main-chat .message {
     border-bottom: 2px #D1B280 dotted;
 }
 
@@ -195,6 +196,9 @@ a:hover {
     margin: 12px auto 0px auto;
 }
 
+img {
+    height: 100%
+}
 
 #main-chat {
     height: 100%;
