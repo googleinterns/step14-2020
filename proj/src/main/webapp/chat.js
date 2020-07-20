@@ -644,10 +644,10 @@ function blockButton(uid) {
             button.innerText = 'unblock user';
             button.onclick = function() {
                 currUserRef.remove();
-                button.onclick = null;
             }
         } else {
             // user not blocked
+            button.innerText = 'block user';
             button.onclick = function() {
                 currUserRef.set(true);
                 // remove from each others' friend lists
@@ -660,7 +660,6 @@ function blockButton(uid) {
                         otherFriendRef.remove();
                     }
                 })
-                button.onclick = null;
             }
         }
     })
