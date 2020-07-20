@@ -387,7 +387,6 @@ function init() {
                 populateSidebar();
                 initRef(dbRefObject);
                 populateProfileSidebar(firebaseUser.uid);
-                initBio();
             });
         }
         else{
@@ -750,6 +749,7 @@ function addUserInfoToDom(userObj) {
             friendRequestButton(userObj.uid);
     } else {
         document.getElementById('friend-request').hidden = true;
+        initBio();
     }
 
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
