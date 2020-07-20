@@ -757,7 +757,7 @@ function addUserInfoToDom(userObj) {
 
     for (tag in userObj.tags) {
         if (userObj.tags.hasOwnProperty(tag)) {
-            addTag(tag);
+            addTag(tag, userObj.uid);
         }
     }
 }
@@ -782,7 +782,7 @@ function addTagsToDom(uid) {
                 const newTag = tagInput.value;
                 if (!tags.includes(newTag)) {
                     tags.push(newTag);
-                    addTag(newTag);
+                    addTag(newTag, uid);
                     addUserTags(tags);
                 }
                 tagInput.value = '';
@@ -791,32 +791,33 @@ function addTagsToDom(uid) {
     });
 }
 
-// remove tag onclick
-
-
 /* 
     add and remove tags!
 */
-function addTag(tag) {
-  const tagTemplate = document.getElementById('tag-template');
-  const docFrag = tagTemplate.content.cloneNode(true);
-  const tagContainer = docFrag.querySelector(".tag");
+function addTag(tag, uid) {
+    const tagTemplate = document.getElementById('tag-template');
+    const docFrag = tagTemplate.content.cloneNode(true);
+    const tagContainer = docFrag.querySelector(".tag");
 
-  const label = tagContainer.querySelector('.label');
-  label.innerText = tag;
+    const label = tagContainer.querySelector('.label');
+    label.innerText = tag;
 
-  const close = tagContainer.querySelector('i');
-  close.id = tag;
-  close.onclick = function() {
-        const tagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
-        tagsRef.once('value', function(snap) {
-            const tagObj = snap.val();
-            delete tagObj[tag];
-            const tags = Object.keys(tagObj);
-            setUserTags(tags);
-            close.parentNode.remove();
-        })
-    };
+    const close = tagContainer.querySelector('i');
+    if (uid == currentUID) {
+        close.id = tag;
+        close.onclick = function() {
+            const tagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
+            tagsRef.once('value', function(snap) {
+                const tagObj = snap.val();
+                delete tagObj[tag];
+                const tags = Object.keys(tagObj);
+                setUserTags(tags);
+                close.parentNode.remove();
+            })
+        };
+    } else {
+        close.remove();
+    }
 
   const tagInput = document.getElementById('tag-input')
   document.querySelector('.tag-container').insertBefore(tagContainer, tagInput)
