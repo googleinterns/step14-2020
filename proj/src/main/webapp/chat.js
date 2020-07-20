@@ -445,12 +445,18 @@ function initRef(dbRefObject) {
     // is intentional
     dbRefObject.off('child_added');
     dbRefObject.orderByChild("timestamp").limitToLast(LIMIT + 1).on('child_added', snap => {
-        if (!firstChildKey) {
-            firstChildKey = snap.key;
-        } else {
-            messageDom = createMessageWithTemplate(snap.key, snap.val());
-            chat.appendChild(messageDom);
-        }
+        messageUid = snap.val().senderUID;
+        blockedRef = firebase.database().ref('/users/'+currentUID+'/blocked/'+messageUid);
+        blockedRef.once('value', function(snap2) {
+            if (!snap2.val()) { //user is not blocked
+                if (!firstChildKey) {
+                    firstChildKey = snap.key;
+                } else {
+                    messageDom = createMessageWithTemplate(snap.key, snap.val());
+                    chat.appendChild(messageDom);
+                }
+            }
+        });
     });
 }
 
