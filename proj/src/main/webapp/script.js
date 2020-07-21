@@ -50,17 +50,91 @@ function errorCallback(err){
 function getLocation() {
     if(navigator.geolocation){
         navigator.geolocation.getCurrentPosition(successCallback,errorCallback,{timeout:10000, enableHighAccuracy:false});
-    }
-    else{
+    } else{
         console.log("Error. Geolocation not supported or not enabled");
     }
     return;
 }
 
+/*
+    Setting password 
+*/ 
+
+// Check if the password meets the password requirement with every character
+$('#pass').on('keyup', function(){
+    meetRequirements();
+    pwLength.hidden = false;
+    pwNumber.hidden = false;
+    pwSymbol.hidden = false;
+});
+
+// Check if the password is strong enough 
+function meetRequirements(){
+    const password = document.getElementById("pass");
+    /* returns true or false so that the sign up button is enables with a 
+    strong password and matching confirmation password **/
+    var goodPassword = [passwordLength,containsNumber,containsSymbol].every(function(handler){return handler(password)})
+    return goodPassword;
+}
+
+function passwordLength(password){
+    if (password.value.length > 7){
+        $('#pwLength').addClass('alert-success');
+        return true;
+    } else{
+        $('#pwLength').removeClass('alert-success');
+        return false;
+    }
+}
+
+function containsNumber(password){
+    var number = /[0-9]/;
+    if(password.value.match(number)){
+        $('#pwNumber').addClass('alert-success');
+        return true;
+    } else{
+        $('#pwNumber').removeClass('alert-success');
+        return false;
+    }
+}
+
+function containsSymbol(password){
+    var symbol = /[$-/:-?{-~!"^_`\[\]]/;
+    // const password = document.getElementById("pass");
+    if(password.value.match(symbol)){
+        $('#pwSymbol').addClass('alert-success');
+        return true;
+    } else{
+        $('#pwSymbol').removeClass('alert-success');
+        return false;        
+    }
+}
+
+
+/* Check for password confirmation 
+    enable button if and only if the password meets the requiremetns and match **/
+$('#pass, #passconf').on('keyup', function(){
+    if ((pass.value.length != 0) && (passconf.value.length != 0) && meetRequirements){
+        if ($('#pass').val() == $('#passconf').val()){
+            $('#btnSignUp').prop('disabled', false);
+            $('#pass').css('border-bottom','2px solid #d1b280');
+            $('#passconf').css('border-bottom','2px solid #d1b280');
+            noMatch.hidden = true;
+        } else{
+            // disable sign up button
+            $('#btnSignUp').prop('disabled', true);
+            // underline the inputs in red
+            $('#pass').css('border-bottom','2px solid #fa8072');
+            $('#passconf').css('border-bottom','2px solid #fa8072');
+            noMatch.hidden = false;
+        }
+    }
+})
+
 
 /*
     Chatroom sidebar
- */ 
+*/ 
 
 // Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
 $('#body-row .collapse').collapse('hide'); 
