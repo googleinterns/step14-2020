@@ -4,6 +4,7 @@ const { JSDOM } = jsdom;
 window = (new JSDOM('')).window;
 document = window.document
 const $ = require('jquery');
+require('bootstrap'); // for collapse
 
 /*
     Notifications
@@ -98,7 +99,6 @@ function containsNumber(password){
 
 function containsSymbol(password){
     var symbol = /[$-/:-?{-~!"^_`\[\]]/;
-    // const password = document.getElementById("pass");
     if(password.value.match(symbol)){
         $('#pwSymbol').addClass('alert-success');
         return true;
@@ -112,7 +112,6 @@ function containsSymbol(password){
 /* Check for password confirmation 
     enable button if and only if the password meets the requiremetns and match **/
 $('#pass, #passconf').on('keyup', function(){
-    console.log("ARINZE7:")
     if ((pass.value.length != 0) && (passconf.value.length != 0) && meetRequirements){
         if ($('#pass').val() == $('#passconf').val()){
             $('#btnSignUp').prop('disabled', false);
@@ -134,8 +133,8 @@ $('#pass, #passconf').on('keyup', function(){
     Chatroom sidebar
 */ 
 
-// // Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
-// $('#body-row .collapse').collapse('hide'); 
+// Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
+$('#body-row .collapse').collapse('hide'); 
 
 // Collapse/Expand icon
 $('#collapse-icon').addClass('fa-angle-double-left'); 
