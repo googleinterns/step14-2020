@@ -229,9 +229,9 @@ function removeAllCurrentTags(currentTags, allTagsRef, tagRemovalRef, abridgedTa
 
 async function setUserTags(tagList){
     if(firebase.auth().currentUser){
-
-        const abridgedTagsRef = "/users/" + currentUID + "/allTags";
-        const abridgedTagRemovalRef = "/users/" + currentUID + "/tagRemovalDict";
+        const currentUid = firebase.auth().currentUser.uid;
+        const abridgedTagsRef = "/users/" + currentUid + "/allTags";
+        const abridgedTagRemovalRef = "/users/" + currentUid + "/tagRemovalDict";
         
         var allTagsRef;
         var tagRemovalRef;
@@ -281,9 +281,9 @@ async function setUserTags(tagList){
 
 async function addUserTags(tagList){
     if(firebase.auth().currentUser){
-
-        const abridgedTagsRef = "/users/" + currentUID + "/allTags";
-        const abridgedTagRemovalRef = "/users/" + currentUID + "/tagRemovalDict";
+        const currentUid = firebase.auth().currentUser.uid;
+        const abridgedTagsRef = "/users/" + currentUid + "/allTags";
+        const abridgedTagRemovalRef = "/users/" + currentUid + "/tagRemovalDict";
 
         var allTagsRef;
         var tagRemovalRef;
@@ -400,8 +400,8 @@ function init() {
 
 
 function initUserChat(){
-    currentUID = firebase.auth().currentUser.uid;
-    const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
+    currentUid = firebase.auth().currentUser.uid;
+    const userTagsRef = firebase.database().ref('/users/'+currentUid+'/allTags');
 
     // Wraps content function in a promise to ensure it runs before wrest of init
     return new Promise(function(resolve){
@@ -557,8 +557,9 @@ function loadProfileOfSender(domElement, uid) {
 }
 
 function friendRequestButton(uid) {
-    const currUserRef = firebase.database().ref('/users/'+currentUID+'/friend-requests/'+uid);
-    const otherUserRef = firebase.database().ref('/users/'+uid+'/friend-requests/'+currentUID);
+    const currentUid = firebase.auth().currentUser.uid;
+    const currUserRef = firebase.database().ref('/users/'+currentUid+'/friend-requests/'+uid);
+    const otherUserRef = firebase.database().ref('/users/'+uid+'/friend-requests/'+currentUid);
 
     const button = document.getElementById('friend-request');
 
@@ -580,8 +581,8 @@ function friendRequestButton(uid) {
                     currUserRef.remove();
                     otherUserRef.remove();
 
-                    const currFriendRef = firebase.database().ref('/users/'+currentUID+'/friends/'+uid);
-                    const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUID);
+                    const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+uid);
+                    const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUid);
                     currFriendRef.set(true);
                     otherFriendRef.set(true);
 
@@ -601,8 +602,8 @@ function friendRequestButton(uid) {
                 break;
             default:
                 // check if already friends, then send request
-                const currFriendRef = firebase.database().ref('/users/'+currentUID+'/friends/'+uid);
-                const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUID);
+                const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+uid);
+                const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUid);
 
                 currFriendRef.off();
                 currFriendRef.on('value', function(snap) {
@@ -705,7 +706,8 @@ function initBio() {
 }
 
 function populateSidebar() {
-    const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
+    const currentUid = firebase.auth().currentUser.uid;
+    const userTagsRef = firebase.database().ref('/users/'+currentUid+'/allTags');
     userTagsRef.orderByKey().on('value', snap => {
         const sidebar = document.getElementById('chats-submenu');
         sidebar.innerHTML = '';
@@ -738,15 +740,16 @@ function populateProfileSidebar(uid) {
 }
 
 function addUserInfoToDom(userObj) {
+    const currentUid = firebase.auth().currentUser.uid;
     const profile = document.getElementById('user-profile');
     const tagContainer = profile.querySelector(".tag-container");
     tagContainer.innerHTML = '';
 
-    if (userObj.uid !== currentUID) {
+    if (userObj.uid !== currentUid) {
             friendRequestButton(userObj.uid);
     } else {
         document.getElementById('friend-request').hidden = true;
-        addTagsToDom(currentUID);
+        addTagsToDom(currentUid);
     }
 
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
@@ -795,6 +798,7 @@ function addTagsToDom(uid) {
     add and remove tags!
 */
 function addTag(tag, uid) {
+    const currentUid = firebase.auth().currentUser.uid;
     const tagTemplate = document.getElementById('tag-template');
     const docFrag = tagTemplate.content.cloneNode(true);
     const tagContainer = docFrag.querySelector(".tag");
@@ -803,10 +807,10 @@ function addTag(tag, uid) {
     label.innerText = tag;
 
     const close = tagContainer.querySelector('i');
-    if (uid == currentUID) {
+    if (uid == currentUid) {
         close.id = tag;
         close.onclick = function() {
-            const tagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
+            const tagsRef = firebase.database().ref('/users/'+currentUid+'/allTags');
             tagsRef.once('value', function(snap) {
                 const tagObj = snap.val();
                 delete tagObj[tag];
