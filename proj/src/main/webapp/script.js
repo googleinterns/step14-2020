@@ -1,24 +1,31 @@
+const firebase = require('firebase');
+const jsdom = require('jsdom');
+const { JSDOM } = jsdom;
+window = (new JSDOM('')).window;
+document = window.document
+const $ = require('jquery');
+
 /*
     Notifications
  */
 
-const messaging = firebase.messaging();
-messaging.requestPermission()
-.then(function () {
-    console.log("Have permission");
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/firebase-messaging-sw.js')
-        .then(function(registration) {
-            console.log('Registration successful, scope is:', registration.scope);
-        }).catch(function(err) {
-            console.log('Service worker registration failed, error:', err);
-        });
-    }
-});
+// const messaging = firebase.messaging();
+// messaging.requestPermission()
+// .then(function () {
+//     console.log("Have permission");
+//     if ('serviceWorker' in navigator) {
+//         navigator.serviceWorker.register('/firebase-messaging-sw.js')
+//         .then(function(registration) {
+//             console.log('Registration successful, scope is:', registration.scope);
+//         }).catch(function(err) {
+//             console.log('Service worker registration failed, error:', err);
+//         });
+//     }
+// });
 
-messaging.onMessage((payload) => {
-    appendMessage(payload);
-});
+// messaging.onMessage((payload) => {
+//     appendMessage(payload);
+// });
 
 function appendMessage(payload){
     const messagesElement = document.getElementById("messages");
@@ -59,15 +66,6 @@ function getLocation() {
 /*
     Setting password 
 */ 
-
-// Check if the password meets the password requirement with every character
-$('#pass').on('keyup', function(){
-    meetRequirements();
-    pwLength.hidden = false;
-    pwNumber.hidden = false;
-    pwSymbol.hidden = false;
-});
-
 // Check if the password is strong enough 
 function meetRequirements(){
     const password = document.getElementById("pass");
@@ -114,6 +112,7 @@ function containsSymbol(password){
 /* Check for password confirmation 
     enable button if and only if the password meets the requiremetns and match **/
 $('#pass, #passconf').on('keyup', function(){
+    console.log("ARINZE7:")
     if ((pass.value.length != 0) && (passconf.value.length != 0) && meetRequirements){
         if ($('#pass').val() == $('#passconf').val()){
             $('#btnSignUp').prop('disabled', false);
@@ -131,13 +130,12 @@ $('#pass, #passconf').on('keyup', function(){
     }
 })
 
-
 /*
     Chatroom sidebar
 */ 
 
-// Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
-$('#body-row .collapse').collapse('hide'); 
+// // Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
+// $('#body-row .collapse').collapse('hide'); 
 
 // Collapse/Expand icon
 $('#collapse-icon').addClass('fa-angle-double-left'); 

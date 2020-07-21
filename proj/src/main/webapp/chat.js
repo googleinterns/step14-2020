@@ -1,3 +1,9 @@
+const firebase = require('firebase');
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+const html = '';//'./index.html'
+window = new JSDOM(html).window
+document = window.document;
 /*
     Authentication
  */
@@ -176,7 +182,7 @@ if(btnLogout){
 
 firebase.auth().onAuthStateChanged(firebaseUser => {
     if(firebaseUser){
-        console.log(firebaseUser);
+        console.log("logged in");
         
         if(btnLogout)
             btnLogout.classList.remove("hidden");
@@ -383,7 +389,6 @@ function init() {
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
 
 }
-
 
 function initUserChat(){
     currentUID = firebase.auth().currentUser.uid;
@@ -752,3 +757,6 @@ function addUserInfoToDom(userObj) {
         }
     }
 }
+
+window.init = init
+window.pushChatMessage = pushChatMessage

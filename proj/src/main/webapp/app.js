@@ -1,13 +1,28 @@
-var firebaseConfig = {
-    apiKey: "AIzaSyAcpxnpwrTCO4XTymTcneRscMBzJBne2Qg",
-    authDomain: "arringtonh-step-2020-d.firebaseapp.com",
-    databaseURL: "https://arringtonh-step-2020-d.firebaseio.com",
-    projectId: "arringtonh-step-2020-d",
-    storageBucket: "arringtonh-step-2020-d.appspot.com",
-    messagingSenderId: "336825043126",
-    appId: "1:336825043126:web:1256d7b08f1c8daa93be17",
-    measurementId: "G-VJQS6TEYGV"
-};
-
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const firebase = require('firebase');
+const appconfig = require('./appconfig.js');
+const jsdom = require('jsdom');
+
+firebase.initializeApp(appconfig.firebaseConfig);
+
+require('./chat.js');
+require('./location.js');
+require('./script.js');
+
+
+const { JSDOM } = jsdom;
+window = (new JSDOM('')).window;
+const welcomePageUrl = '/static/welcome.html';
+const signupPageUrl = '/static/signup.html';
+const chatPageUrl = '/static/chat.html';
+
+function redirectToWelcomeOrChat() {
+    if(!firebase.auth().currentUser && !(window.location.href.endsWith(welcomePageUrl)||window.location.href.endsWith(signupPageUrl))) {
+        window.location.replace(welcomePageUrl);
+    } else {
+        window.location.replace(chatPageUrl);
+    }
+}
+
+
+window.redirectToWelcomeOrChat = redirectToWelcomeOrChat;

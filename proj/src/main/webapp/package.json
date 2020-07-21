@@ -1,0 +1,39 @@
+{
+  "name": "camaraderie",
+  "version": "1.0.0",
+  "description": "meet friends, engage in communities",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "browserify": "^16.5.1",
+    "firebase": "^7.16.1",
+    "firebase-functions-test": "^0.2.1",
+    "fs": "0.0.1-security",
+    "hash-stream-validation": "^0.2.3",
+    "jquery": "^3.3.1",
+    "jsdom": "^16.3.0",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "firebase-admin": "^9.0.0",
+    "firebase-functions": "^3.8.0",
+    "mocha": "^8.0.1",
+    "sinon": "^9.0.2"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec --exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/googleinterns/step14-2020.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/googleinterns/step14-2020/issues"
+  },
+  "homepage": "https://github.com/googleinterns/step14-2020#readme"
+}
