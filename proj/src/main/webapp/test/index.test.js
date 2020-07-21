@@ -101,38 +101,38 @@ describe('Simple Functions', () => {
     });
 })
 
-describe('Testing Page Elements Functions', () => {
-    let window;
-    let document;
-    before(async () => {
-        /// Open the desired page.
-        const { JSDOM } = jsdom;
-        const myFile = path.join(__dirname, "../static/signup.html")
-        await JSDOM.fromFile(myFile)
-        .then((dom) => {
-        window = dom.window;
-        document = window.document;
-        });
+// describe('Testing Page Elements Functions', () => {
+//     let window;
+//     let document;
+//     before(async () => {
+//         /// Open the desired page.
+//         const { JSDOM } = jsdom;
+//         const myFile = path.join(__dirname, "../static/signup.html")
+//         await JSDOM.fromFile(myFile)
+//         .then((dom) => {
+//         window = dom.window;
+//         document = window.document;
+//         });
 
-    });
+//     });
 
-    after(() => {
-        // Do cleanup tasks.
-        test.cleanup();
-    });
+//     after(() => {
+//         // Do cleanup tasks.
+//         test.cleanup();
+//     });
 
-    describe('makeUpperCase', () => {
-        it('password should be invalid', () => {
-            let passField = $('#pass',document)
-            passField.val('test1234!!!')
-            passField.trigger({
-               type: 'keyup',
-               which: 97
-            })
-            console.log("ARINZE1.2:",$('#pass',document).val(),$('#pwLength',document).attr('class').split(/\s+/))
-            assert.equal($('#pwLength',document).hasClass('alert-success'),true);
-            assert.equal($('#pwNumber',document).hasClass('alert-success'),true);
-            assert.equal($('#pwSymbol',document).hasClass('alert-success'),true);
-        })
-    });
-})
+//     describe('makeUpperCase', () => {
+//         it('password should be invalid', () => {
+//             let passField = $('#pass',document)
+//             passField.val('test1234!!!')
+//             passField.trigger({
+//                type: 'keyup',
+//                which: 97
+//             })
+//             console.log("ARINZE1.2:",$('#pass',document).val(),$('#pwLength',document).attr('class').split(/\s+/))
+//             assert.equal($('#pwLength',document).hasClass('alert-success'),true);
+//             assert.equal($('#pwNumber',document).hasClass('alert-success'),true);
+//             assert.equal($('#pwSymbol',document).hasClass('alert-success'),true);
+//         })
+//     });
+// })
