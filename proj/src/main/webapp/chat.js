@@ -1,3 +1,9 @@
+const firebase = require('firebase');
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+const html = '';//'./index.html'
+window = new JSDOM(html).window
+document = window.document;
 /*
     Authentication
  */
@@ -17,7 +23,7 @@ const btnLogout = document.getElementById("btnLogout");
 if(btnLogin){
     btnLogin.addEventListener("click", e => {
         const emailVal = txtEmail.value;
-        const passVal = pass.value;
+        const passVal = txtPassword.value;
 
         // Initialize auth object
         const auth = firebase.auth();
@@ -120,28 +126,12 @@ function createOrJoinChat(currentTag){
     });
 }
 
-// Checks for password confirmation
-$('#pass, #passconf').on('keyup', function (){
-    if ((pass.value.length != 0) && (passconf.value.length != 0)){
-        if ($('#pass').val() == $('#passconf').val()){
-            $('#btnSignUp').prop('disabled', false);
-            $('#pass').css('border-bottom','2px solid #d1b280');
-            $('#passconf').css('border-bottom','2px solid #d1b280');
-        }else{
-            // disable sign up button
-            $('#btnSignUp').prop('disabled', true);
-            // underline the inputs in red
-            $('#pass').css('border-bottom','2px solid #fa8072');
-            $('#passconf').css('border-bottom','2px solid #fa8072');
-        }
-    }
-});
 
 // Add sign up event
 if(btnSignUp){
     btnSignUp.addEventListener("click", e => {
         const emailVal = txtEmail.value;
-        const passVal = pass.value;
+        const passVal = txtPassword.value;
         var tagList = tagStr.value.split(',');
         for(var ii = 0; ii < tagList.length; ii++){
             tagList[ii] = tagList[ii].trim();
@@ -192,7 +182,7 @@ if(btnLogout){
 
 firebase.auth().onAuthStateChanged(firebaseUser => {
     if(firebaseUser){
-        console.log(firebaseUser);
+        console.log("logged in");
         
         if(btnLogout)
             btnLogout.classList.remove("hidden");
@@ -397,7 +387,6 @@ function init() {
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
 
 }
-
 
 function initUserChat(){
     currentUID = firebase.auth().currentUser.uid;
@@ -806,3 +795,6 @@ function addUserInfoToDom(userObj) {
         }
     }
 }
+
+window.init = init
+window.pushChatMessage = pushChatMessage

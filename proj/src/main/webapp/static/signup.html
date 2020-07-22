@@ -6,26 +6,16 @@
     <title>camaraderie</title>
 
     <!-- Styling -->
-    <!-- Bootstrap: Latest compiled and minified CSS -->
+    <!-- Bootstrap 3.4 -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <!-- Bootstrap: jQuery library --> 
+    <!-- Bootstrap jQuery --> 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Bootstrap: Latest compiled JavaScript -->
+    <!-- Bootstrap JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <!-- Font  -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
 
-    <!-- Firebase and other functionality scripts -->
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
-    <!-- TODO: Add SDKs for Firebase products that you want to use
-        https://firebase.google.com/docs/web/setup#available-libraries -->
-    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
-    <script src="../app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-messaging.js"></script>
 
   </head>
   
@@ -33,7 +23,7 @@
     <div class="container screen">
       <div class="row fullscreen">
         <!-- page:signup and signin   desktop:left    mobile:full screen -->
-        <div class="hide-on-mobile mobile-screen col-sm-8 info-graphic d-flex justify-content-center text-center">
+        <div class="hide-on-mobile mobile-screen col-sm-8 info-graphic d-flex justify-content-center">
           <div class="header b-margin border border-warning">
             <h1>camaraderie</h1>
             <h4>meet friends • engage in communities</h4>
@@ -43,7 +33,7 @@
               <img id="chat-image"src="./images/friendsChatting.svg" alt="Friends chatting icon" class="b-margin-3">
             </div>
             <div class="inblock-center-container">
-              <h3 class="center-text black-bold-subtitle text-left" id="info-message"> meet friends <br> create communities</h3>
+              <h3 class="black-bold-subtitle text-left" id="info-message"><strong>meet friends <br> create communities</strong></h3>
               <a href="#signin-screen"><button type="button" name="button" class="button mobile">begin</button></a>
             </div> 
           </div>
@@ -53,7 +43,7 @@
           <div class="row justify-content-md-center" id="sign-up-col">
             <div class="header b-margin">
                 <h1 id="sign-in-title">sign up</h1>
-                <h4 class="m-text">welcome</h4>
+                <h4 class="m-text" id="welcome">welcome</h4>
             </div> 
             <form>
               <label for="fname">first name:</label><br>
@@ -62,15 +52,32 @@
               <input type="text" id="lname" name="lname" class="input"><br>
               <label for="email">email:</label><br>
               <input type="text" id="email" name="email" class="input" required><br>
-              <label for="password">password:</label><br>
+              <label for="password">strong password:</label><br> 
               <input type="password" id="pass" name="password" class="input" required><br>
+              <!-- password tests -->
+                <div class="alert alert-secondary" role="alert" id="pwLength" hidden>
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                     At least 8 characters—the more characters, the better 
+                </div>
+                <div class="alert alert-secondary" role="alert" id="pwNumber" hidden>
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                     At least one number (0-9)
+                </div>
+                <div class="alert alert-secondary" role="alert" id="pwSymbol" hidden> 
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                     A least one symbol (*.!@#$%^&(){}[]:;<>,.?/~_+-=|\) 
+                </div>
               <label for="password">confirm password:</label><br>
-              <input type="password" id="passconf" name="password" class="input" required><br
+              <input type="password" id="passconf" name="password" class="input" required><br>
+              <div class="alert alert-danger" role="alert" id="noMatch" hidden>
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    the passwords does not match 
+                </div>
               <label for="tags">tags:</label><br>
               <label id="tag-info"> tags are an essential part of the experience. write a tag for whatever you are interested, the sky is the limit.</label>
               <textarea class="form-control" rows="3" id="tags" name="tags" class="input b-margin" placeholder="music, marvel, intern, nyc, cats" required></textarea><br>
  
-              <button type="button" name="button" class="button" id="btnSignUp">join</button>
+              <button type="button" name="button" class="button" id="btnSignUp" disabled>join</button>
             </form>
             <h5 class="text-center"><a href="./welcome.html">already have an account? sign in</a></h5>
             </div>
@@ -81,7 +88,6 @@
   <footer class="hide-on-mobile">
     <div>icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
   </footer>
-  <script src="../chat.js"></script>
-  <script src="../script.js"></script>
+  <script src="../bundle.js"></script>
   </body>
 </html>

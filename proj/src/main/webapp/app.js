@@ -1,13 +1,28 @@
-var firebaseConfig = {
-    apiKey: "AIzaSyAcpxnpwrTCO4XTymTcneRscMBzJBne2Qg",
-    authDomain: "arringtonh-step-2020-d.firebaseapp.com",
-    databaseURL: "https://arringtonh-step-2020-d.firebaseio.com",
-    projectId: "arringtonh-step-2020-d",
-    storageBucket: "arringtonh-step-2020-d.appspot.com",
-    messagingSenderId: "336825043126",
-    appId: "1:336825043126:web:1256d7b08f1c8daa93be17",
-    measurementId: "G-VJQS6TEYGV"
-};
+// Imports
+const firebase = require('firebase');
+const appconfig = require('./appconfig.js');
+const jsdom = require('jsdom');
+const { JSDOM } = jsdom;
+window = (new JSDOM('')).window;
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(appconfig.firebaseConfig);
+
+// Other files
+require('./chat.js');
+require('./location.js');
+require('./script.js');
+
+// Redirect from index.html to welcome page if not signed in.
+function redirectToWelcomeOrChat() {
+    const welcomePageUrl = '/static/welcome.html';
+    const signupPageUrl = '/static/signup.html';
+    const chatPageUrl = '/static/chat.html';
+    if(!firebase.auth().currentUser && !(window.location.href.endsWith(welcomePageUrl)||window.location.href.endsWith(signupPageUrl))) {
+        window.location.replace(welcomePageUrl);
+    } else {
+        window.location.replace(chatPageUrl);
+    }
+}
+
+window.redirectToWelcomeOrChat = redirectToWelcomeOrChat;
