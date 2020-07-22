@@ -370,7 +370,6 @@ var globalChatId = '-MB0ycAOM8VGIXlev5u8'
 var tag = 'test';
 var dbRefObject = getDbRef(tag, globalChatId);
 const LIMIT = 20; // how many messages to load at a time
-var firstChildKey;
 
 // Broad init function
 function init() {
@@ -394,7 +393,7 @@ function init() {
         }
     });
 
-    const chat = document.getElementById('chatbox');
+    const chat = document.getElementById('message-list');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
 
 }
@@ -449,12 +448,12 @@ function initRef(dbRefObject) {
         return snap.val(); // dict of blocked users
     }).then(function(blockedUsers) {
         blockedUsers = blockedUsers || {};
-        console.log(blockedUsers);
+        var firstMessageSkipped = false;
         dbRefObject.orderByChild("timestamp").limitToLast(LIMIT + 1).on('child_added', snap => {
             messageUid = snap.val().senderUID;
             if (!blockedUsers[messageUid]) {
-                if (!firstChildKey) {
-                    firstChildKey = snap.key;
+                if (!firstMessageSkipped) {
+                    firstMessageSkipped = true;
                 } else {
                     messageDom = createMessageWithTemplate(snap.key, snap.val());
                     chat.appendChild(messageDom);
@@ -483,50 +482,43 @@ function pushChatMessage() {
 
         // update chatInfo
         const chatRef =  dbRefObject.parent.child('chatInfo');
-        chatRef.child('lastAuthor').set(message.senderUID);
-        chatRef.child('lastMessage').set(message.content);
-        chatRef.child('timestamp').set(message.timestamp);
+        chatRef.update({
+            'lastAuthor': message.senderUID,
+            'lastMessage': message.content,
+            'timestamp': message.timestamp
+        });
     }
-    // push message to datastore
-    if(message.content.length > 0){
-        dbRefObject.push(message);
-    }
-
     messageInput.value = null; // clear the message
-
-    // update chatInfo
-    const chatRef =  dbRefObject.parent.child('chatInfo');
-    chatRef.update({
-        'lastAuthor': message.senderUID,
-        'lastMessage': message.content,
-        'timestamp': message.timestamp
-    });
 }
 
 function addMoreMessagesAtTheTop() {
-    const chat = document.getElementById('chatbox');
-    if (chat.scrollTop === 0) {
-        const oldScrollHeight = chat.scrollHeight;
-        dbRefObject.orderByChild("timestamp").limitToLast(LIMIT + 1).once("value",snap => {
-            firstChildKey = null;
-            addMessagesToListElement(snap.val(), chat.firstChild, oldScrollHeight);
+    const chatbox = document.getElementById('chatbox');
+    const messages = document.getElementById('message-list');
+
+    if (messages.scrollTop === 0) {
+        const blockedRef = firebase.database().ref('/users/'+currentUID+'/blocked');
+
+        blockedRef.once('value').then(function(snap) {
+            // dict of blocked users
+            return snap.val();
+        }).then(function(blockedUsers) {
+            blockedUsers = blockedUsers || {};
+
+            const firstChild = chatbox.firstChild;
+            const firstChildTimestamp = firstChild.querySelector('#timestamp').dataMilli; // timestamp
+
+            dbRefObject.orderByChild("timestamp").endAt(firstChildTimestamp, firstChild.id).limitToLast(LIMIT + 1).once("value", snap => {
+                snap.forEach(function(child) {
+                    const messageUid = child.val().senderUID;
+
+                    if (!blockedUsers[messageUid] && child.key !== firstChild.id) {
+                        const message = createMessageWithTemplate(child.key, child.val());
+                        chatbox.insertBefore(message, firstChild);
+                    }
+                });
+            });
         });
     }
-}
-
-function addMessagesToListElement(messages, firstChild, oldScrollHeight) {
-    const chat = document.getElementById('chatbox');
-    for (var key in messages) {
-        if (messages.hasOwnProperty(key)) {
-            if (!firstChildKey) {
-                firstChildKey = key;
-            } else {
-                const messageDom = createMessageWithTemplate(key, messages[key]);
-                chat.insertBefore(messageDom, firstChild);
-            }
-        }
-    }
-    chat.scrollTop = chat.scrollHeight - oldScrollHeight;
 }
 
 /**
@@ -556,6 +548,7 @@ function createMessageWithTemplate(key, messageObj) {
     msgBody.innerText = messageObj.content;
 
     const timestamp = message.querySelector('#timestamp');
+    timestamp.dataMilli = messageObj.timestamp;
     timestamp.innerText = new Date(messageObj.timestamp).toLocaleString();
 
     message.id = key;
