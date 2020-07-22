@@ -223,11 +223,37 @@ img {
     border: 0;
 }
 
-/*input box*/
+/* input area  */
+.card-footer {
+    background-color: #fff;
+    border-radius: 100px !important;
+    border-top: 0;    
+}
+
 #input-section {
     position: absolute;
     bottom: 0;
     width: 100%;
+}
+
+.input-group {
+    padding: 0 10px 0 10px;
+}
+
+#message-input {
+    border: 0;
+    border-radius: 25px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.17), 0 5px 10px 0 rgba(0, 0, 0, 0.15);
+    height: 50px;
+    margin: 0 15px 0 15px;
+}
+
+.btn {
+    border: 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.17), 0 5px 10px 0 rgba(0, 0, 0, 0.15);
+    border-radius: 50% !important;
+    height: 50px;
+    width: 50px;
 }
 
 @media only screen 
