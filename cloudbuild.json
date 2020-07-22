@@ -25,6 +25,11 @@
         "args": ["test"]
     },
     {
+        "name": "bash",
+        "dir": "proj/src/main/webapp",
+        "args": ["rm", "-r", "node_modules"]
+    },
+    {
         "name": "gcr.io/cloud-builders/mvn",
         "dir": "proj",
         "args": ["package"]
