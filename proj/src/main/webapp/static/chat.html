@@ -84,7 +84,17 @@
                                 <p class="text-left"><strong>tags</strong></p>
                             </div>
                             <div>
-                                <p id="user-tags" class="text-left"></p>
+                                <template id="tag-template">
+                                    <div class="tag-container">
+                                        <div class="tag">
+                                            <span class="label"></span>
+                                            <i class="material-icons">close</i>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div class="tag-container">
+                                    <input id="tag-input" />
+                                </div>
                             </div>
                             <div id="button-house">
                                 <button type="button" id='friend-request' hidden></button>
