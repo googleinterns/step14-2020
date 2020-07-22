@@ -389,7 +389,7 @@ function init() {
 }
 
 function initUserChat(){
-    currentUid = firebase.auth().currentUser.uid;
+    const currentUid = firebase.auth().currentUser.uid;
     const userTagsRef = firebase.database().ref('/users/'+currentUid+'/allTags');
 
     // Wraps content function in a promise to ensure it runs before wrest of init
@@ -759,7 +759,7 @@ function addTagsToDom(uid) {
     tagInput.id = "tag-input";
     tagContainer.append(tagInput);
     tagInput.addEventListener('keyup', function(event) {
-        if (event.keyCode === 13) {
+        if (event.keyCode === 13) { // enter key pressed
             tagsRef.once('value', function(snap) {
                 var tags;
                 if (snap.val()) {
