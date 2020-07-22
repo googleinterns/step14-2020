@@ -549,6 +549,13 @@ function createMessageWithTemplate(key, messageObj) {
 // onclick for messages
 function loadProfileOfSender(domElement, uid) {
     domElement.addEventListener('click', function() {
+        // close friend req/blocked listeners before adding more
+        const currentUid = firebase.database().currentUser.uid;
+        const friendReqRef = firebase.database().ref('/users/'+currentUid+'/friend-requests/'+uid);
+        friendReqRef.off();
+        const blockedRef = firebase.database().ref('/users/'+currentUid+'/blocked/'+uid);
+        blockedRef.off();
+
         populateProfileSidebar(uid);
     })
 }
@@ -559,7 +566,6 @@ function friendRequestButton(uid) {
 
     const button = document.getElementById('friend-request');
 
-    currUserRef.off();
     currUserRef.on('value', function(snap) {
         switch (snap.val()) {
             case 'sent':
@@ -629,7 +635,6 @@ function blockButton(uid) {
     const currUserRef = firebase.database().ref('/users/'+currentUID+'/blocked/'+uid);
     const button = document.getElementById('block');
 
-    currUserRef.off();
     currUserRef.on('value', function(snap) {
         if (snap.val()) {
             // user is blocked
