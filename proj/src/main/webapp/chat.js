@@ -662,6 +662,15 @@ async function addUsernameToMessage(uid, preview) {
     });
 }
 
+function pfpOnInput() {
+    const input = document.getElementById("pfp-upload");
+    const pfp = input.files[0];
+
+    const currentUid = firebase.auth().currentUser.uid;
+    const pfpStorageRef = firebase.storage().ref('/'+currentUid+'/pfp.png');
+    pfpStorageRef.put(pfp);
+}
+
 function initBio() {
     const bioBox = document.getElementById('user-bio');
     const editInputBox = document.getElementById('bio-edit');
