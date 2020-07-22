@@ -444,11 +444,15 @@ function initRef(dbRefObject) {
     // note that when a comment is added it will display more than the limit, which
     // is intentional
     dbRefObject.off('child_added');
-    dbRefObject.orderByChild("timestamp").limitToLast(LIMIT + 1).on('child_added', snap => {
-        messageUid = snap.val().senderUID;
-        blockedRef = firebase.database().ref('/users/'+currentUID+'/blocked/'+messageUid);
-        blockedRef.once('value', function(snap2) {
-            if (!snap2.val()) { //user is not blocked
+    blockedRef = firebase.database().ref('/users/'+currentUID+'/blocked')
+    blockedRef.once('value').then(function(snap) {
+        return snap.val(); // dict of blocked users
+    }).then(function(blockedUsers) {
+        blockedUsers = blockedUsers || {};
+        console.log(blockedUsers);
+        dbRefObject.orderByChild("timestamp").limitToLast(LIMIT + 1).on('child_added', snap => {
+            messageUid = snap.val().senderUID;
+            if (!blockedUsers[messageUid]) {
                 if (!firstChildKey) {
                     firstChildKey = snap.key;
                 } else {
@@ -456,8 +460,8 @@ function initRef(dbRefObject) {
                     chat.appendChild(messageDom);
                 }
             }
-        });
-    });
+        })
+    })
 }
 
 function pushChatMessage() {
