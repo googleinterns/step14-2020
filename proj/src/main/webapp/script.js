@@ -112,18 +112,22 @@ function containsSymbol(password){
 /* Check for password confirmation 
     enable button if and only if the password meets the requiremetns and match **/
 $('#pass, #passconf').on('keyup', function(){
-    if ((pass.value.length != 0) && (passconf.value.length != 0) && meetRequirements){
-        if ($('#pass').val() == $('#passconf').val()){
+    let pass = $('#pass');
+    let passVal = pass.val()||'';
+    let passconf = $('#passconf');
+    let passconfVal = passconf.val()||'';
+    if ((passVal.length != 0) && (passconfVal.length != 0) && meetRequirements){
+        if (passVal == passconfVal){
             $('#btnSignUp').prop('disabled', false);
-            $('#pass').css('border-bottom','2px solid #d1b280');
-            $('#passconf').css('border-bottom','2px solid #d1b280');
+            pass.css('border-bottom','2px solid #d1b280');
+            passconf.css('border-bottom','2px solid #d1b280');
             noMatch.hidden = true;
         } else{
             // disable sign up button
             $('#btnSignUp').prop('disabled', true);
             // underline the inputs in red
-            $('#pass').css('border-bottom','2px solid #fa8072');
-            $('#passconf').css('border-bottom','2px solid #fa8072');
+            pass.css('border-bottom','2px solid #fa8072');
+            passconf.css('border-bottom','2px solid #fa8072');
             noMatch.hidden = false;
         }
     }
