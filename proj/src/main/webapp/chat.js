@@ -463,24 +463,16 @@ function pushChatMessage() {
 
         // update chatInfo
         const chatRef =  dbRefObject.parent.child('chatInfo');
-        chatRef.child('lastAuthor').set(message.senderUID);
-        chatRef.child('lastMessage').set(message.content);
-        chatRef.child('timestamp').set(message.timestamp);
-    }
-    // push message to datastore
-    if(message.content.length > 0){
-        dbRefObject.push(message);
+        chatRef.update({
+            'lastAuthor': message.senderUID,
+            'lastMessage': message.content,
+            'timestamp': message.timestamp
+        });
     }
 
     messageInput.value = null; // clear the message
 
-    // update chatInfo
-    const chatRef =  dbRefObject.parent.child('chatInfo');
-    chatRef.update({
-        'lastAuthor': message.senderUID,
-        'lastMessage': message.content,
-        'timestamp': message.timestamp
-    });
+    
 }
 
 function addMoreMessagesAtTheTop() {
