@@ -370,7 +370,7 @@ function init() {
             await initUserChat().then(function(){
                 populateSidebar();
                 initRef(dbRefObject);
-                populateProfileSidebar(firebaseUser);
+                populateProfileSidebar(firebaseUser.uid);
                 initBio();
             });
         }
@@ -458,24 +458,16 @@ function pushChatMessage() {
 
         // update chatInfo
         const chatRef =  dbRefObject.parent.child('chatInfo');
-        chatRef.child('lastAuthor').set(message.senderUID);
-        chatRef.child('lastMessage').set(message.content);
-        chatRef.child('timestamp').set(message.timestamp);
-    }
-    // push message to datastore
-    if(message.content.length > 0){
-        dbRefObject.push(message);
+        chatRef.update({
+            'lastAuthor': message.senderUID,
+            'lastMessage': message.content,
+            'timestamp': message.timestamp
+        });
     }
 
     messageInput.value = null; // clear the message
 
-    // update chatInfo
-    const chatRef =  dbRefObject.parent.child('chatInfo');
-    chatRef.update({
-        'lastAuthor': message.senderUID,
-        'lastMessage': message.content,
-        'timestamp': message.timestamp
-    });
+    
 }
 
 function addMoreMessagesAtTheTop() {
@@ -523,6 +515,9 @@ function createMessageWithTemplate(key, messageObj) {
     const messageTemplate = document.getElementById('message-temp');
     const docFrag = messageTemplate.content.cloneNode(true);
     const message = docFrag.querySelector('.message')
+
+    const msgHeader = message.querySelector('.message-header');
+    loadProfileOfSender(msgHeader, messageObj.senderUID);
             
     const msgBody = message.querySelector('.message-body');
     msgBody.innerText = messageObj.content;
@@ -531,11 +526,89 @@ function createMessageWithTemplate(key, messageObj) {
     timestamp.innerText = new Date(messageObj.timestamp).toLocaleString();
 
     message.id = key;
+    message.dataset.userId = messageObj.senderUID;
     addUsernameToMessage(messageObj.senderUID, message)
     return message;
 }
 
+// onclick for messages
+function loadProfileOfSender(domElement, uid) {
+    domElement.addEventListener('click', function() {
+        populateProfileSidebar(uid);
+    })
+}
 
+function friendRequestButton(uid) {
+    const currUserRef = firebase.database().ref('/users/'+currentUID+'/friend-requests/'+uid);
+    const otherUserRef = firebase.database().ref('/users/'+uid+'/friend-requests/'+currentUID);
+
+    const button = document.getElementById('friend-request');
+
+    currUserRef.off();
+    currUserRef.on('value', function(snap) {
+        switch (snap.val()) {
+            case 'sent':
+                // cancel friend request
+                button.innerText = 'cancel friend request';
+                button.onclick = function() {
+                    currUserRef.remove();
+                    otherUserRef.remove();
+                };
+                break;
+            case 'received':
+                // accept or deny
+                button.innerText = 'accept friend request';
+                button.onclick = function() {
+                    currUserRef.remove();
+                    otherUserRef.remove();
+
+                    const currFriendRef = firebase.database().ref('/users/'+currentUID+'/friends/'+uid);
+                    const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUID);
+                    currFriendRef.set(true);
+                    otherFriendRef.set(true);
+
+                    deny.hidden = true;
+                    deny.onclick = null;
+                };
+
+                deny = document.getElementById('deny');
+                deny.onclick = function () {
+                    currUserRef.remove();
+                    otherUserRef.remove();
+
+                    deny.hidden = true;
+                    deny.onclick = null;
+                };
+                deny.hidden = false;
+                break;
+            default:
+                // check if already friends, then send request
+                const currFriendRef = firebase.database().ref('/users/'+currentUID+'/friends/'+uid);
+                const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUID);
+
+                currFriendRef.off();
+                currFriendRef.on('value', function(snap) {
+                    if (snap.val()) {
+                        // already friends, unfriend button
+                        button.innerText = 'unfriend';
+                        button.onclick = function() {
+                            currFriendRef.remove();
+                            otherFriendRef.remove();
+                        };
+                    } else {
+                        // not friends, send request
+                        button.innerText = 'send friend request';
+                        button.onclick = function() {
+                            currUserRef.set('sent');
+                            otherUserRef.set('received');
+                        };
+                    }
+                })
+                
+        }
+        button.hidden = false;
+    });
+}
 
 function getDbRef(tag, chatId) {
     const path = "/chat/"+tag+"/"+chatId+"/messages";
@@ -633,24 +706,28 @@ function changeChatOnClick(domElement, tag, chatId) {
     });
 }
 
-function populateProfileSidebar(user) {
-    if (user) {
-    const userRef = firebase.database().ref('/users/'+user.uid)
+function populateProfileSidebar(uid) {
+    const userRef = firebase.database().ref('/users/'+uid)
     userRef.once('value', snap => {
         const userObj = {};
-        userObj.photo = user.photoUrl;
-        userObj.uid = user.uid;
+        userObj.photo = snap.val().photo;
+        userObj.uid = uid;
         userObj.fname = snap.val().firstName;
         userObj.lname = snap.val().lastName;
         userObj.bio = snap.val().bio;  // there is no bio yet
         userObj.tags = snap.val().allTags;
         addUserInfoToDom(userObj)
-        })
-    }
+    })
 }
 
 function addUserInfoToDom(userObj) {
     const profile = document.getElementById('user-profile');
+    if (userObj.uid !== currentUID) {
+            friendRequestButton(userObj.uid);
+    } else {
+        document.getElementById('friend-request').hidden = true;
+    }
+
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
     if (userObj.photo != null) {
         profile.querySelector("#user-pfp").src = userObj.photo;
@@ -658,6 +735,7 @@ function addUserInfoToDom(userObj) {
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
     const tagList = profile.querySelector("#user-tags");
+    tagList.innerHTML = '';
     for (tag in userObj.tags) {
         if (userObj.tags.hasOwnProperty(tag)) {
             const tagNode = document.createElement('li');
