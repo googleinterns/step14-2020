@@ -6,22 +6,9 @@
     <meta name="generator" content="Codeply" />
     <title>Chat</title>
     <base target="_self"> 
-
-    <!-- firebase Scripts -->
-    <!-- the core Firebase JS SDK is always required and must be listed first -->
-
-    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-analytics.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.15.4/firebase-messaging.js"></script>
-    <script src="../app.js"></script>
-
-
     <!-- font awesome icons -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <script src="https://kit.fontawesome.com/d691fbec03.js" crossorigin="anonymous"></script>
-
     <!-- bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
 
@@ -68,53 +55,43 @@
             </a>
 
             <div id='profile-submenu' class="collapse sidebar-submenu">
-            <div id="user-profile"> 
-                <div class="center-h">
-                    <div id="image-cropper">
-                        <img id="user-pfp" src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg" class="menu-collapsed" alt="profile picture">
-                    </div> 
-                </div>
-                <ul class="list-group">
-                    <li class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
-                        <p><strong>name</strong></p>
-                        <p class="ml-auto" id="user-display-name">lilly</p>
-                    </li>
-                    <li class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
-                        <p><strong>email</strong></p>
-                        <p class="ml-auto">lilly@email.com</p>
-                    </li>
-                    <li class="info-section list-group-item menu-collapsed justify-content-start ">
-                        <div>
-                            <p class="text-left"><strong>bio</strong></p>
+                <div id="user-profile">
+                    <div class="center-h">
+                        <div id="image-cropper">
+                            <img id="user-pfp" src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg" class="menu-collapsed" alt="profile picture">
                         </div>
-                        <div>
-                            <pre id="user-bio" class="text-left">hey! i'm lilly, an incoming freshman at NYC. i play tennis and piano. please feel free to message me i love getting to know my fellow interns :) </pre>
-                            <textarea id="bio-edit" style="width:100%; height:100%;" hidden></textarea>
-                        </div>
-                    </li>
-                    <li class="info-section list-group-item menu-collapsed justify-content-start ">
-                        <div>
-                            <p class="text-left"><strong>tags</strong></p>
-                        </div>
-                        <div>
-                            <template id="tag-template">
-                                <div class="tag-container">
-                                    <div class="tag">
-                                        <span class="label"></span>
-                                        <i class="material-icons">close</i>
-                                    </div>
-                                </div>
-                            </template>
-                            <div class="tag-container">
-                                <input id="tag-input" />
+                    </div>
+                    <ul class="list-group">
+                        <li class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
+                            <p><strong>name</strong></p>
+                            <p class="ml-auto" id="user-display-name">lilly</p>
+                        </li>
+                        <li class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
+                            <p><strong>email</strong></p>
+                            <p class="ml-auto">lilly@email.com</p>
+                        </li>
+                        <li class="info-section list-group-item menu-collapsed justify-content-start ">
+                            <div>
+                                <p class="text-left"><strong>bio</strong></p>
                             </div>
-                        </div>
-                        <div id="button-house">
-                            <button type="button" id='friend-request' hidden></button>
-                            <button type="button" id='deny' hidden>deny friend request</button>
-                        </div>
-                    </li>
-            </div>
+                            <div>
+                                <pre id="user-bio" class="text-left">hey! i'm lilly, an incoming freshman at NYC. i play tennis and piano. please feel free to message me i love getting to know my fellow interns :) </pre>
+                                <textarea id="bio-edit" style="width:100%; height:100%;" hidden></textarea>
+                            </div>
+                        </li>
+                        <li class="info-section list-group-item menu-collapsed justify-content-start ">
+                            <div>
+                                <p class="text-left"><strong>tags</strong></p>
+                            </div>
+                            <div>
+                                <p id="user-tags" class="text-left"></p>
+                            </div>
+                            <div id="button-house">
+                                <button type="button" id='friend-request' hidden></button>
+                                <button type="button" id='deny' hidden>deny friend request</button>
+                            </div>
+                        </li>
+                </div>
             </div>
                 
                 <!-- settings drop down-->
@@ -135,7 +112,7 @@
                     <a class="bg-light bg-grey list-group-item list-group-item-action" id="btnLogout">
                         <span class="menu-collapsed">sign out</span>
                     </a>
-                </div> 
+                </div>
                 
                 <!-- separator to prevent overlapping at the bottom of the scroll bar-->
                 <li class="list-group-item sidebar-separator menu-collapsed"></li>
@@ -203,11 +180,6 @@
 
     </div>
     <!-- end of body-row -->
-
-  <!-- scripts -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
-  <script src="../chat.js"></script>
-  <script src="../script.js"></script>
+    <script src="../bundle.js"></script>
 </body>
 </html>

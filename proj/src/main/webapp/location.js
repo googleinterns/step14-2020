@@ -22,3 +22,5 @@ function getLocation() {
     }
     return;
 }
+
+window.getLocation = getLocation
