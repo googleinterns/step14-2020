@@ -426,13 +426,14 @@ function setTitle(dbRefObj){
 function initRef(dbRefObject) {
     const chat = document.getElementById('chatbox');
     chat.innerHTML = '';
+    const currentUid = firebase.auth().currentUser.uid;
 
     setTitle(dbRefObject);
 
     // note that when a comment is added it will display more than the limit, which
     // is intentional
     dbRefObject.off('child_added');
-    blockedRef = firebase.database().ref('/users/'+currentUID+'/blocked')
+    blockedRef = firebase.database().ref('/users/'+currentUid+'/blocked')
     blockedRef.once('value').then(function(snap) {
         return snap.val(); // dict of blocked users
     }).then(function(blockedUsers) {
@@ -483,9 +484,10 @@ function pushChatMessage() {
 function addMoreMessagesAtTheTop() {
     const chatbox = document.getElementById('chatbox');
     const messages = document.getElementById('message-list');
+    const currentUid = firebase.auth().currentUser.uid;
 
     if (messages.scrollTop === 0) {
-        const blockedRef = firebase.database().ref('/users/'+currentUID+'/blocked');
+        const blockedRef = firebase.database().ref('/users/'+currentUid+'/blocked');
 
         blockedRef.once('value').then(function(snap) {
             // dict of blocked users
@@ -561,8 +563,9 @@ function loadProfileOfSender(domElement, uid) {
 }
 
 function friendRequestButton(uid) {
-    const currUserRef = firebase.database().ref('/users/'+currentUID+'/friend-requests/'+uid);
-    const otherUserRef = firebase.database().ref('/users/'+uid+'/friend-requests/'+currentUID);
+    const currentUid = firebase.auth().currentUser.uid;
+    const currUserRef = firebase.database().ref('/users/'+currentUid+'/friend-requests/'+uid);
+    const otherUserRef = firebase.database().ref('/users/'+uid+'/friend-requests/'+currentUid);
 
     const button = document.getElementById('friend-request');
 
@@ -583,8 +586,8 @@ function friendRequestButton(uid) {
                     currUserRef.remove();
                     otherUserRef.remove();
 
-                    const currFriendRef = firebase.database().ref('/users/'+currentUID+'/friends/'+uid);
-                    const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUID);
+                    const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+uid);
+                    const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUid);
                     currFriendRef.set(true);
                     otherFriendRef.set(true);
 
@@ -632,8 +635,10 @@ function friendRequestButton(uid) {
 }
 
 function blockButton(uid) {
-    const currUserRef = firebase.database().ref('/users/'+currentUID+'/blocked/'+uid);
+    const currentUid = firebase.auth().currentUser.uid;
+    const currUserRef = firebase.database().ref('/users/'+currentUid+'/blocked/'+uid);
     const button = document.getElementById('block');
+    
 
     currUserRef.on('value', function(snap) {
         if (snap.val()) {
@@ -648,8 +653,8 @@ function blockButton(uid) {
             button.onclick = function() {
                 currUserRef.set(true);
                 // remove from each others' friend lists
-                const currFriendRef = firebase.database().ref('/users/'+currentUID+'/friends/'+uid);
-                const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUID);
+                const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+uid);
+                const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUid);
 
                 currFriendRef.once('value', function(snap) {
                     if (snap.val()) {
@@ -740,7 +745,8 @@ function initBio() {
 }
 
 function populateSidebar() {
-    const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
+    const currentUid = firebase.auth().currentUser.uid;
+    const userTagsRef = firebase.database().ref('/users/'+currentUid+'/allTags');
     userTagsRef.orderByKey().on('child_added', snap => {
 
         const chatTag = snap.key;
@@ -774,8 +780,9 @@ function populateProfileSidebar(uid) {
 }
 
 function addUserInfoToDom(userObj) {
+    const currentUid = firebase.auth().currentUser.uid;
     const profile = document.getElementById('user-profile');
-    if (userObj.uid !== currentUID) {
+    if (userObj.uid !== currentUid) {
             friendRequestButton(userObj.uid);
             blockButton(userObj.uid);
     } else {
