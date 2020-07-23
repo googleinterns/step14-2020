@@ -19,5 +19,5 @@ To deploy (generally just run a test server instead):
     To deploy:
         $ gcloud config configurations create arringtonh-step-2020-d
         $ gcloud config set project arringtonh-step-2020-d
-        $ cd step14-2020
+        $ cd ~/step14-2020
         $ cloud-build-local --config=clouddeploy.json --dryrun=false .
