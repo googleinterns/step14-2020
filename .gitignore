@@ -3,3 +3,4 @@ target/
 node_modules/
 bundle.js
 package-lock.json
+.nyc_output/
