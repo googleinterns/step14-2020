@@ -1,6 +1,6 @@
 
 To run a local server:
-    Setup. Only needs to be called once:
+    Setup. Only needs to be called once or whenever package.json changes:
         $ npm install browserify -g
         $ cd ~/step14-2020/proj/src/main/webapp
         $ npm install
@@ -9,6 +9,10 @@ To run a local server:
         $ cd ~/step14-2020/proj
         $ browserify src/main/webapp/app.js -o src/main/webapp/bundle.js
         $ mvn package appengine:run
+
+To run tests:
+    $ cd ~/step14-2020/proj/src/main/webapp
+    $ npm test
 
 To deploy (generally just run a test server instead):
     Setup. Only needs to be called once:
