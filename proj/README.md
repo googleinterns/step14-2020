@@ -1,8 +1,19 @@
-This directory is where you'll write all of your code!
+All commands should be done from the ~/step14-2020/proj directory
+To run a local server:
+    Setup. Only needs to be called once or whenever package.json changes:
+        $ npm install
 
-By default it contains a barebones web app. To run a local server, execute this
-command:
+    To run locally:
+        $ npm run-script run
 
-```bash
-mvn package appengine:run
-```
+To run tests:
+    $ npm test
+
+To deploy (generally just run a test server instead):
+    Setup. Only needs to be called once:
+        $ gcloud components install docker-credential-gcr
+        $ gcloud auth configure-docker
+        $ gcloud components install cloud-build-local
+
+    To deploy:
+        $ npm run-script deploy
