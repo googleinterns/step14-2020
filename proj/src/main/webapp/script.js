@@ -186,13 +186,10 @@ function sidebarCollapse () {
 **/
 function checkLoadingDisplays() {
     if ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" )) {
-        console.log("open");
         $('.sidebar + .p-4').addClass('d-block'); 
-        $('.sidebar + .p-4').removeClass('d-none'); 
     }
     else {
         $('.sidebar + .p-4').addClass('d-none'); 
-        console.log("open");
     }
 }
 
