@@ -32,20 +32,19 @@
             </a>
 
             <!-- submenu content for navigating between chats -->
-            <div id='chats-submenu' class="collapse sidebar-submenu">
-                    <template id="chat-preview-temp">
-                        <div class="chat-preview list-group-item">
-                            <strong><p id="chat-name"></p></strong>
-                            <span id=timestamp></span>
-                            <div class="message">
-                                <div class="message-header">
-                                    <img id="pfp">
-                                    <p id="username"></p>
-                                </div>
-                                <pre class="message-body"></pre>
-                            </div>
-                    </template>
-            </div> 
+            <template id="chat-preview-temp">
+                <div class="chat-preview list-group-item">
+                    <strong><p id="chat-name"></p></strong>
+                    <span id=timestamp></span>
+                    <div class="message">
+                        <div class="message-header">
+                            <img id="pfp">
+                            <p id="username"></p>
+                        </div>
+                    <pre class="message-body"></pre>
+                </div>
+            </template>
+            <div id='chats-submenu' class="collapse sidebar-submenu"></div> 
         
             <a href="#profile-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between align-items-center">
@@ -59,7 +58,7 @@
                 <div id="user-profile">
                     <div class="center-h">
                         <div id="image-cropper">
-                            <img id="user-pfp" src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg" class="menu-collapsed" alt="profile picture">
+                            <img id="user-pfp" src="https://cdn130.picsart.com/278148578018211.png" class="menu-collapsed" alt="profile picture">
                         </div>
                     </div>
                     <ul class="list-group">
@@ -69,11 +68,11 @@
                     </li>
                         <li class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
                             <p><strong>name</strong></p>
-                            <p class="ml-auto" id="user-display-name">lilly</p>
+                            <p class="ml-auto" id="user-display-name">doggie</p>
                         </li>
                         <li class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
                             <p><strong>email</strong></p>
-                            <p class="ml-auto">lilly@email.com</p>
+                            <p class="ml-auto">cool@dog.com</p>
                         </li>
                         <li class="info-section list-group-item menu-collapsed justify-content-start ">
                             <div>
@@ -89,7 +88,17 @@
                                 <p class="text-left"><strong>tags</strong></p>
                             </div>
                             <div>
-                                <p id="user-tags" class="text-left"></p>
+                                <template id="tag-template">
+                                    <div class="tag-container">
+                                        <div class="tag">
+                                            <span class="label"></span>
+                                            <i class="material-icons">close</i>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div class="tag-container">
+                                    <input id="tag-input" />
+                                </div>
                             </div>
                             <div id="button-house">
                                 <button type="button" id='friend-request' hidden></button>
@@ -140,28 +149,29 @@
                 <h1 class="display-4 card-header" id="big-title"> Chat Room </h1>
                 <!-- chat display-->
                 <div class="card-body" id="message-list">
-                    <!-- template for later use -->
-                    <!-- <ul>
-                        <li class="list-group-item">
-                            <div class="d-flex justify-content-between">
-                                <span>name</span>
-                                <span>time</span>
-                            </div>
-                            <div>message</div>
-                        </li>
-                    </ul> -->
-                    <div class="conversation">
-                        <div id="chatbox" class="chat"></div>
-                        <template id="message-temp">
-                            <div class="message">
-                                <div class="message-header">
-                                <img id="pfp">
-                                <strong><p id="username"></p></strong>
-                                <span id=timestamp></span>
-                            </div>
-                            <pre class="message-body"></pre>
-                        </template>
-                    </div> 
+                    <ul>
+                        <div class="conversation">
+                            <div id="chatbox" class="chat"></div>
+                            <template id="message-temp" class="row">
+                                <div class="message d-flex">
+                                    <div class="col-1">
+                                        <div id="image-cropper-pfp">
+                                            <img id="pfp" src="https://cdn130.picsart.com/278148578018211.png" alt="profile picture">
+                                        </div> 
+                                    </div>
+                                    <div calss="col-11">
+                                        <li class="list-group-item">
+                                            <div class=" justify-content-between">
+                                                <span><strong id="username">name</strong></span>
+                                                <span class="text-muted" id=timestamp>time</span>
+                                            </div>
+                                            <div><p class="message-body"></p></div>
+                                        </li>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </ul>
                 </div>
                 <!-- end of messages-->
 

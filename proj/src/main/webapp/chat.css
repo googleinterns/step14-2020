@@ -1,3 +1,35 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+.tag-container {
+  border: 2px solid #ccc;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag-container .tag {
+  border: 2px solid #ccc;
+  border-radius: 3px;
+  display: flex;
+  background-color: #f2f2f2;
+  align-items: center;
+  margin: 5px;
+  padding: 5px;
+}
+
+.tag-container input {
+  outline: #ccc;
+  flex: 1;
+}
+
+.tag span {
+  padding-right: 3px;
+}
+
+
+.tag i {
+  font-size: 90%;
+}
+
 /* container with all child divs aligned horizontally in the center*/
 body {
     background-color: #333333;
@@ -57,6 +89,7 @@ h1 {
 
 ul {
     list-style-type: none;
+    padding: 0;
 }
 
 /* profile pictures*/
@@ -175,6 +208,30 @@ a:hover {
 }
 
 /* main chat*/
+.col-1 {
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+}
+
+#main-chat .message {
+    border-bottom: 2px #D1B280 dotted;
+}
+
+/* profile pictures for messages*/
+#image-cropper-pfp {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50%;
+    margin: 12px auto 0px auto;
+}
+
+img {
+    height: 100%
+}
+
 #main-chat {
     height: 100%;
 }
@@ -190,6 +247,10 @@ a:hover {
     flex-direction: column-reverse;
 }
 
+.text-muted {
+    font-size: .8rem;
+}
+
 .card-body li {
     border: 0;
 }
@@ -199,4 +260,12 @@ a:hover {
     position: absolute;
     bottom: 0;
     width: 100%;
+}
+
+@media only screen 
+    and (min-width: 760px) 
+    and (max-width: 250px) {
+    #sidebar-container {
+        width: 250px;
+    }
 }
