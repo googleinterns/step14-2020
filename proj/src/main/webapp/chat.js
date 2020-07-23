@@ -388,6 +388,7 @@ function init() {
     const chat = document.getElementById('chatbox');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
 
+    document.getElementById('pfp-upload').oninput = pfpOnInput;
 }
 
 function initUserChat(){
@@ -674,6 +675,15 @@ function pfpOnInput() {
     const currentUid = firebase.auth().currentUser.uid;
     const pfpStorageRef = firebase.storage().ref('/'+currentUid+'/pfp.png');
     pfpStorageRef.put(pfp);
+
+    pfpStorageRef.getDownloadURL().then(function(url) {
+        const userPfpRef = firebase.database().ref('/users/'+currentUid+'/photo');
+        userPfpRef.set(true);
+
+        userPfp = document.getElementById('user-pfp');
+        userPfp.src = url;
+    })
+    input.files = null; // clear the input
 }
 
 function initBio() {
@@ -743,9 +753,16 @@ function addUserInfoToDom(userObj) {
     }
 
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
-    if (userObj.photo != null) {
-        profile.querySelector("#user-pfp").src = userObj.photo;
+    if (userObj.photo) {
+        const pfpStorageRef = firebase.storage().ref('/'+userObj.uid+'/pfp.png');
+        pfpStorageRef.getDownloadURL().then(function(url) {
+            profile.querySelector("#user-pfp").src = url;
+        })
+    } else {
+        const url = "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg";
+        profile.querySelector("#user-pfp").src = url;
     }
+    
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
     const tagList = profile.querySelector("#user-tags");
