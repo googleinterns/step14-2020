@@ -2,5 +2,7 @@ target/
 .idea
 node_modules/
 bundle.js
+/keys/
+firebase-debug.log
 package-lock.json
 .nyc_output/
