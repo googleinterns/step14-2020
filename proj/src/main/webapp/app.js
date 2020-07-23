@@ -10,7 +10,8 @@ firebase.initializeApp(appconfig.firebaseConfig);
 
 // Other files
 require('./chat.js');
-require('./location.js');
+require('./welcome.js');
+require('./signup.js');
 require('./script.js');
 
 // Redirect from index.html to welcome page if not signed in.

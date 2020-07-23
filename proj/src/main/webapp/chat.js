@@ -1,7 +1,7 @@
 const firebase = require('firebase');
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
-const html = '';//'./index.html'
+const html = '';
 window = new JSDOM(html).window
 document = window.document;
 /*
@@ -9,31 +9,6 @@ document = window.document;
  */
 
 const MAX_CHAT_SIZE = 200;
-
-// Elements of login container
-const fname = document.getElementById("fname")
-const txtEmail = document.getElementById("email");
-const txtPassword = document.getElementById("pass");
-const tagStr = document.getElementById("tags");
-const btnLogin = document.getElementById("btnLogin");
-const btnSignUp = document.getElementById("btnSignUp");
-const btnLogout = document.getElementById("btnLogout");
-
-// Add login event
-if(btnLogin){
-    btnLogin.addEventListener("click", e => {
-        const emailVal = txtEmail.value;
-        const passVal = txtPassword.value;
-
-        // Initialize auth object
-        const auth = firebase.auth();
-
-        const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(user){
-            window.location.replace("chat.html");
-        });
-        promise.catch(e => console.log(e.message));
-    });
-}
 
 // TODO: Make local variable; rewrite to allow for returning of keyIdDict
 var keyIdDict = {};
@@ -124,76 +99,6 @@ function createOrJoinChat(currentTag){
         console.log("unexpected error searching for chat rooms:", err);
     });
 }
-
-
-// Add sign up event
-if(btnSignUp){
-    btnSignUp.addEventListener("click", e => {
-        const emailVal = txtEmail.value;
-        const passVal = txtPassword.value;
-        var tagList = tagStr.value.split(',');
-        for(var ii = 0; ii < tagList.length; ii++){
-            tagList[ii] = tagList[ii].trim();
-        }
-
-        // Initialize auth object
-        const auth = firebase.auth();
-        auth.useDeviceLanguage();
-
-        auth.createUserWithEmailAndPassword(emailVal, passVal).then(async function(){
-            var allTags = {};
-            for(var ii = 0; ii < tagList.length; ii++){
-
-                var tag = tagList[ii];
-                var key = await createOrJoinChat(tag);
-                allTags[tag] = key;
-            }
-
-            const user = auth.currentUser;
-            user.updateProfile({
-                displayName: fname.value + " " + lname.value
-                }).then(function(){
-                console.log("display name updated successfully");
-                firebase.database().ref("users/" + auth.currentUser.uid).set({
-                    firstName : fname.value,
-                    lastName : lname.value,
-                    allTags : allTags,
-                    tagRemovalDict : keyIdDict,
-                    bio : "I'm a new user! Say hi!"
-                }).then(function(){
-                    window.location.replace("chat.html");
-                });
-            }).catch(function(err){
-                console.log("error updating display name:", err);
-            });
-        });
-
-    });
-}
-
-if(btnLogout){
-    btnLogout.addEventListener("click", e => {
-        firebase.auth().signOut();
-        window.location.replace("welcome.html");
-        console.log("You logged out")
-    });
-}
-
-firebase.auth().onAuthStateChanged(firebaseUser => {
-    if(firebaseUser){
-        console.log("logged in");
-        
-        if(btnLogout)
-            btnLogout.classList.remove("hidden");
-    }
-    else{
-        console.log("not logged in");
-        if(btnLogout)
-            btnLogout.classList.add("hidden");
-    }
-});
-
-
 
 function getExistingTags(ref){
     var currentTags = {};
@@ -361,11 +266,9 @@ var dbRefObject = getDbRef(tag, globalChatId);
 const LIMIT = 20; // how many messages to load at a time
 var firstChildKey;
 
-// Broad init function
-function init() {
-    const auth = firebase.auth();
-    
-    auth.onAuthStateChanged(async firebaseUser => {
+// init function for static/chat.html
+function initChat() {    
+    firebase.auth().onAuthStateChanged(async firebaseUser => {
         if(firebaseUser){
 
             clickWithEnterKey();
@@ -812,5 +715,6 @@ function addTag(tag, uid) {
   document.querySelector('.tag-container').insertBefore(tagContainer, tagInput)
 }
 
-window.init = init
+window.initChat = initChat
 window.pushChatMessage = pushChatMessage
+exports.createOrJoinChat = createOrJoinChat

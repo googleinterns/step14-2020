@@ -23,4 +23,4 @@ function getLocation() {
     return;
 }
 
-window.getLocation = getLocation
+exports.getLocation = getLocation
