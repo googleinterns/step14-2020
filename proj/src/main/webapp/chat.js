@@ -427,7 +427,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
     }
     else{
         // Deletes chat
-        infoRef.parent.update({null});
+        infoRef.parent.parent.update({chatId: null});
     }
 
 }
@@ -830,6 +830,8 @@ function addUserInfoToDom(userObj) {
         }
     }
 }
+
+exports.createOrJoinChat = createOrJoinChat;
 
 window.init = init
 window.pushChatMessage = pushChatMessage

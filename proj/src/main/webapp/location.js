@@ -36,5 +36,6 @@ function getLatLong(){
     }
 }
 
+
 window.getLocation = getLocation
 window.getLatLong = getLatLong
