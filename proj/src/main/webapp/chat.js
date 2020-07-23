@@ -108,7 +108,6 @@ function createOrJoinChat(currentTag){
     return ref.once("value").then(function(snapshot){
         // Checks to see if tag already exists in database
         if(snapshot.hasChild(currentTag)){
-
             // If tag already exists, navigate to users and add users if there is room
             var query = firebase.database().ref("/chat/" + currentTag + "/").orderByKey();
             return query.once("value").then(function(snapshot){
@@ -220,9 +219,9 @@ function removeAllCurrentTags(currentTags, allTagsRef, tagRemovalRef, abridgedTa
 
 async function setUserTags(tagList){
     if(firebase.auth().currentUser){
-
-        const abridgedTagsRef = "/users/" + firebaseUser.uid + "/allTags";
-        const abridgedTagRemovalRef = "/users/" + firebaseUser.uid + "/tagRemovalDict";
+        const currentUid = firebase.auth().currentUser.uid;
+        const abridgedTagsRef = "/users/" + currentUid + "/allTags";
+        const abridgedTagRemovalRef = "/users/" + currentUid + "/tagRemovalDict";
         
         var allTagsRef;
         var tagRemovalRef;
@@ -253,7 +252,7 @@ async function setUserTags(tagList){
                 allTags[tag] = key;
             }
 
-            await removeAllCurrentTags(currentTags);
+            await removeAllCurrentTags(currentTags, allTagsRef, tagRemovalRef, abridgedTagsRef);
 
             resolve(1);
         }).then(function(){
@@ -272,9 +271,9 @@ async function setUserTags(tagList){
 
 async function addUserTags(tagList){
     if(firebase.auth().currentUser){
-
-        const abridgedTagsRef = "/users/" + firebaseUser.uid + "/allTags";
-        const abridgedTagRemovalRef = "/users/" + firebaseUser.uid + "/tagRemovalDict";
+        const currentUid = firebase.auth().currentUser.uid;
+        const abridgedTagsRef = "/users/" + currentUid + "/allTags";
+        const abridgedTagRemovalRef = "/users/" + currentUid + "/tagRemovalDict";
 
         var allTagsRef;
         var tagRemovalRef;
@@ -385,12 +384,11 @@ function init() {
 
     const chat = document.getElementById('message-list');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
-
 }
 
 function initUserChat(){
-    currentUID = firebase.auth().currentUser.uid;
-    const userTagsRef = firebase.database().ref('/users/'+currentUID+'/allTags');
+    const currentUid = firebase.auth().currentUser.uid;
+    const userTagsRef = firebase.database().ref('/users/'+currentUid+'/allTags');
 
     // Wraps content function in a promise to ensure it runs before wrest of init
     return new Promise(function(resolve){
@@ -607,8 +605,8 @@ function friendRequestButton(uid) {
                 break;
             default:
                 // check if already friends, then send request
-                const currFriendRef = firebase.database().ref('/users/'+currentUID+'/friends/'+uid);
-                const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUID);
+                const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+uid);
+                const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUid);
 
                 currFriendRef.off();
                 currFriendRef.on('value', function(snap) {
@@ -747,14 +745,14 @@ function initBio() {
 function populateSidebar() {
     const currentUid = firebase.auth().currentUser.uid;
     const userTagsRef = firebase.database().ref('/users/'+currentUid+'/allTags');
-    userTagsRef.orderByKey().on('child_added', snap => {
 
-        const chatTag = snap.key;
-        const chatId = snap.val();
-
-        // get last message
-        makePreviewWithLastMessage(chatTag, chatId)
-
+    userTagsRef.orderByKey().on('value', snap => {
+        const sidebar = document.getElementById('chats-submenu');
+        sidebar.innerHTML = '';
+        for (tag in snap.val()) {
+            chatId = snap.val()[tag];
+            makePreviewWithLastMessage(tag, chatId)
+        }
     });
 }
 
@@ -782,6 +780,9 @@ function populateProfileSidebar(uid) {
 function addUserInfoToDom(userObj) {
     const currentUid = firebase.auth().currentUser.uid;
     const profile = document.getElementById('user-profile');
+    const tagContainer = profile.querySelector(".tag-container");
+    tagContainer.innerHTML = '';
+    
     if (userObj.uid !== currentUid) {
             friendRequestButton(userObj.uid);
             blockButton(userObj.uid);
@@ -789,6 +790,7 @@ function addUserInfoToDom(userObj) {
         document.getElementById('friend-request').hidden = true;
         document.getElementById('block').hidden = true;
         initBio();
+        addTagsToDom(currentUid);
     }
 
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
@@ -797,15 +799,73 @@ function addUserInfoToDom(userObj) {
     }
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
-    const tagList = profile.querySelector("#user-tags");
-    tagList.innerHTML = '';
     for (tag in userObj.tags) {
         if (userObj.tags.hasOwnProperty(tag)) {
-            const tagNode = document.createElement('li');
-            tagNode.innerText = tag;
-            tagList.appendChild(tagNode);
+            addTag(tag, userObj.uid);
         }
     }
+}
+
+// adds tag input
+function addTagsToDom(uid) {
+    tagsRef = firebase.database().ref('/users/'+uid+'/allTags');
+    tagContainer = document.querySelector('.tag-container');
+
+    const tagInput = document.createElement('input');
+    tagInput.id = "tag-input";
+    tagContainer.append(tagInput);
+    tagInput.addEventListener('keyup', function(event) {
+        if (event.keyCode === 13) { // enter key pressed
+            tagsRef.once('value', function(snap) {
+                var tags;
+                if (snap.val()) {
+                    tags = Object.keys(snap.val());
+                } else {
+                    tags = [];
+                }
+                const newTag = tagInput.value;
+                if (!tags.includes(newTag)) {
+                    tags.push(newTag);
+                    addTag(newTag, uid);
+                    addUserTags(tags);
+                }
+                tagInput.value = '';
+            });
+        }
+    });
+}
+
+/* 
+    add and remove tags!
+*/
+function addTag(tag, uid) {
+    const currentUid = firebase.auth().currentUser.uid;
+    const tagTemplate = document.getElementById('tag-template');
+    const docFrag = tagTemplate.content.cloneNode(true);
+    const tagContainer = docFrag.querySelector(".tag");
+
+    const label = tagContainer.querySelector('.label');
+    label.innerText = tag;
+
+    const close = tagContainer.querySelector('i');
+    if (uid == currentUid) {
+        close.id = tag;
+        close.onclick = function() {
+            const tagsRef = firebase.database().ref('/users/'+currentUid+'/allTags');
+            tagsRef.once('value', function(snap) {
+                const tagObj = snap.val();
+                delete tagObj[tag];
+                const tags = Object.keys(tagObj);
+                setUserTags(tags);
+                close.parentNode.remove();
+            })
+        };
+    } else {
+        close.remove();
+    }
+
+  const tagInput = document.getElementById('tag-input')
+  document.querySelector('.tag-container').insertBefore(tagContainer, tagInput)
 }
 
 window.init = init
