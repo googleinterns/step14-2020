@@ -167,11 +167,12 @@ a:hover {
 
 .sidebar {
     position: relative;
+    overflow-x: hidden;
 }
 
 .bottom {
     width: inherit;
-    position: absolute;
+    position: sticky;
     bottom: 0;
     z-index: 1;
 }
@@ -277,24 +278,61 @@ img {
 .topbtn {
     width: inherit;
     position: fixed;
-    top: 60px;
-    left: 10%;
+    top: 40px;
+    left: 12.5%;
     z-index: 3;
 }
 
-/* sizes up to tablets */
-@media only screen and (max-width: 760px) 
-and (min-width: 450px) {
-    #sidebar-expanded {
-        width: 250px;
+/* tablets or smaller */
+@media only screen and (max-width: 800px) {
+    #big-title {
+        font-size: 4rem;
+    }
+
+    /* message template */
+    #main-chat .message {
+        border: 0px;
+    }
+
+    #username {
+        font-size: .9rem;
+    }
+
+    .text-muted {
+        font-size: .7rem;
+    }
+
+    p {
+        margin-top: 0;
+        margin-bottom: .7rem;
+        font-size: .8rem;
+    }
+
+    #message-input {
+        font-size: .8rem;
+    }
+
+    #message-list {
+        padding: 5px;
     }
 }
 
-/* tablets only */
-@media only screen and (max-width: 1000px) 
-and (min-width: 700px) {
-    /* .bg-gold {
-        width: 145px;
-    } */
-} 
-    
+/* phones */
+@media only screen and (max-width: 450px) {
+    #big-title {
+        font-size: 3rem;
+    }    
+
+    #message-list {
+        max-height: calc(100% - 150px);
+    }
+
+    #img-col {
+        padding-left: 0;
+    }
+
+    a.bg-light:focus, a.bg-light:hover, button.bg-light:focus, button.bg-light:hover {
+    background-color: #D1B280! important;
+    border-radius: 50% !important;
+    }
+}

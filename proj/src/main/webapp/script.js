@@ -185,7 +185,7 @@ function sidebarCollapse () {
     is closed. 
 **/
 function checkLoadingDisplays() {
-    if ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" )) {
+    if ($( '#sidebar-container' ).hasClass( 'sidebar-collapsed' )) {
         $('.sidebar + .p-4').addClass('d-block'); 
     }
     else {
@@ -196,5 +196,12 @@ function checkLoadingDisplays() {
 $( document ).ready(function() {
     if (screen.width < 750) {
         checkLoadingDisplays();
+    }
+
+    // adjust message tempate proportions
+    if (screen.width < 800) {
+        $('#img-col').addClass('col-2');
+        $('#msg-col').addClass('col-10');
+        console.log("class added");
     }
 });
