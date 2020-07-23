@@ -172,3 +172,23 @@ function sidebarCollapse () {
      $('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
 }
 
+/*  This makes sure that the logic is working properly for the classes.
+    This ensures that if the sidebar is opened on a mobile device, the chat is hidden.
+    It also make sure that there is not an d-none tag on the chat if the sidebar
+    is closed. 
+**/
+function checkLoadingDisplays() {
+    if ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" )) {
+        $('.sidebar + .p-4').addClass('d-block'); 
+        $('.sidebar + .p-4').removeClass('d-none'); 
+    }
+    else {
+        $('.sidebar + .p-4').addClass('d-none'); 
+    }
+}
+
+$( document ).ready(function() {
+    if (screen.width < 750) {
+        checkLoadingDisplays();
+    }
+});

@@ -45,6 +45,9 @@ h1 {
     margin-left: 0;
     margin-right: 0;
     overflow: hidden;
+    /* prevent column wrapping */
+    display: flex;
+    flex-wrap: nowrap;
 }
 
 #sidebar-container {
@@ -100,8 +103,8 @@ ul {
 
 .list-group-item:last-child {
     border: 0;
-    border-bottom-right-radius: 0 !important; 
-    border-bottom-left-radius: 0 !important;
+    border-radius: 0 !important; 
+
 }
 
 /* infinte scroll */
@@ -269,17 +272,21 @@ img {
     width: 50px;
 }
 
-@media only screen 
-    and (min-width: 760px) 
-    and (max-width: 250px) {
-    #sidebar-container {
+
+/* sizes up to tablets */
+@media only screen and (max-width: 760px) 
+and (min-width: 450px) {
+    #sidebar-expanded {
         width: 250px;
     }
 }
 
-/* small device view */
-/* under 750px*/
-@media only screen and (max-width: 750px) {
+/* tablets only */
+@media only screen and (max-width: 1000px) 
+and (min-width: 700px) {
+    .bg-gold {
+        width: 145px;
+    }
 
 } 
     
