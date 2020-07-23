@@ -1,24 +1,32 @@
+const firebase = require('firebase');
+const jsdom = require('jsdom');
+const { JSDOM } = jsdom;
+window = (new JSDOM('')).window;
+document = window.document
+const $ = require('jquery');
+require('bootstrap'); // for collapse
+
 /*
     Notifications
  */
 
-const messaging = firebase.messaging();
-messaging.requestPermission()
-.then(function () {
-    console.log("Have permission");
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/firebase-messaging-sw.js')
-        .then(function(registration) {
-            console.log('Registration successful, scope is:', registration.scope);
-        }).catch(function(err) {
-            console.log('Service worker registration failed, error:', err);
-        });
-    }
-});
+// const messaging = firebase.messaging();
+// messaging.requestPermission()
+// .then(function () {
+//     console.log("Have permission");
+//     if ('serviceWorker' in navigator) {
+//         navigator.serviceWorker.register('/firebase-messaging-sw.js')
+//         .then(function(registration) {
+//             console.log('Registration successful, scope is:', registration.scope);
+//         }).catch(function(err) {
+//             console.log('Service worker registration failed, error:', err);
+//         });
+//     }
+// });
 
-messaging.onMessage((payload) => {
-    appendMessage(payload);
-});
+// messaging.onMessage((payload) => {
+//     appendMessage(payload);
+// });
 
 function appendMessage(payload){
     const messagesElement = document.getElementById("messages");
@@ -59,15 +67,6 @@ function getLocation() {
 /*
     Setting password 
 */ 
-
-// Check if the password meets the password requirement with every character
-$('#pass').on('keyup', function(){
-    meetRequirements();
-    pwLength.hidden = false;
-    pwNumber.hidden = false;
-    pwSymbol.hidden = false;
-});
-
 // Check if the password is strong enough 
 function meetRequirements(){
     const password = document.getElementById("pass");
@@ -100,7 +99,6 @@ function containsNumber(password){
 
 function containsSymbol(password){
     var symbol = /[$-/:-?{-~!"^_`\[\]]/;
-    // const password = document.getElementById("pass");
     if(password.value.match(symbol)){
         $('#pwSymbol').addClass('alert-success');
         return true;
@@ -114,23 +112,26 @@ function containsSymbol(password){
 /* Check for password confirmation 
     enable button if and only if the password meets the requiremetns and match **/
 $('#pass, #passconf').on('keyup', function(){
-    if ((pass.value.length != 0) && (passconf.value.length != 0) && meetRequirements){
-        if ($('#pass').val() == $('#passconf').val()){
+    let pass = $('#pass');
+    let passVal = pass.val()||'';
+    let passconf = $('#passconf');
+    let passconfVal = passconf.val()||'';
+    if ((passVal.length != 0) && (passconfVal.length != 0) && meetRequirements){
+        if (passVal == passconfVal){
             $('#btnSignUp').prop('disabled', false);
-            $('#pass').css('border-bottom','2px solid #d1b280');
-            $('#passconf').css('border-bottom','2px solid #d1b280');
+            pass.css('border-bottom','2px solid #d1b280');
+            passconf.css('border-bottom','2px solid #d1b280');
             noMatch.hidden = true;
         } else{
             // disable sign up button
             $('#btnSignUp').prop('disabled', true);
             // underline the inputs in red
-            $('#pass').css('border-bottom','2px solid #fa8072');
-            $('#passconf').css('border-bottom','2px solid #fa8072');
+            pass.css('border-bottom','2px solid #fa8072');
+            passconf.css('border-bottom','2px solid #fa8072');
             noMatch.hidden = false;
         }
     }
 })
-
 
 /*
     Chatroom sidebar
