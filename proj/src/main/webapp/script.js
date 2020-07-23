@@ -148,6 +148,8 @@ $('[data-toggle = sidebar-colapse]').click(function() {
 });
 
 function sidebarCollapse () {
+    // remove locational reset 
+    $('#bottom').removeClass('topbtn'); 
 
     // if the device is small, this will hide the chat when they open the side bar
     if (screen.width < 750) {
@@ -168,6 +170,11 @@ function sidebarCollapse () {
         SeparatorTitle.addClass('d-flex');
     }
 
+    // move the buttom on mobile view
+    if ((screen.width<500) && ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" ))) {
+        $('#bottom').addClass('topbtn'); 
+    }
+
      // Collapse/Expand icon
      $('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
 }
@@ -179,11 +186,13 @@ function sidebarCollapse () {
 **/
 function checkLoadingDisplays() {
     if ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" )) {
+        console.log("open");
         $('.sidebar + .p-4').addClass('d-block'); 
         $('.sidebar + .p-4').removeClass('d-none'); 
     }
     else {
         $('.sidebar + .p-4').addClass('d-none'); 
+        console.log("open");
     }
 }
 
