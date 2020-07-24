@@ -901,8 +901,8 @@ function addTag(tag, uid) {
         close.remove();
     }
 
-  const tagInput = document.getElementById('tag-input')
-  document.querySelector('.tag-container').insertBefore(tagContainer, tagInput)
+  const tagInput = document.getElementById('tag-input');
+  document.querySelector('.tag-container').insertBefore(tagContainer, tagInput);
 }
 
 window.init = init
