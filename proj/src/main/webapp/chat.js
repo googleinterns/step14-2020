@@ -1,9 +1,4 @@
 const firebase = require('firebase');
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
-const html = '';//'./index.html'
-window = new JSDOM(html).window
-document = window.document;
 
 /*
     Authentication
@@ -16,26 +11,8 @@ const fname = document.getElementById("fname")
 const txtEmail = document.getElementById("email");
 const txtPassword = document.getElementById("pass");
 const tagStr = document.getElementById("tags");
-const btnLogin = document.getElementById("btnLogin");
 const btnSignUp = document.getElementById("btnSignUp");
-const btnLogout = document.getElementById("btnLogout");
 const isLoc = document.getElementById("loc");
-
-// Add login event
-if(btnLogin){
-    btnLogin.addEventListener("click", e => {
-        const emailVal = txtEmail.value;
-        const passVal = txtPassword.value;
-
-        // Initialize auth object
-        const auth = firebase.auth();
-
-        const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(user){
-            window.location.replace("chat.html");
-        });
-        promise.catch(e => console.log(e.message));
-    });
-}
 
 // TODO: Make local variable; rewrite to allow for returning of keyIdDict
 var keyIdDict = {};
@@ -213,30 +190,6 @@ if(btnSignUp){
 
     });
 }
-
-if(btnLogout){
-    btnLogout.addEventListener("click", e => {
-        firebase.auth().signOut();
-        window.location.replace("welcome.html");
-        console.log("You logged out")
-    });
-}
-
-firebase.auth().onAuthStateChanged(firebaseUser => {
-    if(firebaseUser){
-        console.log("logged in");
-        
-        if(btnLogout)
-            btnLogout.classList.remove("hidden");
-    }
-    else{
-        console.log("not logged in");
-        if(btnLogout)
-            btnLogout.classList.add("hidden");
-    }
-});
-
-
 
 function getExistingTags(ref){
     var currentTags = {};
@@ -951,10 +904,14 @@ function addTag(tag, uid) {
   document.querySelector('.tag-container').insertBefore(tagContainer, tagInput)
 }
 
-
-
+function logout(){
+    firebase.auth().signOut();
+    window.location.replace("welcome.html");
+    console.log("You logged out")
+}
 
 exports.createOrJoinChat = createOrJoinChat;
 
 window.init = init
 window.pushChatMessage = pushChatMessage
+window.logout = logout

@@ -103,7 +103,8 @@ describe('Functions calling to the firestore database', () => {
     });
 
     // Long runtime test
-    describe('Creates another user to join the same chat', () => {
+    describe('Creates another user to join the same chat', function () {
+        this.timeout(5000)
         it('lat and long should be averaged (99.8)', async () => {
             const tag = "averaging-test";
             var chatLat;
