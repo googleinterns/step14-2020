@@ -586,7 +586,7 @@ function createMessageWithTemplate(key, messageObj) {
 function loadProfileOfSender(domElement, uid) {
     domElement.addEventListener('click', function() {
         // close friend req/blocked listeners before adding more
-        const currentUid = firebase.database().currentUser.uid;
+        const currentUid = firebase.auth().currentUser.uid;
         const friendReqRef = firebase.database().ref('/users/'+currentUid+'/friend-requests/'+uid);
         friendReqRef.off();
         const blockedRef = firebase.database().ref('/users/'+currentUid+'/blocked/'+uid);
