@@ -32,19 +32,12 @@ async function createUserIfNotExisting(userData){
             })    
 }
 
-async function deleteUser(userData){
-    // Try to sign in to user
-    await firebase.auth().signInWithEmailAndPassword(userData.email, userData.password).then(async function(data){
-        await firebase.auth().currentUser.delete()
-        }).catch(function(err){
-            })
-}
-
 describe('Creating and Joining Chats', function() {
     this.timeout(10000);
     let testUsers = [
         {email:'test@test.com', password:'test123'},
         {email:'test2@test.com', password:'test123'}]
+    const tag = 'test-tag';
 
     before(async function() {
         // Require sample.js and save the exports inside a namespace called myFunctions.
@@ -56,11 +49,6 @@ describe('Creating and Joining Chats', function() {
 
     after(async function() {
         if (testconfig.shouldCleanUp) {
-            // // Delete the test users
-            // for (let i=0;i<testUsers.length;i++){
-            //     await deleteUser(testUsers[i])
-            // }
-
             // Remove nodes created
             await firebase.database().ref("/chat/").remove().then(function(){
                 console.log("Successfully removed chat node from database")
@@ -78,8 +66,7 @@ describe('Creating and Joining Chats', function() {
         test.cleanup();
     });
 
-    describe('Log into first user and create a chats', function() {
-        const tag = 'test-tag';
+    describe('With a new user, creates a predetermined chat', function() {
         let userData = testUsers[0];
         let keys;
         it('log into first user', async function() {
@@ -92,6 +79,8 @@ describe('Creating and Joining Chats', function() {
         });
 
         it('create a chat with the tag', async function() {
+            const lat = 100;
+            const long = 100;
             // Make sure chat with 'test-tag' does not exit
             let chatRef = firebase.database().ref("/chat/")
             await chatRef.once('value', function(snapshot) {
@@ -99,7 +88,7 @@ describe('Creating and Joining Chats', function() {
             });
             
             // Create chat with tag='test-tag'
-            keys = await chat.createOrJoinChat(tag);
+            keys = await chat.createOrJoinChat(tag,lat,long);
 
             // Make sure a chat was created and the user was added to the set of users
             let specificChatRemovalRef = firebase.database().ref("/chat/" + tag + "/" + keys.tag + "/users/");
@@ -108,6 +97,13 @@ describe('Creating and Joining Chats', function() {
                 assert.equal(data, userData.uid);
             });
 
+            const chatInfoRef = firebase.database().ref("/chat/" + tag + "/" + keys.tag + "/chatInfo/");
+            await chatInfoRef.once("value").then(function(snapshot){
+                chatLat = snapshot.child("latitude").val();
+                chatLong = snapshot.child("longitude").val();
+                assert.equal(lat, chatLat);
+                assert.equal(long, chatLong);
+            });
         });
         it('sign out of first user', async function() {
 
@@ -119,7 +115,6 @@ describe('Creating and Joining Chats', function() {
 
 
     describe('Log into second user and join existing a chats', function() {
-        const tag = 'test-tag';
         let userData = testUsers[1];
         let keys;
         it('log into second user', async function() {
@@ -132,6 +127,8 @@ describe('Creating and Joining Chats', function() {
         });
 
         it('join an existing chat with the tag', async function() {
+            const lat = 99.6;
+            const long = 99.6;
             // Make sure chat with 'test-tag' does exit
             let chatRef = firebase.database().ref("/chat/")
             await chatRef.once('value', function(snapshot) {
@@ -139,13 +136,22 @@ describe('Creating and Joining Chats', function() {
             });
             
             // Create chat with tag='test-tag'
-            keys = await chat.createOrJoinChat(tag);
+            keys = await chat.createOrJoinChat(tag, lat, long);
 
             // Make sure a chat was created and the user was added to the set of users
             let specificChatRemovalRef = firebase.database().ref("/chat/" + tag + "/" + keys.tag + "/users/");
             await specificChatRemovalRef.once("value").then(function(snapshot){
                 var data = snapshot.child(keys.tagRemoval).val();
                 assert.equal(data, userData.uid);
+            });
+
+
+            const chatInfoRef = firebase.database().ref("/chat/" + tag + "/" + keys.tag + "/chatInfo/");
+            await chatInfoRef.once("value").then(function(snapshot){
+                chatLat = snapshot.child("latitude").val();
+                chatLong = snapshot.child("longitude").val();
+                assert.equal(99.8, chatLat.toFixed(1));
+                assert.equal(99.8, chatLong.toFixed(1));
             });
 
         });

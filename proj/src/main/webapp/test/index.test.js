@@ -29,8 +29,9 @@ describe('Functions calling to the firestore database', () => {
     let testUserUID;
 
     before(async () => {
-        // Require sample.js and save the exports inside a namespace called myFunctions.
+        // Require js functions and store their functionality
         myFunctions = require('../sample.js');
+        
         // Sign in to test user
         testUserUID = await firebase.auth().signInWithEmailAndPassword(testEmail, testPassword).then(function(data){
                 console.log("Successfully logged in to test user.",testEmail,"\\",testPassword)
@@ -49,29 +50,25 @@ describe('Functions calling to the firestore database', () => {
     });
 
     after(async () => {
-        if (testconfig.shouldCleanUp) {
-            // // Delete the test user
-            // await firebase.auth().currentUser.delete()
-            // Remove nodes created
-            await firebase.database().ref("/chat/").remove().then(function(){
-                console.log("Successfully removed chat node from database")
-            }).catch(function(err){
-                console.log("Error cleaning up chat node from:", err);
-                throw err
-            })
-        }
+        // Remove nodes created
+        await firebase.database().ref("/chat/").remove().then(function(){
+            console.log("Successfully removed chat node from database")
+        }).catch(function(err){
+            console.log("Error cleaning up chat node from:", err);
+            throw err
+        })
         // Do cleanup tasks.
         test.cleanup();
     });
 
     describe('Create a chat with the current user', () => {
-        it('should create add UID to chat/test-tag/', async () => {
+        it('should create add UID to chat/test-tag/', () => {
             const tag = 'test-tag';
             const postKey = 'test-postKey';
             const key = myFunctions.addUserToTag(tag,postKey);
             // Check that uid is stored as the value under the return key
             var chatRef = firebase.database().ref("/chat/" + tag + "/" + postKey + "/users/");
-            await chatRef.once("value").then(function(snapshot){
+            chatRef.once("value").then(function(snapshot){
                 var data = snapshot.child(key).val();
                 assert.equal(data, testUserUID);
             });
