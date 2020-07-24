@@ -94,7 +94,7 @@ function findChatAndAddUser(snapshot, tag){
         return {'tag':key,'tagRemoval':removalKey};
     } else {
         // Create new chat if room is full, add new user
-        return createNewChatWithUser(currentTag);
+        return createNewChatWithUser(tag);
     }
 }
 
