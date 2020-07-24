@@ -14,7 +14,7 @@ const test = require('firebase-functions-test')();
 // Set up the app
 const appconfig = require("../appconfig.js");
 const testconfig = require("./test-appconfig.js");
-//appconfig.firebaseConfig = testconfig.firebaseTestConfig
+appconfig.firebaseConfig = testconfig.firebaseTestConfig
 const app = require("../app.js");
 
 let jsdom = require("jsdom"); 
@@ -99,49 +99,4 @@ describe('Simple Functions', () => {
             assert.equal(actual, expected);
         })
     });
-})
-
-describe('testing profile picture functions', () => {
-    let functions;
-    before(async function() {
-        functions = require('../chat.js');
-        const email = "realdog@woof.com";
-        const pass = "dogdogdog";
-        console.log("BRO!");
-        await firebase.auth().signInWithEmailAndPassword(email, pass).then(function() {
-                console.log("Successfully logged in to test user.");
-            }).catch(function(e) {
-                console.log("error: "+e.message);
-            });
-    });
-
-    after(() => {
-        firebase.auth().signOut();
-        test.cleanup();
-    })
-
-    describe('addUserInfoToDom', () => {
-        it('no profile picture', () => {
-            const expected = "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg";
-            const testUser = {};
-            functions.addUserInfoToDom(testUser);
-            const actual = document.querySelector('#user-pfp').src;
-            assert.equal(actual, expected);
-        })
-
-        it('test user profile picture', async function() {
-            const uid = "AsaCFzk14xRoru19RpIkKENH5Bs2"; // test user uid
-            const pfpRef = firebase.storage().ref('/'+uid+'/pfp.png');
-            const expected = await pfpRef.getDownloadURL().then(function(url) {
-                return url;
-            })
-            const testUser = {
-                "uid": uid,
-                "photo": expected,
-            };
-            functions.addUserInfoToDom(testUser);
-            const actual = document.querySelector('#user-pfp').src;
-            assert.equal(actual, expected);
-        })
-    })
 })
