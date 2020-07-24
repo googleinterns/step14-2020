@@ -1,9 +1,10 @@
 // Imports
 const firebase = require('firebase');
 const appconfig = require('./appconfig.js');
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
-window = (new JSDOM('')).window;
+const { JSDOM } = require('jsdom');
+const { window } = new JSDOM('<!doctype html><html><body></body></html>');
+global.document = window.document;
+global.window = window;
 
 // Initialize Firebase
 firebase.initializeApp(appconfig.firebaseConfig);
@@ -12,6 +13,7 @@ firebase.initializeApp(appconfig.firebaseConfig);
 require('./chat.js');
 require('./location.js');
 require('./script.js');
+require('./welcome.js');
 
 // Redirect from index.html to welcome page if not signed in.
 function redirectToWelcomeOrChat() {

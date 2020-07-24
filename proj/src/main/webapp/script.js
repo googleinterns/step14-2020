@@ -1,8 +1,4 @@
 const firebase = require('firebase');
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
-window = (new JSDOM('')).window;
-document = window.document
 const $ = require('jquery');
 require('bootstrap'); // for collapse
 
