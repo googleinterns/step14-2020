@@ -394,7 +394,8 @@ footer a:hover {
 }
 
 /* tablet view */
-@media screen and (min-device-width: 600px) and (max-device-width: 1024px) { 
+@media screen and (min-device-width: 600px) 
+and (max-device-width: 1024px) { 
     .hide-on-mobile .header {
         margin-top: 7.5vh;
         margin-bottom: 13vh;
