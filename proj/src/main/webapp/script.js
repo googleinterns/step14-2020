@@ -172,7 +172,7 @@ function sidebarCollapse () {
     }
 
     // move the buttom on mobile view
-    if ((screen.width<500) && ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" ))) {
+    if ((screen.width < 500) && ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" ))) {
         $('#bottom').addClass('topbtn'); 
     }
 
