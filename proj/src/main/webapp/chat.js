@@ -842,3 +842,4 @@ function addTag(tag, uid) {
 
 window.init = init
 window.pushChatMessage = pushChatMessage
+module.exports.addUserInfoToDom = addUserInfoToDom;
