@@ -33,16 +33,22 @@
 
             <!-- submenu content for navigating between chats -->
             <template id="chat-preview-temp">
-                <div class="chat-preview list-group-item">
-                    <strong><p id="chat-name"></p></strong>
-                    <span id=timestamp></span>
-                    <div class="message">
-                        <div class="message-header">
-                            <img id="pfp">
-                            <p id="username"></p>
+                <div class="chat-preview list-group-item row">
+                    <div class="d-flex">
+                        <div style="width:20%;">
+                            <div id="image-cropper-pfp">
+                                <img id="pfp" alt="profile picture">
+                            </div> 
                         </div>
-                    <pre class="message-body"></pre>
-                </div>
+                        <div class="message">
+                            <div class="message-header">
+                                <strong><p id="chat-name"></p></strong>
+                                <p id="username"></p>
+                                <span id=timestamp></span>
+                            </div>
+                            <pre class="message-body"></pre>
+                        </div>
+                    </div>
             </template>
             <div id='chats-submenu' class="collapse sidebar-submenu"></div> 
         

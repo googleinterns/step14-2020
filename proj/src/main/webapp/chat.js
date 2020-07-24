@@ -727,8 +727,14 @@ async function makeChatPreview(chatInfoObj, tag, chatId) {
 async function addUsernameToMessage(uid, preview) {
     const userRef = firebase.database().ref('/users/'+uid);
     await userRef.once("value", snap => {
-        if(snap.val()){
+        if(snap.val()) {
             preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
+            // add pfp
+            const url = snap.val().photo || "gs://arringtonh-step-2020-d.appspot.com/default.png";
+            const pfpStorageRef = firebase.storage().refFromURL(url);
+            pfpStorageRef.getDownloadURL().then(function(src) {
+                preview.querySelector("#pfp").src = src;
+            })
         }
     });
 }
