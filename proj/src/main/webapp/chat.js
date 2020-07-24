@@ -5,6 +5,7 @@ const firebase = require('firebase');
  */
 
 const MAX_CHAT_SIZE = 200;
+const defaultPfp = "gs://arringtonh-step-2020-d.appspot.com/default.png";
 
 // Elements of login container
 const fname = document.getElementById("fname")
@@ -180,7 +181,7 @@ if(btnSignUp){
                     allTags : allTags,
                     tagRemovalDict : keyIdDict,
                     bio : "I'm a new user! Say hi!",
-                    photo: "gs://arringtonh-step-2020-d.appspot.com/default.png",
+                    photo: defaultPfp,
                 }).then(function(){
                     window.location.replace("chat.html");
                 });
@@ -583,7 +584,7 @@ function createMessageWithTemplate(key, messageObj) {
     // add pfp
     const pfpRef = firebase.database().ref('/users/'+messageObj.senderUID+'/photo');
     pfpRef.once('value', function(snap) {
-        const url = snap.val() || "gs://arringtonh-step-2020-d.appspot.com/default.png";
+        const url = snap.val() || defaultPfp;
         storageRef = firebase.storage().refFromURL(url);
         storageRef.getDownloadURL().then(function(src) {
             message.querySelector('#pfp').src = src;
@@ -766,7 +767,7 @@ async function addUsernameToMessage(uid, preview) {
         if(snap.val()) {
             preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
             // add pfp
-            const url = snap.val().photo || "gs://arringtonh-step-2020-d.appspot.com/default.png";
+            const url = snap.val().photo || defaultPfp;
             const pfpStorageRef = firebase.storage().refFromURL(url);
             pfpStorageRef.getDownloadURL().then(function(src) {
                 preview.querySelector("#pfp").src = src;
@@ -870,7 +871,7 @@ function addUserInfoToDom(userObj) {
 
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
 
-    const url = userObj.photo || "gs://arringtonh-step-2020-d.appspot.com/default.png";
+    const url = userObj.photo || defaultPfp;
     const pfpStorageRef = firebase.storage().refFromURL(url);
     pfpStorageRef.getDownloadURL().then(function(src) {
         profile.querySelector("#user-pfp").src = src;
