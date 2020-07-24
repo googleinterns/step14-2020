@@ -2,6 +2,7 @@ All commands should be done from the ~/step14-2020/proj directory
 To run a local server:
     Setup. Only needs to be called once or whenever package.json changes:
         $ npm install
+        $ npm install -g browserify
 
     To run locally:
         $ npm run-script run

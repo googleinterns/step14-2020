@@ -9,9 +9,9 @@ const chat = require('./chat.js');
 
 // init function for static/signup.html
 function initSignUp(){
-    location.getLocation()
     initSignUpButtons()
     initializePasswordValidation()
+    location.getLocation()
 }
 
 function initSignUpButtons(){
@@ -39,11 +39,13 @@ function initSignUpButtons(){
 
             auth.createUserWithEmailAndPassword(emailVal, passVal).then(async function(){
                 var allTags = {};
+                var tagRemovalDict = {};
                 for(var ii = 0; ii < tagList.length; ii++){
-
-                    var tag = tagList[ii];
-                    var key = await chat.createOrJoinChat(tag);
-                    allTags[tag] = key;
+                    var tag = tagList[ii];                    
+                    var keys = await chat.createOrJoinChat(tag);
+                    console.log("ARINZE1:",keys)
+                    allTags[tag] = keys['tag']
+                    tagRemovalDict[tag] = keys['tagRemoval']                    
                 }
 
                 const user = auth.currentUser;
@@ -55,7 +57,7 @@ function initSignUpButtons(){
                         firstName : fname.value,
                         lastName : lname.value,
                         allTags : allTags,
-                        tagRemovalDict : keyIdDict,
+                        tagRemovalDict : tagRemovalDict,
                         bio : "I'm a new user! Say hi!"
                     }).then(function(){
                         window.location.replace("chat.html");
@@ -103,7 +105,6 @@ function containsSymbol(password){
 }
 
 function styleAlert(alertObj, passing){
-    console.log('ARINZE1:',alertObj,passing)
     if (alertObj) {
         alertObj.hidden = false;
         if(passing){

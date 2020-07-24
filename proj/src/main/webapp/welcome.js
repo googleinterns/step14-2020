@@ -8,8 +8,8 @@ const location = require('./location.js');
 
 // init function for static/welcome.html
 function initWelcome(){
-    location.getLocation()
     initLoginButtons()
+    location.getLocation()   
 }
 
 function initLoginButtons(){

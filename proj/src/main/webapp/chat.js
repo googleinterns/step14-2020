@@ -10,15 +10,12 @@ document = window.document;
 
 const MAX_CHAT_SIZE = 200;
 
-// TODO: Make local variable; rewrite to allow for returning of keyIdDict
-var keyIdDict = {};
-
 // Adds user to an existing chat when given a reference to the place in the database
 function addUserToTag(reference, tag){
     currentUID = firebase.auth().currentUser.uid;
     console.log("adding new user to chat room with uid: " + currentUID);
     const removalKey = reference.push(currentUID).key;
-    keyIdDict[tag] = removalKey;
+    return removalKey;
 }
 
 // Creates a new chat given a tag and adds the current user as a member
@@ -46,14 +43,15 @@ function createNewChatWithUser(tag){
     var currentReference = firebase.database().ref("/chat/" + tag);
     var postKey = currentReference.push(newChat).key;
     currentReference = firebase.database().ref("/chat/" + tag + "/" + postKey + "/users/");
-    addUserToTag(currentReference, tag);
-
-    return postKey;
+    var removalKey = addUserToTag(currentReference, tag);
+    console.log("ARINZE6:",{'tag':postKey, 'tagRemoval':removalKey})
+    return {'tag':postKey, 'tagRemoval':removalKey};
 }
 
 // Loops through open chat rooms, adds the user to the first open chat and returns the key
 function findChatAndAddUser(snapshot, tag){
     var key;
+    var removalKey;
     var foundOpenRoom = false;
     snapshot.forEach(function(childSnapshot){
         key = childSnapshot.key;
@@ -63,14 +61,16 @@ function findChatAndAddUser(snapshot, tag){
 
         // Handled below if spillover is needed
         if(userSnapshot.numChildren() < MAX_CHAT_SIZE){
-            addUserToTag(usersReference, tag);
+            removalKey = addUserToTag(usersReference, tag);
             foundOpenRoom = true;
             return true;
         }
     });
     if(foundOpenRoom){
-        return key;
+        console.log("ARINZE4:",{'tag':key,'tagRemoval':removalKey})
+        return {'tag':key,'tagRemoval':removalKey};
     } else {
+        console.log("ARINZE5:")
         // Create new chat if room is full, add new user
         return createNewChatWithUser(currentTag);
     }
@@ -86,12 +86,13 @@ function createOrJoinChat(currentTag){
             // If tag already exists, navigate to users and add users if there is room
             var query = firebase.database().ref("/chat/" + currentTag + "/").orderByKey();
             return query.once("value").then(function(snapshot){
-
+                console.log("ARINZE2:")
                 //adds user to chat and returns key
                 return findChatAndAddUser(snapshot, currentTag);
             });
         }
         else{
+            console.log("ARINZE3:")
             // Create new chat if tag does not exist yet
            return createNewChatWithUser(currentTag);
         }
@@ -137,8 +138,9 @@ async function setUserTags(tagList){
         });
 
         var currentTags = await getExistingTags(allTagsRef);
+        var currentTagRemovalDict = await getExistingTags(tagRemovalRef);
         var allTags = {};
-        keyIdDict = await getExistingTags(tagRemovalRef);
+        var tagRemovalDict = {};
 
         new Promise(async function(resolve){
             // If tag is not in existing list of tags, adds user to the chat
@@ -146,15 +148,17 @@ async function setUserTags(tagList){
                 // tag will be removed)
             for(var ii = 0; ii < tagList.length; ii++){
                 var tag = tagList[ii];
-                var key;
-                if(!currentTags.hasOwnProperty(tagList[ii]) && !allTags.hasOwnProperty(tagList[ii])){
-                    key = await createOrJoinChat(tag);
+                if(!currentTags.hasOwnProperty(tag) && !allTags.hasOwnProperty(tag)){
+                    keys = await createOrJoinChat(tag);
+                    allTags[tag] = keys['tag'];
+                    tagRemovalDict[tag] = keys['tagRemoval'];
                 }
                 else{
-                    key = currentTags[tag];
+                    allTags[tag] = currentTags[tag];
+                    tagRemovalDict[tag] = currentTagRemovalDict[tag];
                     delete currentTags[tag];
-                }
-                allTags[tag] = key;
+                    delete currentTagRemovalDict;
+                }            
             }
 
             await removeAllCurrentTags(currentTags, allTagsRef, tagRemovalRef, abridgedTagsRef);
@@ -166,7 +170,7 @@ async function setUserTags(tagList){
             firebase.database().ref().update(updates).then(function(){
                 // After updating tags, update tag removal keys
                 var tagRemovalUpdates = {};
-                tagRemovalUpdates[abridgedTagRemovalRef] = keyIdDict;
+                tagRemovalUpdates[abridgedTagRemovalRef] = tagRemovalDict;
                 firebase.database().ref().update(tagRemovalUpdates);
                 console.log("chats changed successfully");
             });
@@ -190,7 +194,7 @@ async function addUserTags(tagList){
 
         var currentTags = await getExistingTags(allTagsRef);
         var allTags = {};
-        keyIdDict = await getExistingTags(tagRemovalRef);
+        var currentTagRemovalDict = await getExistingTags(tagRemovalRef);
 
         for(var property in currentTags){
             allTags[property] = currentTags[property];
@@ -199,10 +203,10 @@ async function addUserTags(tagList){
         new Promise(async function(resolve){
             for(var ii = 0; ii < tagList.length; ii++){
                 var tag = tagList[ii];
-                var key;
-                if(!allTags.hasOwnProperty(tagList[ii])){
-                    key = await createOrJoinChat(tag);
-                    allTags[tag] = key;
+                if(!allTags.hasOwnProperty(tag)){
+                    keys = await createOrJoinChat(tag);
+                    allTags[tag] = keys['tag'];
+                    tagRemovalDict[tag] = keys['tagRemoval'];
                 }
             }
 
@@ -214,7 +218,7 @@ async function addUserTags(tagList){
 
                 // After updating tags, update tag removal keys
                 var tagRemovalUpdates = {};
-                tagRemovalUpdates[abridgedTagRemovalRef] = keyIdDict;
+                tagRemovalUpdates[abridgedTagRemovalRef] = currentTagRemovalDict;
                 firebase.database().ref().update(tagRemovalUpdates);
                 console.log("tags added successfully");
             });
@@ -247,9 +251,6 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
             // Removes tag removal key from user 
             var allTagsWithTagRef = firebase.database().ref(abridgedTagsRef + "/" + tag);
             allTagsWithTagRef.remove();
-
-            // Removes tag removal key as well
-            delete keyIdDict[tag];
         });
     });
 

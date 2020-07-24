@@ -25,7 +25,7 @@
   },
   "scripts": {
     "test": "nyc mocha src/main/webapp/test --reporter spec --exit",
-    "run": "npm install -g browserify && browserify src/main/webapp/app.js -o src/main/webapp/bundle.js && (mvn package appengine:run || echo done)",
+    "run": "browserify src/main/webapp/app.js -o src/main/webapp/bundle.js && (mvn package appengine:run || echo done)",
     "deploy": "(gcloud config configurations create arringtonh-step-2020-d || gcloud config configurations activate arringtonh-step-2020-d) && gcloud config set project arringtonh-step-2020-d && cloud-build-local --config=../clouddeploy.json --dryrun=false ../"
   },
   "repository": {
