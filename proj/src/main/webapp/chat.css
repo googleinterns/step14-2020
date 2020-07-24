@@ -1,3 +1,35 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+.tag-container {
+  border: 2px solid #ccc;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag-container .tag {
+  border: 2px solid #ccc;
+  border-radius: 3px;
+  display: flex;
+  background-color: #f2f2f2;
+  align-items: center;
+  margin: 5px;
+  padding: 5px;
+}
+
+.tag-container input {
+  outline: #ccc;
+  flex: 1;
+}
+
+.tag span {
+  padding-right: 3px;
+}
+
+
+.tag i {
+  font-size: 90%;
+}
+
 /* container with all child divs aligned horizontally in the center*/
 body {
     background-color: #333333;
