@@ -4,6 +4,7 @@ const { JSDOM } = jsdom;
 const html = '';//'./index.html'
 window = new JSDOM(html).window
 document = window.document;
+
 /*
     Authentication
  */
