@@ -9,8 +9,8 @@ window = (new JSDOM('')).window;
 firebase.initializeApp(appconfig.firebaseConfig);
 
 // Other files
-require('./chat.js');
 require('./location.js');
+require('./chat.js');
 require('./script.js');
 
 // Redirect from index.html to welcome page if not signed in.
@@ -25,4 +25,4 @@ function redirectToWelcomeOrChat() {
     }
 }
 
-window.redirectToWelcomeOrChat = redirectToWelcomeOrChat;
+window.redirectToWelcomeOrChat = redirectToWelcomeOrChat
