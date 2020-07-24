@@ -1,3 +1,10 @@
+const firebase = require('firebase');
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+const html = '';//'./index.html'
+window = new JSDOM(html).window
+document = window.document;
+
 /*
     Location
  */
@@ -6,7 +13,7 @@ var position;
 
 function successCallback(pos){
     position = pos;
-    console.log(pos);
+    console.log(pos.coords);
 }
 
 function errorCallback(err){
@@ -23,4 +30,12 @@ function getLocation() {
     return;
 }
 
+function getLatLong(){
+    if(position){
+        return [position.coords.latitude, position.coords.longitude];
+    }
+}
+
+
 window.getLocation = getLocation
+window.getLatLong = getLatLong

@@ -10,8 +10,8 @@ global.window = window;
 firebase.initializeApp(appconfig.firebaseConfig);
 
 // Other files
-require('./chat.js');
 require('./location.js');
+require('./chat.js');
 require('./script.js');
 require('./welcome.js');
 
@@ -27,4 +27,4 @@ function redirectToWelcomeOrChat() {
     }
 }
 
-window.redirectToWelcomeOrChat = redirectToWelcomeOrChat;
+window.redirectToWelcomeOrChat = redirectToWelcomeOrChat
