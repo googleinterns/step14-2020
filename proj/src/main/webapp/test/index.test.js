@@ -49,27 +49,29 @@ describe('Functions calling to the firestore database', () => {
     });
 
     after(async () => {
-        // Delete the test user
-        await firebase.auth().currentUser.delete()
-        // Remove nodes created
-        await firebase.database().ref("/chat/").remove().then(function(){
-            console.log("Successfully removed chat node from database")
-        }).catch(function(err){
-            console.log("Error cleaning up chat node from:", err);
-            throw err
-        })
+        if (testconfig.shouldCleanUp) {
+            // // Delete the test user
+            // await firebase.auth().currentUser.delete()
+            // Remove nodes created
+            await firebase.database().ref("/chat/").remove().then(function(){
+                console.log("Successfully removed chat node from database")
+            }).catch(function(err){
+                console.log("Error cleaning up chat node from:", err);
+                throw err
+            })
+        }
         // Do cleanup tasks.
         test.cleanup();
     });
 
     describe('Create a chat with the current user', () => {
-        it('should create add UID to chat/test-tag/', () => {
+        it('should create add UID to chat/test-tag/', async () => {
             const tag = 'test-tag';
             const postKey = 'test-postKey';
             const key = myFunctions.addUserToTag(tag,postKey);
             // Check that uid is stored as the value under the return key
             var chatRef = firebase.database().ref("/chat/" + tag + "/" + postKey + "/users/");
-            chatRef.once("value").then(function(snapshot){
+            await chatRef.once("value").then(function(snapshot){
                 var data = snapshot.child(key).val();
                 assert.equal(data, testUserUID);
             });
