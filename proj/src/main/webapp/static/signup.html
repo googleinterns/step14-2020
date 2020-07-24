@@ -19,7 +19,7 @@
 
   </head>
   
-  <body> 
+  <body onload="getLocation()"> 
     <div class="container screen">
       <div class="row fullscreen">
         <!-- page:signup and signin   desktop:left    mobile:full screen -->
@@ -76,7 +76,8 @@
               <label for="tags">tags:</label><br>
               <label id="tag-info"> tags are an essential part of the experience. write a tag for whatever you are interested, the sky is the limit.</label>
               <textarea class="form-control" rows="3" id="tags" name="tags" class="input b-margin" placeholder="music, marvel, intern, nyc, cats" required></textarea><br>
- 
+              <label id="loc-info">Add location to chat selection?</label><input type="checkbox" id="loc"><br>
+
               <button type="button" name="button" class="button" id="btnSignUp" disabled>join</button>
             </form>
             <h5 class="text-center"><a href="./welcome.html">already have an account? sign in</a></h5>
