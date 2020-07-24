@@ -24,13 +24,16 @@ let $ = require("jquery")
 
 describe('Functions calling to the firestore database', () => {
     let myFunctions;
+    let chatFunctions;
     const testEmail = 'test@test.com';
     const testPassword = 'test123';
     let testUserUID;
 
     before(async () => {
-        // Require sample.js and save the exports inside a namespace called myFunctions.
+        // Require js functions and store their functionality
         myFunctions = require('../sample.js');
+        chatFunctions = require('../chat.js');
+        console.log("Nick1 ", chatFunctions);
         // Sign in to test user
         testUserUID = await firebase.auth().signInWithEmailAndPassword(testEmail, testPassword).then(function(data){
                 console.log("Successfully logged in to test user.",testEmail,"\\",testPassword)
@@ -75,6 +78,53 @@ describe('Functions calling to the firestore database', () => {
             });
             
         })
+    });
+
+    describe('With a new user, creates or joins a predetermined chat', () => {
+        it('keys should match, signifying successful creation of chat', async () => {
+            const tag = 'createOrJoinChat-test';
+            const lat = 100;
+            const long = 100;
+            var chatLat;
+            var chatLong;
+            var key = await chatFunctions.createOrJoinChat(tag, lat, long);
+
+            const chatRef = firebase.database().ref("/chat/" + tag);
+            var chatKey;
+            await chatRef.once("value").then(function(snapshot){
+                assert(snapshot.hasChild(key), "If a chat is created with a key, this passes");
+                var infoSnap = snapshot.child(key).child("chatInfo");
+                chatLat = infoSnap.child("latitude").val();
+                chatLong = infoSnap.child("longitude").val();
+            });
+            assert.equal(lat, chatLat);
+            assert.equal(long, chatLong);
+        });
+    });
+
+    // Long runtime test
+    describe('Creates another user to join the same chat', function () {
+        this.timeout(5000)
+        it('lat and long should be averaged (99.8)', async () => {
+            const tag = "averaging-test";
+            var chatLat;
+            var chatLong;
+            var key;
+            await firebase.auth().createUserWithEmailAndPassword("newEmail@totallyNewEmail.com", "newPassword").then(async function(data){
+                key = await chatFunctions.createOrJoinChat(tag, 100, 100);
+                await firebase.auth().currentUser.delete();
+            });
+            await firebase.auth().createUserWithEmailAndPassword("anotherNewEmail@newemail.com", "anotherNewPassword").then(async function(data){
+                key = await chatFunctions.createOrJoinChat(tag, 99.6, 99.6);
+            });
+            const infoRef = firebase.database().ref("/chat/" + tag + "/" + key + "/chatInfo/");
+            await infoRef.once("value").then(function(snap){
+                chatLat = snap.child("latitude").val();
+                chatLong = snap.child("longitude").val();
+            });
+            assert(Math.abs((chatLat - 99.8)) < .0001);
+            assert(Math.abs((chatLong - 99.8)) < .0001);
+        });
     });
 })
 
