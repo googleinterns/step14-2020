@@ -2,7 +2,7 @@
     "steps": [
     {
         "name": "node",
-        "dir": "proj/src/main/webapp",
+        "dir": "proj",
         "entrypoint": "npm",
         "args": ["install"]
     },
@@ -15,19 +15,14 @@
     {
         "name": "node",
         "entrypoint": "node_modules/browserify/bin/cmd.js",
-        "dir": "proj/src/main/webapp",
-        "args": ["app.js", "-o", "bundle.js"]
+        "dir": "proj",
+        "args": ["src/main/webapp/app.js", "-o", "src/main/webapp/bundle.js"]
     },
     {
         "name": "node",
-        "dir": "proj/src/main/webapp",
+        "dir": "proj",
         "entrypoint": "npm",
         "args": ["test"]
-    },
-    {
-        "name": "bash",
-        "dir": "proj/src/main/webapp",
-        "args": ["rm", "-r", "node_modules"]
     },
     {
         "name": "gcr.io/cloud-builders/mvn",
