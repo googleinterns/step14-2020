@@ -5,7 +5,7 @@ const firebase = require('firebase');
  */
 
 const MAX_CHAT_SIZE = 200;
-const defaultPfp = "gs://arringtonh-step-2020-d.appspot.com/default.png";
+const defaultPfp = "gs://arringtonh-step-2020-d.appspot.com/profile-pictures/default.png";
 
 // Elements of login container
 const fname = document.getElementById("fname")
@@ -776,16 +776,17 @@ async function addUsernameToMessage(uid, preview) {
     });
 }
 
+// function for when a user adds a picture
 function pfpOnInput() {
     const input = document.getElementById("pfp-upload");
     const pfp = input.files[0];
 
     const currentUid = firebase.auth().currentUser.uid;
-    const pfpStorageRef = firebase.storage().ref('/'+currentUid+'/pfp.png');
+    const pfpStorageRef = firebase.storage().ref('/profile-pictures/${currentUid}/pfp.png');
     pfpStorageRef.put(pfp);
 
     pfpStorageRef.getDownloadURL().then(function(url) {
-        const userPfpRef = firebase.database().ref('/users/'+currentUid+'/photo');
+        const userPfpRef = firebase.database().ref('/users/${currentUid}/photo');
         userPfpRef.set(pfpStorageRef.toString());
 
         userPfp = document.getElementById('user-pfp');
