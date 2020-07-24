@@ -2,6 +2,7 @@ target/
 .idea
 node_modules/
 bundle.js
+bundle.js.*
 /keys/
 firebase-debug.log
 package-lock.json
