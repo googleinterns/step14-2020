@@ -159,7 +159,8 @@ if(btnSignUp){
                     lastName : lname.value,
                     allTags : allTags,
                     tagRemovalDict : keyIdDict,
-                    bio : "I'm a new user! Say hi!"
+                    bio : "I'm a new user! Say hi!",
+                    photo: "gs://arringtonh-step-2020-d.appspot.com/default.png",
                 }).then(function(){
                     window.location.replace("chat.html");
                 });
@@ -543,6 +544,17 @@ function createMessageWithTemplate(key, messageObj) {
     timestamp.dataMilli = messageObj.timestamp;
     timestamp.innerText = new Date(messageObj.timestamp).toLocaleString();
 
+    // add pfp
+    const pfpRef = firebase.database().ref('/users/'+messageObj.senderUID+'/photo');
+    pfpRef.once('value', function(snap) {
+        const url = snap.val() || "gs://arringtonh-step-2020-d.appspot.com/default.png";
+        storageRef = firebase.storage().refFromURL(url);
+        storageRef.getDownloadURL().then(function(src) {
+            message.querySelector('#pfp').src = src;
+        })
+    })
+    
+
     message.id = key;
     message.dataset.userId = messageObj.senderUID;
     addUsernameToMessage(messageObj.senderUID, message)
@@ -553,7 +565,7 @@ function createMessageWithTemplate(key, messageObj) {
 function loadProfileOfSender(domElement, uid) {
     domElement.addEventListener('click', function() {
         // close friend req/blocked listeners before adding more
-        const currentUid = firebase.database().currentUser.uid;
+        const currentUid = firebase.auth().currentUser.uid;
         const friendReqRef = firebase.database().ref('/users/'+currentUid+'/friend-requests/'+uid);
         friendReqRef.off();
         const blockedRef = firebase.database().ref('/users/'+currentUid+'/blocked/'+uid);
@@ -731,7 +743,7 @@ function pfpOnInput() {
 
     pfpStorageRef.getDownloadURL().then(function(url) {
         const userPfpRef = firebase.database().ref('/users/'+currentUid+'/photo');
-        userPfpRef.set(true);
+        userPfpRef.set(pfpStorageRef.toString());
 
         userPfp = document.getElementById('user-pfp');
         userPfp.src = url;
@@ -815,15 +827,12 @@ function addUserInfoToDom(userObj) {
     }
 
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
-    if (userObj.photo) {
-        const pfpStorageRef = firebase.storage().ref('/'+userObj.uid+'/pfp.png');
-        pfpStorageRef.getDownloadURL().then(function(url) {
-            profile.querySelector("#user-pfp").src = url;
-        })
-    } else {
-        const url = "https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/poppyscape-sunset-impasto-palette-knife-acrylic-painting-mona-edulesco-mona-edulesco.jpg";
-        profile.querySelector("#user-pfp").src = url;
-    }
+
+    const url = userObj.photo || "gs://arringtonh-step-2020-d.appspot.com/default.png";
+    const pfpStorageRef = firebase.storage().refFromURL(url);
+    pfpStorageRef.getDownloadURL().then(function(src) {
+        profile.querySelector("#user-pfp").src = src;
+    })
     
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
