@@ -203,6 +203,5 @@ $( document ).ready(function() {
     if (screen.width < 800) {
         $('#img-col').addClass('col-2');
         $('#msg-col').addClass('col-10');
-        console.log("class added");
     }
 });
