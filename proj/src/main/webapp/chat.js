@@ -248,7 +248,7 @@ async function setUserTags(tagList){
                     allTags[tag] = currentTags[tag];
                     tagRemovalDict[tag] = currentTagRemovalDict[tag];
                     delete currentTags[tag];
-                    delete currentTagRemovalDict;
+                    delete currentTagRemovalDict[tag];
                 }
             }
 
