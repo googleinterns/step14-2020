@@ -1,5 +1,7 @@
 const firebase = require('firebase');
-const location = require('./location.js');
+const $ = require('jquery');
+require('bootstrap'); // for collapse
+
 /*
     Authentication
  */

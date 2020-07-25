@@ -1,6 +1,3 @@
-const $ = require('jquery');
-require('bootstrap'); // for collapse
-
 /*
     Notifications
  */
