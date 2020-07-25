@@ -5,16 +5,22 @@ const chat = require('./chat.js');
 
 // init function for static/signup.html
 function initSignUp(){
-    initSignUpButtons();
-    initializePasswordValidation();
-    location.getLocation();
+    firebase.auth().onAuthStateChanged(async firebaseUser => {
+        if(firebaseUser){
+            window.location.replace("/static/chat.html");
+        } else{
+            initSignUpButtons();
+            initializePasswordValidation();
+            location.getLocation();
+        }
+    });
 }
 
 function initSignUpButtons(){
     const btnSignUp = document.getElementById("btnSignUp");
     // Add sign up event
     if(btnSignUp){
-        btnSignUp.addEventListener("click", e => {
+        btnSignUp.addEventListener("click", async function () {
             // Elements of sign up container
             const fname = document.getElementById("fname");
             const lname = document.getElementById("lname");
@@ -33,12 +39,12 @@ function initSignUpButtons(){
                 lat = 999;
                 long = 999;
             }
-            signUp(fname.value, lname.value, txtEmail.value, txtPassword.value, tagStr.value, lat, long);
+            await signUp(fname.value, lname.value, txtEmail.value, txtPassword.value, tagStr.value, lat, long);
         });
     }
 }
 
-function signUp(fname, lname, email, pass, tagStr, lat, long){
+async function signUp(fname, lname, email, pass, tagStr, lat, long){
     var tagList = tagStr.split(',');
     for(var ii = 0; ii < tagList.length; ii++){
         tagList[ii] = tagList[ii].trim();
@@ -48,22 +54,21 @@ function signUp(fname, lname, email, pass, tagStr, lat, long){
     const auth = firebase.auth();
     auth.useDeviceLanguage();
 
-    auth.createUserWithEmailAndPassword(email, pass).then(async function(){
+    await auth.createUserWithEmailAndPassword(email, pass).then(async function(){
         var allTags = {};
         var tagRemovalDict = {};
         for(var ii = 0; ii < tagList.length; ii++){
             var tag = tagList[ii];                    
-            
+
             var keys = await chat.createOrJoinChat(tag, lat, long);
             allTags[tag] = keys['tag'];
             tagRemovalDict[tag] = keys['tagRemoval'];                 
         }
 
         const user = auth.currentUser;
-        user.updateProfile({
+        await user.updateProfile({
             displayName: fname + " " + lname
             }).then(function(){
-            console.log("display name updated successfully");
             firebase.database().ref("users/" + user.uid).set({
                 firstName : fname,
                 lastName : lname,
@@ -102,13 +107,13 @@ function passwordLength(password){
 function containsNumber(password){
     let alertObj = document.getElementById("pwNumber");
     var number = /[0-9]/;
-    return styleAlert(alertObj, password.match(number));
+    return styleAlert(alertObj, !!password.match(number));
 }
 
 function containsSymbol(password){
     let alertObj = document.getElementById("pwSymbol");
     var symbol = /[$-/:-?{-~!"^_`@#\[\]\\]/;
-    return styleAlert(alertObj,password.match(symbol));
+    return styleAlert(alertObj, !!password.match(symbol));
 }
 
 function styleAlert(alertObj, passing){
@@ -154,3 +159,4 @@ function initializePasswordValidation(){
 
 window.initSignUp = initSignUp;
 exports.signUp = signUp;
+exports.meetRequirements = meetRequirements;

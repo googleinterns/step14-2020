@@ -9,7 +9,6 @@ const MAX_CHAT_SIZE = 200;
 // Adds user to an existing chat when given a reference to the place in the database
 function addUserToTag(reference, tag, newLat, newLong){
     currentUid = firebase.auth().currentUser.uid;
-    console.log("adding new user to chat room with uid: " + currentUid);
     const removalKey = reference.push(currentUid).key;
     const infoRef = reference.parent.child("chatInfo");
     infoRef.update({latitude : newLat, longitude : newLong});
@@ -18,7 +17,6 @@ function addUserToTag(reference, tag, newLat, newLong){
 
 // Creates a new chat given a tag and adds the current user as a member
 function createNewChatWithUser(tag, lat, long){
-    console.log("creating new chat with tag: " + tag);
     var time = new Date().getTime();
     var messageContent = "Welcome to the " + tag + " chat!";
     var newChat = {
@@ -323,7 +321,7 @@ const LIMIT = 20; // how many messages to load at a time
 function initChat() {
     firebase.auth().onAuthStateChanged(async firebaseUser => {
         if(firebaseUser){
-
+            setupSidebar()
             clickWithEnterKey();
 
             // InitUserChat sets information relevant to logged-in user
@@ -697,6 +695,80 @@ function initBio() {
         bioBox.hidden = false;
         bioBox.innerText = this.value;
     });
+}
+
+
+/*
+    Chatroom sidebar
+*/
+function setupSidebar(){
+    // Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
+    $('#body-row .collapse').collapse('hide');
+
+    // Collapse/Expand icon
+    $('#collapse-icon').addClass('fa-angle-double-left');
+
+    // Collapse on click
+    $('[data-toggle = sidebar-colapse]').click(function() {
+        sidebarCollapse();
+    });
+
+    $( document ).ready(function() {
+        if (screen.width < 750) {
+            checkLoadingDisplays();
+        }
+
+        // adjust message tempate proportions
+        if (screen.width < 800) {
+            $('#img-col').addClass('col-2');
+            $('#msg-col').addClass('col-10');
+        }
+    });
+}
+function sidebarCollapse () {
+    // remove locational reset
+    $('#bottom').removeClass('topbtn');
+
+    // if the device is small, this will hide the chat when they open the side bar
+    if (screen.width < 750) {
+        $('.sidebar + .p-4').toggleClass('d-none');
+    }
+
+    // collapse sidebar as normal
+    $('.menu-collapsed').toggleClass('d-none');
+    $('.sidebar-submenu').toggleClass('d-none');
+    $('.submenu-icon').toggleClass('d-none');
+    $('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
+
+    // Treating d-flex/d-none on separators with title
+    var SeparatorTitle = $('.sidebar-separator-title');
+    if ( SeparatorTitle.hasClass('d-flex') ) {
+        SeparatorTitle.removeClass('d-flex');
+    } else {
+        SeparatorTitle.addClass('d-flex');
+    }
+
+    // move the buttom on mobile view
+    if ((screen.width < 500) && ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" ))) {
+        $('#bottom').addClass('topbtn');
+    }
+
+     // Collapse/Expand icon
+     $('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
+}
+
+/*  This makes sure that the logic is working properly for the classes.
+    This ensures that if the sidebar is opened on a mobile device, the chat is hidden.
+    It also make sure that there is not an d-none tag on the chat if the sidebar
+    is closed.
+**/
+function checkLoadingDisplays() {
+    if ($( '#sidebar-container' ).hasClass( 'sidebar-collapsed' )) {
+        $('.sidebar + .p-4').addClass('d-block');
+    }
+    else {
+        $('.sidebar + .p-4').addClass('d-none');
+    }
 }
 
 function populateSidebar() {
