@@ -37,5 +37,5 @@ function getLatLong(){
 }
 
 
-window.getLocation = getLocation
-window.getLatLong = getLatLong
+exports.getLocation = getLocation
+exports.getLatLong = getLatLong

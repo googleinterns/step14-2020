@@ -35,20 +35,20 @@
 
             <!-- submenu content for navigating between chats -->
             <div id='chats-submenu' class="collapse sidebar-submenu">
-                    <template id="chat-preview-temp">
-                        <div class="chat-preview list-group-item">
-                            <strong><p id="chat-name"></p></strong>
-                            <span class="text-muted" id=timestamp></span>
-                            <div class="message">
-                                <div class="message-header">
-                                    <img id="pfp" />
-                                    <p id="username"></p>
-                                </div>
-                                <p class="message-body"></p>
-                            </div>
-                        </div>
-                    </template>
             </div> 
+            <template id="chat-preview-temp">
+                <div class="chat-preview list-group-item">
+                    <strong><p id="chat-name"></p></strong>
+                    <span class="text-muted" id=timestamp></span>
+                    <div class="message">
+                        <div class="message-header">
+                            <img id="pfp" />
+                            <p id="username"></p>
+                        </div>
+                        <p class="message-body"></p>
+                    </div>
+                </div>
+            </template>
         
             <a href="#profile-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between align-items-center">

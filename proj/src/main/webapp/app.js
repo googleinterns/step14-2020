@@ -10,9 +10,10 @@ global.document = window.document;
 firebase.initializeApp(appconfig.firebaseConfig);
 
 // Other files
-require('./location.js');
 require('./chat.js');
+require('./location.js');
 require('./script.js');
+require('./signup.js');
 require('./welcome.js');
 
 // Redirect from index.html to welcome page if not signed in.
