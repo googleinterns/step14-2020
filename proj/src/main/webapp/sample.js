@@ -1,5 +1,3 @@
-const firebase = require('firebase');
-
 function makeUppercase(s){
     return s.toUpperCase();
 }

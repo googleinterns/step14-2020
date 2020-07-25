@@ -1,10 +1,3 @@
-const firebase = require('firebase');
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
-const html = '';//'./index.html'
-window = new JSDOM(html).window
-document = window.document;
-
 /*
     Location
  */

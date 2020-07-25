@@ -5,9 +5,6 @@ const assert = chai.assert;
 // Sinon is a library used for mocking or verifying function calls in JavaScript.
 const sinon = require('sinon');
 
-// Firebase for setting up database for tests
-const firebase = require('firebase');
-
 // For Test Clean Up
 const test = require('firebase-functions-test')();
 
