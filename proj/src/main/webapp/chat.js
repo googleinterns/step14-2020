@@ -844,6 +844,7 @@ function populateSidebar() {
 function changeChatOnClick(domElement, tag, chatId) {
     domElement.addEventListener('click', function() {
         dbRefObject = getDbRef(tag, chatId);
+        sessionStorage.clear(); // clear pfps
         initRef(dbRefObject);
     });
 }
