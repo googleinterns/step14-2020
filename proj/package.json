@@ -28,6 +28,16 @@
     "run": "browserify src/main/webapp/app.js -o src/main/webapp/bundle.js && (mvn package appengine:run || echo done)",
     "deploy": "(gcloud config configurations create arringtonh-step-2020-d || gcloud config configurations activate arringtonh-step-2020-d) && gcloud config set project arringtonh-step-2020-d && cloud-build-local --config=../clouddeploy.json --dryrun=false ../"
   },
+  "nyc": {
+    "include": [
+      "src/main/webapp/*.js"
+    ],
+    "exclude": [
+      "src/main/webapp/test/*",
+      "src/main/webapp/bundle.js",
+      "src/main/webapp/bundle.js.*"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/googleinterns/step14-2020.git"
