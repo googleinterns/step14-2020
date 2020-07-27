@@ -1,24 +1,13 @@
-const firebase = require('firebase');
-
 /*
     Authentication
  */
 
 const MAX_CHAT_SIZE = 200;
 
-// Elements of login container
-const fname = document.getElementById("fname")
-const txtEmail = document.getElementById("email");
-const txtPassword = document.getElementById("pass");
-const tagStr = document.getElementById("tags");
-const btnSignUp = document.getElementById("btnSignUp");
-const isLoc = document.getElementById("loc");
-
 // Adds user to an existing chat when given a reference to the place in the database
 function addUserToTag(reference, tag, newLat, newLong){
-    currentUID = firebase.auth().currentUser.uid;
-    console.log("adding new user to chat room with uid: " + currentUID);
-    const removalKey = reference.push(currentUID).key;
+    currentUid = firebase.auth().currentUser.uid;
+    const removalKey = reference.push(currentUid).key;
     const infoRef = reference.parent.child("chatInfo");
     infoRef.update({latitude : newLat, longitude : newLong});
     return removalKey;
@@ -26,7 +15,6 @@ function addUserToTag(reference, tag, newLat, newLong){
 
 // Creates a new chat given a tag and adds the current user as a member
 function createNewChatWithUser(tag, lat, long){
-    console.log("creating new chat with tag: " + tag);
     var time = new Date().getTime();
     var messageContent = "Welcome to the " + tag + " chat!";
     var newChat = {
@@ -124,68 +112,6 @@ function createOrJoinChat(currentTag, lat, long){
     });
 }
 
-
-// Add sign up event
-if(btnSignUp){
-    btnSignUp.addEventListener("click", e => {
-        const emailVal = txtEmail.value;
-        const passVal = txtPassword.value;
-        var tagList = tagStr.value.split(',');
-        for(var ii = 0; ii < tagList.length; ii++){
-            tagList[ii] = tagList[ii].trim();
-        }
-
-        // Initialize auth object
-        const auth = firebase.auth();
-        auth.useDeviceLanguage();
-
-        auth.createUserWithEmailAndPassword(emailVal, passVal).then(async function(){
-            var lat;
-            var long;
-            const coords = getLatLong();
-            if(isLoc.checked){
-                lat = coords[0];
-                long = coords[1]; 
-            }
-            else{
-                lat = 999;
-                long = 999;
-            }
-            console.log(lat, long);
-
-
-            var allTags = {};
-            for(var ii = 0; ii < tagList.length; ii++){
-
-                var tag = tagList[ii];
-                var key = await createOrJoinChat(tag, lat, long);
-                allTags[tag] = key;
-            }
-
-            const user = auth.currentUser;
-            user.updateProfile({
-                displayName: fname.value + " " + lname.value
-                }).then(function(){
-                console.log("display name updated successfully");
-                firebase.database().ref("users/" + auth.currentUser.uid).set({
-                    firstName : fname.value,
-                    lastName : lname.value,
-                    latitude : lat,
-                    longitude : long,
-                    allTags : allTags,
-                    tagRemovalDict : keyIdDict,
-                    bio : "I'm a new user! Say hi!"
-                }).then(function(){
-                    window.location.replace("chat.html");
-                });
-            }).catch(function(err){
-                console.log("error updating display name:", err);
-            });
-        });
-
-    });
-}
-
 function getExistingTags(ref){
     var currentTags = {};
     console.log(ref.toString());
@@ -223,7 +149,7 @@ async function setUserTags(tagList){
             allTagsRef = firebase.database().ref(abridgedTagsRef);
             tagRemovalRef = firebase.database().ref(abridgedTagRemovalRef);
             const userDataRef = allTagsRef.parent;
-            userDatRef.once("value").then(function(snapshot){
+            userDataRef.once("value").then(function(snapshot){
                 lat = snapshot.child("latitude").val();
                 long = snapshot.child("longitude").val();
             });
@@ -328,7 +254,6 @@ async function addUserTags(tagList){
     }
 }
 
-
 async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedTagsRef, lat, long){
     // Can't be an invalid ref (will be valid ref if tags exist; this is tag removal function)
     // Gets tag removal key
@@ -385,8 +310,6 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
 /*
     Realtime Database
  */
-
-var currentUID = null;
 var globalChatId = '-MB0ycAOM8VGIXlev5u8'
 var tag = 'test';
 var dbRefObject = getDbRef(tag, globalChatId);
@@ -396,7 +319,7 @@ const LIMIT = 20; // how many messages to load at a time
 function initChat() {
     firebase.auth().onAuthStateChanged(async firebaseUser => {
         if(firebaseUser){
-
+            setupSidebar()
             clickWithEnterKey();
 
             // InitUserChat sets information relevant to logged-in user
@@ -770,6 +693,80 @@ function initBio() {
         bioBox.hidden = false;
         bioBox.innerText = this.value;
     });
+}
+
+
+/*
+    Chatroom sidebar
+*/
+function setupSidebar(){
+    // Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
+    $('#body-row .collapse').collapse('hide');
+
+    // Collapse/Expand icon
+    $('#collapse-icon').addClass('fa-angle-double-left');
+
+    // Collapse on click
+    $('[data-toggle = sidebar-colapse]').click(function() {
+        sidebarCollapse();
+    });
+
+    $( document ).ready(function() {
+        if (screen.width < 750) {
+            checkLoadingDisplays();
+        }
+
+        // adjust message tempate proportions
+        if (screen.width < 800) {
+            $('#img-col').addClass('col-2');
+            $('#msg-col').addClass('col-10');
+        }
+    });
+}
+function sidebarCollapse () {
+    // remove locational reset
+    $('#bottom').removeClass('topbtn');
+
+    // if the device is small, this will hide the chat when they open the side bar
+    if (screen.width < 750) {
+        $('.sidebar + .p-4').toggleClass('d-none');
+    }
+
+    // collapse sidebar as normal
+    $('.menu-collapsed').toggleClass('d-none');
+    $('.sidebar-submenu').toggleClass('d-none');
+    $('.submenu-icon').toggleClass('d-none');
+    $('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
+
+    // Treating d-flex/d-none on separators with title
+    var SeparatorTitle = $('.sidebar-separator-title');
+    if ( SeparatorTitle.hasClass('d-flex') ) {
+        SeparatorTitle.removeClass('d-flex');
+    } else {
+        SeparatorTitle.addClass('d-flex');
+    }
+
+    // move the buttom on mobile view
+    if ((screen.width < 500) && ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" ))) {
+        $('#bottom').addClass('topbtn');
+    }
+
+     // Collapse/Expand icon
+     $('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
+}
+
+/*  This makes sure that the logic is working properly for the classes.
+    This ensures that if the sidebar is opened on a mobile device, the chat is hidden.
+    It also make sure that there is not an d-none tag on the chat if the sidebar
+    is closed.
+**/
+function checkLoadingDisplays() {
+    if ($( '#sidebar-container' ).hasClass( 'sidebar-collapsed' )) {
+        $('.sidebar + .p-4').addClass('d-block');
+    }
+    else {
+        $('.sidebar + .p-4').addClass('d-none');
+    }
 }
 
 function populateSidebar() {

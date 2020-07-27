@@ -2,9 +2,6 @@
 const chai = require('chai');
 const assert = chai.assert;
 
-// Firebase for setting up database for tests
-const firebase = require('firebase');
-
 // For Test Clean Up
 const test = require('firebase-functions-test')();
 
@@ -12,54 +9,29 @@ const test = require('firebase-functions-test')();
 const appconfig = require("../appconfig.js");
 const testconfig = require("./test-appconfig.js");
 appconfig.firebaseConfig = testconfig.firebaseTestConfig
-const app = require("../app.js");
+require("../app.js");
 
+let testHelper = require('./test-helper-functions.js');
 let chat = require('../chat.js');
-
-async function createUserIfNotExisting(userData){
-    const testEmail = userData.email
-    const testPassword = userData.password
-    // Try to sign in to user
-    userData.uid = await firebase.auth().signInWithEmailAndPassword(testEmail, testPassword).then(function(data){
-            return firebase.auth().currentUser.uid;
-        }).catch(async function(){
-            // Create the test user if it doesn't exists
-            return firebase.auth().createUserWithEmailAndPassword(testEmail, testPassword).then(function(data){
-                return firebase.auth().currentUser.uid;
-            }).catch(function(err){
-                    throw err
-                })
-            })    
-}
 
 describe('Creating and Joining Chats', function() {
     this.timeout(10000);
     let testUsers = [
-        {email:'test@test.com', password:'test123'},
-        {email:'test2@test.com', password:'test123'}]
+        {email:'test@test.com', password:'test123!'},
+        {email:'test2@test.com', password:'test123!'}]
     const tag = 'test-tag';
 
     before(async function() {
-        // Require sample.js and save the exports inside a namespace called myFunctions.
         for (let i=0;i<testUsers.length;i++){
-            await createUserIfNotExisting(testUsers[i])
-            await firebase.auth().signOut()
+            await testHelper.createUserIfNotExisting(testUsers[i]);
+            await firebase.auth().signOut();
         }
     });
 
     after(async function() {
         if (testconfig.shouldCleanUp) {
             // Remove nodes created
-            await firebase.database().ref("/chat/").remove().then(function(){
-                console.log("Successfully removed chat node from database")
-            }).catch(function(err){
-                throw err
-            })
-            await firebase.database().ref("/users/").remove().then(function(){
-                console.log("Successfully removed users node from database")
-            }).catch(function(err){
-                throw err
-            })
+            await testHelper.emptyDatabase();
         }
 
         // Do cleanup tasks.

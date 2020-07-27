@@ -5,9 +5,6 @@ const assert = chai.assert;
 // Sinon is a library used for mocking or verifying function calls in JavaScript.
 const sinon = require('sinon');
 
-// Firebase for setting up database for tests
-const firebase = require('firebase');
-
 // For Test Clean Up
 const test = require('firebase-functions-test')();
 
@@ -15,62 +12,42 @@ const test = require('firebase-functions-test')();
 const appconfig = require("../appconfig.js");
 const testconfig = require("./test-appconfig.js");
 appconfig.firebaseConfig = testconfig.firebaseTestConfig
-const app = require("../app.js");
+require("../app.js");
 
-let jsdom = require("jsdom");
-let fs = require("fs");
-let path = require("path")
-let $ = require("jquery")
+let testHelper = require('./test-helper-functions.js');
 
 describe('Functions calling to the firestore database', () => {
     let myFunctions;
-    const testEmail = 'test@test.com';
-    const testPassword = 'test123';
-    let testUserUID;
+    var userData = {email:'test@test.com', password:'test123!'};
 
     before(async () => {
         // Require js functions and store their functionality
         myFunctions = require('../sample.js');
         
         // Sign in to test user
-        testUserUID = await firebase.auth().signInWithEmailAndPassword(testEmail, testPassword).then(function(data){
-                console.log("Successfully logged in to test user.",testEmail,"\\",testPassword)
-                return firebase.auth().currentUser.uid;
-            }).catch(function(err){
-                // Create the test user if it doesn't exists
-                console.log("Creating user",testEmail,"\\",testPassword);
-                return firebase.auth().createUserWithEmailAndPassword(testEmail, testPassword).then(function(data){
-                    console.log("Successfully created test user.")
-                    return firebase.auth().currentUser.uid;
-                }).catch(function(err){
-                        console.log("Error creating user:", err);
-                        throw err
-                    })
-                })
+        await testHelper.createUserIfNotExisting(userData);
     });
 
     after(async () => {
         // Remove nodes created
-        await firebase.database().ref("/chat/").remove().then(function(){
-            console.log("Successfully removed chat node from database")
-        }).catch(function(err){
-            console.log("Error cleaning up chat node from:", err);
-            throw err
-        })
+        if (testconfig.shouldCleanUp) {
+            // Remove nodes created
+            await testHelper.emptyDatabase();
+        }
         // Do cleanup tasks.
         test.cleanup();
     });
 
     describe('Create a chat with the current user', () => {
-        it('should create add UID to chat/test-tag/', () => {
+        it('should create add UID to chat/test-tag/', async () => {
             const tag = 'test-tag';
             const postKey = 'test-postKey';
             const key = myFunctions.addUserToTag(tag,postKey);
             // Check that uid is stored as the value under the return key
             var chatRef = firebase.database().ref("/chat/" + tag + "/" + postKey + "/users/");
-            chatRef.once("value").then(function(snapshot){
+            await chatRef.once("value").then(function(snapshot){
                 var data = snapshot.child(key).val();
-                assert.equal(data, testUserUID);
+                assert.equal(data, userData.uid);
             });
             
         })
