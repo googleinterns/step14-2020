@@ -212,7 +212,7 @@ async function addUserTags(tagList){
             allTagsRef = firebase.database().ref(abridgedTagsRef);
             tagRemovalRef = firebase.database().ref(abridgedTagRemovalRef);
             const userDataRef = allTagsRef.parent;
-            userDatRef.once("value").then(function(snapshot){
+            userDataRef.once("value").then(function(snapshot){
                 lat = snapshot.child("latitude").val();
                 long = snapshot.child("longitude").val();
             });
@@ -271,12 +271,12 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
             // Gets chatId to remove user from
             var data2 = snapshot2.val();
             chatId = data2[tag];
-        }).finally(function(){
+        }).finally(async function(){
             // Removes user from chat
             const chatRef = firebase.database().ref("/chat/" + tag + "/" + chatId + "/users/" + removalKey);
             chatRef.remove();
-            chatRef.parent.once("value").then(function(snapshot){
-                numUsers = snapshot.numChildren();
+            await chatRef.parent.once("value").then(async function(snapshot){
+                numUsers = await snapshot.numChildren();
             });
             // Removes tag removal key from user 
             var allTagsWithTagRef = firebase.database().ref(abridgedTagsRef + "/" + tag);
@@ -284,9 +284,9 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
         });
     });
 
+    const infoRef = firebase.database().ref("/chat/" + tag + "/" + chatId + "/chatInfo");
     if(numUsers > 0){
         // Updates location of chat
-        const infoRef = firebase.database().ref("/chat/" + tag + "/" + chatId + "/chatInfo");
         var chatLat;
         var chatLong;
         infoRef.once("value").then(function(snap){
@@ -302,7 +302,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
     }
     else{
         // Deletes chat
-        infoRef.parent.parent.update({chatId: null});
+        infoRef.parent.update({chatInfo: null, messages: null});
     }
 
 }
@@ -641,7 +641,9 @@ async function makeChatPreview(chatInfoObj, tag, chatId) {
         oldPreview = document.getElementById(chatId);
         oldPreview.parentNode.removeChild(oldPreview);
     }
-
+    if (!chatInfoObj){
+        return
+    }
     const previewTemplate = document.getElementById('chat-preview-temp');
     const docFrag = previewTemplate.content.cloneNode(true);
     const preview = docFrag.querySelector(".chat-preview")

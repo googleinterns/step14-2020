@@ -3,15 +3,9 @@ const chat = require('./chat.js');
 
 // init function for static/signup.html
 function initSignUp(){
-    firebase.auth().onAuthStateChanged(async firebaseUser => {
-        if(firebaseUser){
-            window.location.replace("/static/chat.html");
-        } else{
-            initSignUpButtons();
-            initializePasswordValidation();
-            location.getLocation();
-        }
-    });
+    initSignUpButtons();
+    initializePasswordValidation();
+    location.getLocation();
 }
 
 function initSignUpButtons(){
