@@ -121,7 +121,7 @@ function meetRequirements(password){
 
 function passwordLength(password){
     let alertObj = document.getElementById("pwLength");
-    return styleAlert(alertObj,password.length > 7);
+    return styleAlert(alertObj,password.length > 5);
 }
 
 function containsNumber(password){
@@ -154,7 +154,8 @@ function initializePasswordValidation(){
     const pass = document.getElementById("pass");
     const passconf = document.getElementById("passconf");
     /* Check for password confirmation 
-        enable button if and only if the password meets the requiremetns and match **/
+        enable button if and only if the password meets the 
+        requirements and match each other**/
     $('#pass, #passconf').on('keyup', function(){
         let passVal = pass.value || '';
         let passconfVal = passconf.value || '';
