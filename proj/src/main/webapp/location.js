@@ -1,10 +1,3 @@
-const firebase = require('firebase');
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
-const html = '';//'./index.html'
-window = new JSDOM(html).window
-document = window.document;
-
 /*
     Location
  */
@@ -37,5 +30,5 @@ function getLatLong(){
 }
 
 
-window.getLocation = getLocation
-window.getLatLong = getLatLong
+exports.getLocation = getLocation
+exports.getLatLong = getLatLong

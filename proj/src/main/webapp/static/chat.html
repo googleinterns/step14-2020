@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="../chat.css" />
 </head>
 
-<body onload="init()" id="top">
+<body onload="initChat()" id="top">
 
     <div class="row" id="body-row">
         <!-- sidebar -->
@@ -34,6 +34,7 @@
             </a>
 
             <!-- submenu content for navigating between chats -->
+
             <template id="chat-preview-temp">
                 <div class="chat-preview list-group-item row">
                     <div class="d-flex">
@@ -53,7 +54,7 @@
                     </div>
             </template>
             <div id='chats-submenu' class="collapse sidebar-submenu"></div> 
-        
+  
             <a href="#profile-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between align-items-center">
                         <span class="fa fa-user fa-fw mr-3 fa-1x"></span>
