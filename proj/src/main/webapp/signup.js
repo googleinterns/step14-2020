@@ -1,5 +1,3 @@
-const firebase = require('firebase');
-const $ = require('jquery');
 const location = require('./location.js');
 const chat = require('./chat.js');
 

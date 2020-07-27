@@ -1,5 +1,3 @@
-const firebase = require('firebase');
-
 // init function for static/welcome.html
 async function initWelcome(){
     firebase.auth().onAuthStateChanged(function(user) {

@@ -2,10 +2,6 @@
 const chai = require('chai');
 const assert = chai.assert;
 
-// Firebase for setting up database for tests
-const firebase = require('firebase');
-
-
 // For Test Clean Up
 const test = require('firebase-functions-test')();
 

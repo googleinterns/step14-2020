@@ -1,7 +1,3 @@
-const firebase = require('firebase');
-const $ = require('jquery');
-require('bootstrap'); // for collapse
-
 /*
     Authentication
  */
@@ -153,7 +149,7 @@ async function setUserTags(tagList){
             allTagsRef = firebase.database().ref(abridgedTagsRef);
             tagRemovalRef = firebase.database().ref(abridgedTagRemovalRef);
             const userDataRef = allTagsRef.parent;
-            userDatRef.once("value").then(function(snapshot){
+            userDataRef.once("value").then(function(snapshot){
                 lat = snapshot.child("latitude").val();
                 long = snapshot.child("longitude").val();
             });

@@ -1,5 +1,3 @@
-const firebase = require('firebase');
-
 async function createUserIfNotExisting(userData){
     const testEmail = userData.email
     const testPassword = userData.password
