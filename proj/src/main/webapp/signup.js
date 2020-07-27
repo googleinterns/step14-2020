@@ -77,7 +77,7 @@ async function signUp(fname, lname, email, pass, tagStr, lat, long){
                 window.location.replace("chat.html");
             });
         }).catch(function(err){
-            console.log("error updating display name:", err);
+            alert(err);
         });
     });
 }

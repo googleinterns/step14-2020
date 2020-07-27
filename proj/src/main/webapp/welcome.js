@@ -29,7 +29,7 @@ function initLoginButtons(){
             const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(){
                 window.location.replace("chat.html");
             });
-            promise.catch(e => console.log(e.message));
+            promise.catch(e => alert(e.message));
         });
     }
 }
