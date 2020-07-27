@@ -8,3 +8,5 @@ exports.firebaseTestConfig = {
     appId: "1:112721519695:web:955f8e0c768e5fc511f63a",
     measurementId: "G-7920XZFV69"
   };
+
+exports.shouldCleanUp = true;

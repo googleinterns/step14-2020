@@ -1,60 +1,29 @@
-const firebase = require('firebase');
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
-const html = '';//'./index.html'
-window = new JSDOM(html).window
-document = window.document;
 /*
     Authentication
  */
 
 const MAX_CHAT_SIZE = 200;
 
-// Elements of login container
-const fname = document.getElementById("fname")
-const txtEmail = document.getElementById("email");
-const txtPassword = document.getElementById("pass");
-const tagStr = document.getElementById("tags");
-const btnLogin = document.getElementById("btnLogin");
-const btnSignUp = document.getElementById("btnSignUp");
-const btnLogout = document.getElementById("btnLogout");
-
-// Add login event
-if(btnLogin){
-    btnLogin.addEventListener("click", e => {
-        const emailVal = txtEmail.value;
-        const passVal = txtPassword.value;
-
-        // Initialize auth object
-        const auth = firebase.auth();
-
-        const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(user){
-            window.location.replace("chat.html");
-        });
-        promise.catch(e => console.log(e.message));
-    });
-}
-
-// TODO: Make local variable; rewrite to allow for returning of keyIdDict
-var keyIdDict = {};
-
 // Adds user to an existing chat when given a reference to the place in the database
-function addUserToTag(reference, tag){
-    currentUID = firebase.auth().currentUser.uid;
-    console.log("adding new user to chat room with uid: " + currentUID);
-    const removalKey = reference.push(currentUID).key;
-    keyIdDict[tag] = removalKey;
+function addUserToTag(reference, tag, newLat, newLong){
+    currentUid = firebase.auth().currentUser.uid;
+    const removalKey = reference.push(currentUid).key;
+    const infoRef = reference.parent.child("chatInfo");
+    infoRef.update({latitude : newLat, longitude : newLong});
+    return removalKey;
 }
 
 // Creates a new chat given a tag and adds the current user as a member
-function createNewChatWithUser(tag){
-    console.log("creating new chat with tag: " + tag);
+function createNewChatWithUser(tag, lat, long){
     var time = new Date().getTime();
     var messageContent = "Welcome to the " + tag + " chat!";
     var newChat = {
         "chatInfo" : {
             "name" : tag,
             "tag" : tag,
+            // Sets latitude and longitude to 0 because it's averaged by position of users in it
+            "latitude" : 0,
+            "longitude" : 0,
             "lastMessage" : messageContent,
             "timestamp" : time,
             "lastAuthor" : ""
@@ -71,39 +40,57 @@ function createNewChatWithUser(tag){
     var currentReference = firebase.database().ref("/chat/" + tag);
     var postKey = currentReference.push(newChat).key;
     currentReference = firebase.database().ref("/chat/" + tag + "/" + postKey + "/users/");
-    addUserToTag(currentReference, tag);
-
-    return postKey;
+    var removalKey = addUserToTag(currentReference, tag, lat, long);
+    return {'tag':postKey, 'tagRemoval':removalKey};
 }
 
 // Loops through open chat rooms, adds the user to the first open chat and returns the key
-function findChatAndAddUser(snapshot, tag){
+function findChatAndAddUser(snapshot, tag, lat, long){
     var key;
+    var removalKey;
+    var chatLat;
+    var chatLong;
+    const precision = .5;
+
     var foundOpenRoom = false;
     snapshot.forEach(function(childSnapshot){
         key = childSnapshot.key;
 
+        var infoSnapshot = childSnapshot.child("chatInfo");
+        // Has both lat and long if it has latitude
+        if(infoSnapshot.hasChild("latitude")){
+            chatLat = infoSnapshot.child("latitude").val();
+            chatLong = infoSnapshot.child("longitude").val();
+        }
+        else{
+            chatLat = 999;
+            chatLong = 999;
+        }
+
         var userSnapshot = childSnapshot.child("users");
         var usersReference = userSnapshot.ref;
 
+        var numUsers = userSnapshot.numChildren();
         // Handled below if spillover is needed
-        if(userSnapshot.numChildren() < MAX_CHAT_SIZE){
-            addUserToTag(usersReference, tag);
+        if(numUsers < MAX_CHAT_SIZE && Math.abs(chatLat - lat) < precision && Math.abs(chatLong - long) < precision){
+            chatLat = ((chatLat*numUsers) + lat)/(numUsers + 1);
+            chatLong = ((chatLong*numUsers) + long)/(numUsers + 1);
+            removalKey = addUserToTag(usersReference, tag, chatLat, chatLong);
             foundOpenRoom = true;
             return true;
         }
     });
     if(foundOpenRoom){
-        return key;
+        return {'tag':key,'tagRemoval':removalKey};
     } else {
         // Create new chat if room is full, add new user
-        return createNewChatWithUser(currentTag);
+        return createNewChatWithUser(tag, lat, long);
     }
 }
 
 
 // Create or join chatroom
-function createOrJoinChat(currentTag){
+function createOrJoinChat(currentTag, lat, long){
     var ref = firebase.database().ref("/chat/");
     return ref.once("value").then(function(snapshot){
         // Checks to see if tag already exists in database
@@ -113,87 +100,17 @@ function createOrJoinChat(currentTag){
             return query.once("value").then(function(snapshot){
 
                 //adds user to chat and returns key
-                return findChatAndAddUser(snapshot, currentTag);
+                return findChatAndAddUser(snapshot, currentTag, lat, long);
             });
         }
         else{
             // Create new chat if tag does not exist yet
-           return createNewChatWithUser(currentTag);
+           return createNewChatWithUser(currentTag, lat, long);
         }
     }).catch(function(err){
         console.log("unexpected error searching for chat rooms:", err);
     });
 }
-
-
-// Add sign up event
-if(btnSignUp){
-    btnSignUp.addEventListener("click", e => {
-        const emailVal = txtEmail.value;
-        const passVal = txtPassword.value;
-        var tagList = tagStr.value.split(',');
-        for(var ii = 0; ii < tagList.length; ii++){
-            tagList[ii] = tagList[ii].trim();
-        }
-
-        // Initialize auth object
-        const auth = firebase.auth();
-        auth.useDeviceLanguage();
-
-        auth.createUserWithEmailAndPassword(emailVal, passVal).then(async function(){
-            var allTags = {};
-            for(var ii = 0; ii < tagList.length; ii++){
-
-                var tag = tagList[ii];
-                var key = await createOrJoinChat(tag);
-                allTags[tag] = key;
-            }
-
-            const user = auth.currentUser;
-            user.updateProfile({
-                displayName: fname.value + " " + lname.value
-                }).then(function(){
-                console.log("display name updated successfully");
-                firebase.database().ref("users/" + auth.currentUser.uid).set({
-                    firstName : fname.value,
-                    lastName : lname.value,
-                    allTags : allTags,
-                    tagRemovalDict : keyIdDict,
-                    bio : "I'm a new user! Say hi!"
-                }).then(function(){
-                    window.location.replace("chat.html");
-                });
-            }).catch(function(err){
-                console.log("error updating display name:", err);
-            });
-        });
-
-    });
-}
-
-if(btnLogout){
-    btnLogout.addEventListener("click", e => {
-        firebase.auth().signOut();
-        window.location.replace("welcome.html");
-        console.log("You logged out")
-    });
-}
-
-firebase.auth().onAuthStateChanged(firebaseUser => {
-    if(firebaseUser){
-        console.log("logged in");
-        
-        if(btnLogout)
-            btnLogout.classList.remove("hidden");
-    }
-    else{
-        console.log("not logged in");
-        if(btnLogout)
-            btnLogout.classList.add("hidden");
-    }
-});
-
-
 
 function getExistingTags(ref){
     var currentTags = {};
@@ -206,10 +123,10 @@ function getExistingTags(ref){
     });
 }
 
-function removeAllCurrentTags(currentTags, allTagsRef, tagRemovalRef, abridgedTagsRef){
+function removeAllCurrentTags(currentTags, allTagsRef, tagRemovalRef, abridgedTagsRef, lat, long){
     return new Promise(async function(resolve){
         for(var remainingTag in currentTags){
-            await removeUserFromChatByTag(remainingTag, allTagsRef, tagRemovalRef, abridgedTagsRef);
+            await removeUserFromChatByTag(remainingTag, allTagsRef, tagRemovalRef, abridgedTagsRef, lat, long);
         }
 
         resolve(1);
@@ -219,6 +136,9 @@ function removeAllCurrentTags(currentTags, allTagsRef, tagRemovalRef, abridgedTa
 
 async function setUserTags(tagList){
     if(firebase.auth().currentUser){
+        var lat;
+        var long;
+
         const currentUid = firebase.auth().currentUser.uid;
         const abridgedTagsRef = "/users/" + currentUid + "/allTags";
         const abridgedTagRemovalRef = "/users/" + currentUid + "/tagRemovalDict";
@@ -228,12 +148,18 @@ async function setUserTags(tagList){
         await new Promise(function(resolve){
             allTagsRef = firebase.database().ref(abridgedTagsRef);
             tagRemovalRef = firebase.database().ref(abridgedTagRemovalRef);
+            const userDataRef = allTagsRef.parent;
+            userDataRef.once("value").then(function(snapshot){
+                lat = snapshot.child("latitude").val();
+                long = snapshot.child("longitude").val();
+            });
             resolve(1);
         });
 
         var currentTags = await getExistingTags(allTagsRef);
+        var currentTagRemovalDict = await getExistingTags(tagRemovalRef);
         var allTags = {};
-        keyIdDict = await getExistingTags(tagRemovalRef);
+        var tagRemovalDict = {};
 
         new Promise(async function(resolve){
             // If tag is not in existing list of tags, adds user to the chat
@@ -241,18 +167,20 @@ async function setUserTags(tagList){
                 // tag will be removed)
             for(var ii = 0; ii < tagList.length; ii++){
                 var tag = tagList[ii];
-                var key;
-                if(!currentTags.hasOwnProperty(tagList[ii]) && !allTags.hasOwnProperty(tagList[ii])){
-                    key = await createOrJoinChat(tag);
+                if(!currentTags.hasOwnProperty(tag) && !allTags.hasOwnProperty(tag)){
+                    let keys = await createOrJoinChat(tag, lat, long);
+                    allTags[tag] = keys['tag'];
+                    tagRemovalDict[tag] = keys['tagRemoval'];
                 }
                 else{
-                    key = currentTags[tag];
+                    allTags[tag] = currentTags[tag];
+                    tagRemovalDict[tag] = currentTagRemovalDict[tag];
                     delete currentTags[tag];
+                    delete currentTagRemovalDict[tag];
                 }
-                allTags[tag] = key;
             }
 
-            await removeAllCurrentTags(currentTags, allTagsRef, tagRemovalRef, abridgedTagsRef);
+            await removeAllCurrentTags(currentTags, allTagsRef, tagRemovalRef, abridgedTagsRef, lat, long);
 
             resolve(1);
         }).then(function(){
@@ -261,7 +189,7 @@ async function setUserTags(tagList){
             firebase.database().ref().update(updates).then(function(){
                 // After updating tags, update tag removal keys
                 var tagRemovalUpdates = {};
-                tagRemovalUpdates[abridgedTagRemovalRef] = keyIdDict;
+                tagRemovalUpdates[abridgedTagRemovalRef] = tagRemovalDict;
                 firebase.database().ref().update(tagRemovalUpdates);
                 console.log("chats changed successfully");
             });
@@ -271,6 +199,9 @@ async function setUserTags(tagList){
 
 async function addUserTags(tagList){
     if(firebase.auth().currentUser){
+        var lat;
+        var long;
+
         const currentUid = firebase.auth().currentUser.uid;
         const abridgedTagsRef = "/users/" + currentUid + "/allTags";
         const abridgedTagRemovalRef = "/users/" + currentUid + "/tagRemovalDict";
@@ -280,24 +211,30 @@ async function addUserTags(tagList){
         await new Promise(function(resolve){
             allTagsRef = firebase.database().ref(abridgedTagsRef);
             tagRemovalRef = firebase.database().ref(abridgedTagRemovalRef);
+            const userDataRef = allTagsRef.parent;
+            userDataRef.once("value").then(function(snapshot){
+                lat = snapshot.child("latitude").val();
+                long = snapshot.child("longitude").val();
+            });
             resolve(1);
         });
 
         var currentTags = await getExistingTags(allTagsRef);
+        var currentTagRemovalDict = await getExistingTags(tagRemovalRef);
         var allTags = {};
-        keyIdDict = await getExistingTags(tagRemovalRef);
-
+        var tagRemovalDict = {};
         for(var property in currentTags){
             allTags[property] = currentTags[property];
+            tagRemovalDict[property] = currentTagRemovalDict[property];
         }
 
         new Promise(async function(resolve){
             for(var ii = 0; ii < tagList.length; ii++){
                 var tag = tagList[ii];
-                var key;
-                if(!allTags.hasOwnProperty(tagList[ii])){
-                    key = await createOrJoinChat(tag);
-                    allTags[tag] = key;
+                if(!allTags.hasOwnProperty(tag)){
+                    let keys = await createOrJoinChat(tag, lat, long);
+                    allTags[tag] = keys['tag'];
+                    tagRemovalDict[tag] = keys['tagRemoval'];
                 }
             }
 
@@ -309,7 +246,7 @@ async function addUserTags(tagList){
 
                 // After updating tags, update tag removal keys
                 var tagRemovalUpdates = {};
-                tagRemovalUpdates[abridgedTagRemovalRef] = keyIdDict;
+                tagRemovalUpdates[abridgedTagRemovalRef] = tagRemovalDict;
                 firebase.database().ref().update(tagRemovalUpdates);
                 console.log("tags added successfully");
             });
@@ -317,11 +254,11 @@ async function addUserTags(tagList){
     }
 }
 
-async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedTagsRef){
+async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedTagsRef, lat, long){
     // Can't be an invalid ref (will be valid ref if tags exist; this is tag removal function)
     // Gets tag removal key
     // tagRemovalRef = ref@ "/users/" + firebaseUser.uid + "/tagRemovalDict"
-
+    var numUsers;
     var removalKey;
     var chatId;
     await tagRemovalRef.once("value").then(function(snapshot){
@@ -334,39 +271,55 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
             // Gets chatId to remove user from
             var data2 = snapshot2.val();
             chatId = data2[tag];
-        }).finally(function(){
+        }).finally(async function(){
             // Removes user from chat
-            var chatRef = firebase.database().ref("/chat/" + tag + "/" + chatId + "/users/" + removalKey);
+            const chatRef = firebase.database().ref("/chat/" + tag + "/" + chatId + "/users/" + removalKey);
             chatRef.remove();
-
+            await chatRef.parent.once("value").then(async function(snapshot){
+                numUsers = await snapshot.numChildren();
+            });
             // Removes tag removal key from user 
             var allTagsWithTagRef = firebase.database().ref(abridgedTagsRef + "/" + tag);
             allTagsWithTagRef.remove();
-
-            // Removes tag removal key as well
-            delete keyIdDict[tag];
         });
     });
+
+    const infoRef = firebase.database().ref("/chat/" + tag + "/" + chatId + "/chatInfo");
+    if(numUsers > 0){
+        // Updates location of chat
+        var chatLat;
+        var chatLong;
+        infoRef.once("value").then(function(snap){
+            chatLat = snap.child("latitude").val();
+            chatLong = snap.child("longitude").val();
+        }).finally(function(){
+            // numUsers is the number of users remaining after removal
+            // There is a check to make sure numUsers is not 0
+            chatLat = (chatLat * (numUsers+1) - lat)/numUsers;
+            chatLat = (chatLat * (numUsers+1) - lat)/numUsers;
+            infoRef.update({latitude : chatLat, longitude : chatLong});
+        });
+    }
+    else{
+        // Deletes chat
+        infoRef.parent.update({chatInfo: null, messages: null});
+    }
 
 }
 
 /*
     Realtime Database
  */
-
-var currentUID = null;
 var globalChatId = '-MB0ycAOM8VGIXlev5u8'
 var tag = 'test';
 var dbRefObject = getDbRef(tag, globalChatId);
 const LIMIT = 20; // how many messages to load at a time
 
 // Broad init function
-function init() {
-    const auth = firebase.auth();
-    
-    auth.onAuthStateChanged(async firebaseUser => {
+function initChat() {
+    firebase.auth().onAuthStateChanged(async firebaseUser => {
         if(firebaseUser){
-
+            setupSidebar()
             clickWithEnterKey();
 
             // InitUserChat sets information relevant to logged-in user
@@ -407,9 +360,9 @@ function initUserChat(){
             resolve(1);
         });
     });
-
-
 }
+
+
 // Sets title of page
 function setTitle(dbRefObj){
     nameRef = dbRefObj.parent.child('chatInfo');
@@ -550,7 +503,7 @@ function createMessageWithTemplate(key, messageObj) {
 function loadProfileOfSender(domElement, uid) {
     domElement.addEventListener('click', function() {
         // close friend req/blocked listeners before adding more
-        const currentUid = firebase.database().currentUser.uid;
+        const currentUid = firebase.auth().currentUser.uid;
         const friendReqRef = firebase.database().ref('/users/'+currentUid+'/friend-requests/'+uid);
         friendReqRef.off();
         const blockedRef = firebase.database().ref('/users/'+currentUid+'/blocked/'+uid);
@@ -688,7 +641,9 @@ async function makeChatPreview(chatInfoObj, tag, chatId) {
         oldPreview = document.getElementById(chatId);
         oldPreview.parentNode.removeChild(oldPreview);
     }
-
+    if (!chatInfoObj){
+        return
+    }
     const previewTemplate = document.getElementById('chat-preview-temp');
     const docFrag = previewTemplate.content.cloneNode(true);
     const preview = docFrag.querySelector(".chat-preview")
@@ -740,6 +695,80 @@ function initBio() {
         bioBox.hidden = false;
         bioBox.innerText = this.value;
     });
+}
+
+
+/*
+    Chatroom sidebar
+*/
+function setupSidebar(){
+    // Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
+    $('#body-row .collapse').collapse('hide');
+
+    // Collapse/Expand icon
+    $('#collapse-icon').addClass('fa-angle-double-left');
+
+    // Collapse on click
+    $('[data-toggle = sidebar-colapse]').click(function() {
+        sidebarCollapse();
+    });
+
+    $( document ).ready(function() {
+        if (screen.width < 750) {
+            checkLoadingDisplays();
+        }
+
+        // adjust message tempate proportions
+        if (screen.width < 800) {
+            $('#img-col').addClass('col-2');
+            $('#msg-col').addClass('col-10');
+        }
+    });
+}
+function sidebarCollapse () {
+    // remove locational reset
+    $('#bottom').removeClass('topbtn');
+
+    // if the device is small, this will hide the chat when they open the side bar
+    if (screen.width < 750) {
+        $('.sidebar + .p-4').toggleClass('d-none');
+    }
+
+    // collapse sidebar as normal
+    $('.menu-collapsed').toggleClass('d-none');
+    $('.sidebar-submenu').toggleClass('d-none');
+    $('.submenu-icon').toggleClass('d-none');
+    $('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
+
+    // Treating d-flex/d-none on separators with title
+    var SeparatorTitle = $('.sidebar-separator-title');
+    if ( SeparatorTitle.hasClass('d-flex') ) {
+        SeparatorTitle.removeClass('d-flex');
+    } else {
+        SeparatorTitle.addClass('d-flex');
+    }
+
+    // move the buttom on mobile view
+    if ((screen.width < 500) && ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" ))) {
+        $('#bottom').addClass('topbtn');
+    }
+
+     // Collapse/Expand icon
+     $('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
+}
+
+/*  This makes sure that the logic is working properly for the classes.
+    This ensures that if the sidebar is opened on a mobile device, the chat is hidden.
+    It also make sure that there is not an d-none tag on the chat if the sidebar
+    is closed.
+**/
+function checkLoadingDisplays() {
+    if ($( '#sidebar-container' ).hasClass( 'sidebar-collapsed' )) {
+        $('.sidebar + .p-4').addClass('d-block');
+    }
+    else {
+        $('.sidebar + .p-4').addClass('d-none');
+    }
 }
 
 function populateSidebar() {
@@ -887,5 +916,14 @@ function addTag(tag, uid) {
   document.querySelector('.tag-container').insertBefore(tagContainer, tagInput)
 }
 
-window.init = init
-window.pushChatMessage = pushChatMessage
+function logout(){
+    firebase.auth().signOut();
+    window.location.replace("welcome.html");
+    console.log("You logged out")
+}
+
+
+window.initChat = initChat;
+window.pushChatMessage = pushChatMessage;
+window.logout = logout;
+exports.createOrJoinChat = createOrJoinChat;
