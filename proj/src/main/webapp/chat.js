@@ -768,10 +768,17 @@ async function addUsernameToMessage(uid, preview) {
             preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
             // add pfp
             const url = snap.val().photo || defaultPfp;
-            const pfpStorageRef = firebase.storage().refFromURL(url);
-            pfpStorageRef.getDownloadURL().then(function(src) {
+            if (sessionStorage[uid+" pfp"]) {
+                const src = sessionStorage[uid+" pfp"];
                 preview.querySelector("#pfp").src = src;
-            })
+            } else {
+                const pfpStorageRef = firebase.storage().refFromURL(url);
+                pfpStorageRef.getDownloadURL().then(function(src) {
+                    preview.querySelector("#pfp").src = src;
+                    sessionStorage[uid+" pfp"] = src;
+                })
+                
+            }
         }
     });
 }
@@ -793,6 +800,7 @@ function pfpOnInput() {
         userPfp.src = url;
     })
     input.files = null; // clear the input
+    sessionStorage[currentUid +" pfp"] = null; // clear session storage
 }
 
 function initBio() {
@@ -873,10 +881,16 @@ function addUserInfoToDom(userObj) {
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
 
     const url = userObj.photo || defaultPfp;
-    const pfpStorageRef = firebase.storage().refFromURL(url);
-    pfpStorageRef.getDownloadURL().then(function(src) {
+    if (sessionStorage[userObj.uid+" pfp"]) {
+        const src = sessionStorage[userObj.uid+" pfp"];
         profile.querySelector("#user-pfp").src = src;
-    })
+    } else {
+        const pfpStorageRef = firebase.storage().refFromURL(url);
+        pfpStorageRef.getDownloadURL().then(function(src) {
+            profile.querySelector("#user-pfp").src = src;
+            sessionStorage[userObj.uid+" pfp"] = src;
+        })
+    }
     
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
