@@ -134,8 +134,9 @@ h5 a:visited {
 .sign-in {
   justify-content: center;
   padding-left: 5%;
-  padding-right: 5%;
+  padding-right: 5%; 
   background-color: #333333;
+  padding-bottom: 50px;
 }
 
 #sign-up-col {
@@ -159,6 +160,9 @@ h5 a:visited {
   font-size:2rem;
   font-weight: lighter;
   color: #FFFFFF;
+}
+input.non-matching-pass {
+border-bottom: 2px solid #FA8072;
 }
 
 label, 
@@ -250,7 +254,7 @@ footer div {
   display: inline-block;
   height: 3vh;
   width: 100vw;
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   text-align: center;

@@ -1,18 +1,26 @@
 // Imports
-const firebase = require('firebase');
-const appconfig = require('./appconfig.js');
+const firebase = require('firebase/app');
+require('firebase/database');
+require('firebase/auth');
+global.firebase = firebase;
+
 const { JSDOM } = require('jsdom');
 window = (new JSDOM('')).window;
 global.window = window;
 global.document = window.document;
 
+global.$ = require('jquery'); // Must be after setting global.window and global.document
+require('bootstrap'); // for collapse
+
 // Initialize Firebase
+const appconfig = require('./appconfig.js');
 firebase.initializeApp(appconfig.firebaseConfig);
 
 // Other files
-require('./location.js');
 require('./chat.js');
+require('./location.js');
 require('./script.js');
+require('./signup.js');
 require('./welcome.js');
 
 // Redirect from index.html to welcome page if not signed in.
