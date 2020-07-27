@@ -17,7 +17,7 @@ const testconfig = require("./test-appconfig.js");
 appconfig.firebaseConfig = testconfig.firebaseTestConfig
 const app = require("../app.js");
 
-let jsdom = require("jsdom"); 
+let jsdom = require("jsdom");
 let fs = require("fs");
 let path = require("path")
 let $ = require("jquery")
