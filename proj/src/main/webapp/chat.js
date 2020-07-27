@@ -799,6 +799,8 @@ function addUserInfoToDom(userObj) {
     }
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
+    addFriendsToProfile(userObj.uid);
+
     for (tag in userObj.tags) {
         if (userObj.tags.hasOwnProperty(tag)) {
             addTag(tag, userObj.uid);
@@ -833,6 +835,23 @@ function addTagsToDom(uid) {
             });
         }
     });
+}
+
+/*
+    friend list in profile section
+*/
+
+function addFriendsToProfile(uid) {
+    const friendRef = firebase.database().ref('/users/'+uid+'/friends');
+    friendRef.once('value', function(snap) {
+        snap.forEach(function(child) {
+            console.log(child);
+        })
+    })
+}
+
+function addFriendToDom(uid) {
+
 }
 
 /* 
