@@ -3,6 +3,7 @@
  */
 
 const MAX_CHAT_SIZE = 200;
+const DEFAULT_PFP = 'gs://arringtonh-step-2020-d.appspot.com/profile-pictures/default.png';
 
 // Adds user to an existing chat when given a reference to the place in the database
 function addUserToTag(reference, tag, newLat, newLong){
@@ -828,6 +829,7 @@ function addUserInfoToDom(userObj) {
     }
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
+    document.getElementById('friend-house').innerHTML = '';
     addFriendsToProfile(userObj.uid);
 
     for (tag in userObj.tags) {
@@ -874,13 +876,37 @@ function addFriendsToProfile(uid) {
     const friendRef = firebase.database().ref('/users/'+uid+'/friends');
     friendRef.once('value', function(snap) {
         snap.forEach(function(child) {
-            console.log(child);
+            const friendUid = child.key;
+            addFriendToDom(friendUid);
         })
     })
 }
 
 function addFriendToDom(uid) {
+    const friendRef = firebase.database().ref('/users/'+uid);
+    friendRef.once('value', function(snap) {
+        const friendTemplate = document.getElementById('friend-template');
+        const docFrag = friendTemplate.content.cloneNode(true);
+        const friend = docFrag.querySelector('.friend');
 
+        if (sessionStorage[uid+" pfp"]) {
+            const src = sessionStorage[uid+" pfp"];
+            friend.querySelector('#pfp').src = src;
+        } else {
+            const url = snap.val().photo || DEFAULT_PFP;
+            pfpRef = firebase.storage().refFromURL(url);
+            pfpRef.getDownloadURL().then(function(src) {
+                friend.querySelector('#pfp').src = src;
+                sessionStorage[uid+" pfp"] = src;
+            })
+        }
+
+        const displayName = friend.querySelector('#display-name');
+        displayName.innerText = snap.val().firstName + ' ' + snap.val().lastName;
+
+        const friendHouse = document.getElementById('friend-house');
+        friendHouse.append(friend);
+    })
 }
 
 /* 
