@@ -81,7 +81,7 @@ function containsSymbol(password){
 
 
 /* Check for password confirmation 
-    enable button if and only if the password meets the requiremetns and match **/
+    enable button if and only if the password meets the requirements and match **/
 $('#pass, #passconf').on('keyup', function(){
     let pass = $('#pass');
     let passVal = pass.val()||'';
