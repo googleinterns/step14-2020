@@ -68,7 +68,8 @@ async function signUp(fname, lname, email, pass, tagStr, lat, long){
                 tagRemovalDict : tagRemovalDict,
                 latitude : lat,
                 longitude : long,
-                bio : "I'm a new user! Say hi!"
+                bio : "I'm a new user! Say hi!",
+                photo: chat.DEFAULT_PFP,
             }).then(function(){
                 window.location.replace("chat.html");
             });
