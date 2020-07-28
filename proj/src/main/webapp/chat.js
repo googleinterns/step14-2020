@@ -901,6 +901,8 @@ function addFriendToDom(uid) {
             })
         }
 
+        loadProfileOfSender(friend, uid) // to go profile on click
+
         const displayName = friend.querySelector('#display-name');
         displayName.innerText = snap.val().firstName + ' ' + snap.val().lastName;
 
