@@ -628,11 +628,12 @@ function getDbRef(tag, chatId) {
 async function makePreviewWithLastMessage(tag, chatId) {
     const tagRefObj = firebase.database().ref('/chat/'+tag+'/'+chatId+'/chatInfo')
     await tagRefObj.on('value', async function (snap) {
-
-        const preview = await makeChatPreview(snap.val(), tag, chatId);
-
-        const sidebar = document.getElementById('chats-submenu');
-        sidebar.prepend(preview);
+        chatInfoObj = snap.val();
+        if (chatInfoObj) {
+            const preview = await makeChatPreview(snap.val(), tag, chatId);
+            const sidebar = document.getElementById('chats-submenu');
+            sidebar.prepend(preview);
+        }
     });
 }
 
@@ -641,9 +642,7 @@ async function makeChatPreview(chatInfoObj, tag, chatId) {
         oldPreview = document.getElementById(chatId);
         oldPreview.parentNode.removeChild(oldPreview);
     }
-    if (!chatInfoObj){
-        return
-    }
+
     const previewTemplate = document.getElementById('chat-preview-temp');
     const docFrag = previewTemplate.content.cloneNode(true);
     const preview = docFrag.querySelector(".chat-preview")
