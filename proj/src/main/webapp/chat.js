@@ -896,7 +896,7 @@ function addBlockedToDom(uid) {
         const docFrag = blockedTemplate.content.cloneNode(true);
         const blockedt = docFrag.querySelector('.blockedt');
 
-        loadProfileOfSender(blockedt, uid); // to go profile on click
+        loadProfileOfSender(blockedt, uid); // go to profile on click
 
         blockedt.querySelector('#display-name').innerText = name;
         const blockedHouse = document.getElementById('blocked-house');
@@ -938,7 +938,7 @@ function addFriendToDom(uid) {
             })
         }
 
-        loadProfileOfSender(friend, uid); // to go profile on click
+        loadProfileOfSender(friend, uid); // go to profile on click
 
         const displayName = friend.querySelector('#display-name');
         displayName.innerText = snap.val().firstName + ' ' + snap.val().lastName;
