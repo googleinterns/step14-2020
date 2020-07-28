@@ -3,7 +3,7 @@
  */
 
 const MAX_CHAT_SIZE = 200;
-const DEFAULT_PFP = 'gs://arringtonh-step-2020-d.appspot.com/profile-pictures/default.png';
+const DEFAULT_PFP = "gs://arringtonh-step-2020-d.appspot.com/profile-pictures/default.png";
 
 // Adds user to an existing chat when given a reference to the place in the database
 function addUserToTag(reference, tag, newLat, newLong){
@@ -339,6 +339,9 @@ function initChat() {
 
     const chat = document.getElementById('message-list');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
+
+    document.getElementById('pfp-upload').oninput = pfpOnInput;
+
 }
 
 function initUserChat(){
@@ -495,6 +498,17 @@ function createMessageWithTemplate(key, messageObj) {
     timestamp.dataMilli = messageObj.timestamp;
     timestamp.innerText = new Date(messageObj.timestamp).toLocaleString();
 
+    // add pfp
+    const pfpRef = firebase.database().ref('/users/'+messageObj.senderUID+'/photo');
+    pfpRef.once('value', function(snap) {
+        const url = snap.val() || DEFAULT_PFP;
+        storageRef = firebase.storage().refFromURL(url);
+        storageRef.getDownloadURL().then(function(src) {
+            message.querySelector('#pfp').src = src;
+        })
+    })
+    
+
     message.id = key;
     message.dataset.userId = messageObj.senderUID;
     addUsernameToMessage(messageObj.senderUID, message)
@@ -630,11 +644,12 @@ function getDbRef(tag, chatId) {
 async function makePreviewWithLastMessage(tag, chatId) {
     const tagRefObj = firebase.database().ref('/chat/'+tag+'/'+chatId+'/chatInfo')
     await tagRefObj.on('value', async function (snap) {
-
-        const preview = await makeChatPreview(snap.val(), tag, chatId);
-
-        const sidebar = document.getElementById('chats-submenu');
-        sidebar.prepend(preview);
+        chatInfoObj = snap.val();
+        if (chatInfoObj) {
+            const preview = await makeChatPreview(snap.val(), tag, chatId);
+            const sidebar = document.getElementById('chats-submenu');
+            sidebar.prepend(preview);
+        }
     });
 }
 
@@ -643,9 +658,7 @@ async function makeChatPreview(chatInfoObj, tag, chatId) {
         oldPreview = document.getElementById(chatId);
         oldPreview.parentNode.removeChild(oldPreview);
     }
-    if (!chatInfoObj){
-        return
-    }
+
     const previewTemplate = document.getElementById('chat-preview-temp');
     const docFrag = previewTemplate.content.cloneNode(true);
     const preview = docFrag.querySelector(".chat-preview")
@@ -669,10 +682,43 @@ async function makeChatPreview(chatInfoObj, tag, chatId) {
 async function addUsernameToMessage(uid, preview) {
     const userRef = firebase.database().ref('/users/'+uid);
     await userRef.once("value", snap => {
-        if(snap.val()){
+        if(snap.val()) {
             preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
+            // add pfp
+            const url = snap.val().photo || DEFAULT_PFP;
+            if (sessionStorage[uid+" pfp"]) {
+                const src = sessionStorage[uid+" pfp"];
+                preview.querySelector("#pfp").src = src;
+            } else {
+                const pfpStorageRef = firebase.storage().refFromURL(url);
+                pfpStorageRef.getDownloadURL().then(function(src) {
+                    preview.querySelector("#pfp").src = src;
+                    sessionStorage[uid+" pfp"] = src;
+                })
+                
+            }
         }
     });
+}
+
+// function for when a user adds a picture
+function pfpOnInput() {
+    const input = document.getElementById("pfp-upload");
+    const pfp = input.files[0];
+
+    const currentUid = firebase.auth().currentUser.uid;
+    const pfpStorageRef = firebase.storage().ref('/profile-pictures/${currentUid}/pfp.png');
+    pfpStorageRef.put(pfp);
+
+    pfpStorageRef.getDownloadURL().then(function(url) {
+        const userPfpRef = firebase.database().ref('/users/${currentUid}/photo');
+        userPfpRef.set(pfpStorageRef.toString());
+
+        userPfp = document.getElementById('user-pfp');
+        userPfp.src = url;
+    })
+    input.files = null; // clear the input
+    sessionStorage[currentUid +" pfp"] = null; // clear session storage
 }
 
 function initBio() {
@@ -790,6 +836,7 @@ function populateSidebar() {
 function changeChatOnClick(domElement, tag, chatId) {
     domElement.addEventListener('click', function() {
         dbRefObject = getDbRef(tag, chatId);
+        sessionStorage.clear(); // clear pfps
         initRef(dbRefObject);
     });
 }
@@ -825,9 +872,19 @@ function addUserInfoToDom(userObj) {
     }
 
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
-    if (userObj.photo != null) {
-        profile.querySelector("#user-pfp").src = userObj.photo;
+
+    const url = userObj.photo || DEFAULT_PFP;
+    if (sessionStorage[userObj.uid+" pfp"]) {
+        const src = sessionStorage[userObj.uid+" pfp"];
+        profile.querySelector("#user-pfp").src = src;
+    } else {
+        const pfpStorageRef = firebase.storage().refFromURL(url);
+        pfpStorageRef.getDownloadURL().then(function(src) {
+            profile.querySelector("#user-pfp").src = src;
+            sessionStorage[userObj.uid+" pfp"] = src;
+        })
     }
+    
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
     document.getElementById('friend-house').innerHTML = '';
@@ -977,8 +1034,8 @@ function addTag(tag, uid) {
         close.remove();
     }
 
-  const tagInput = document.getElementById('tag-input')
-  document.querySelector('.tag-container').insertBefore(tagContainer, tagInput)
+  const tagInput = document.getElementById('tag-input');
+  document.querySelector('.tag-container').insertBefore(tagContainer, tagInput);
 }
 
 function logout(){
@@ -992,3 +1049,5 @@ window.initChat = initChat;
 window.pushChatMessage = pushChatMessage;
 window.logout = logout;
 exports.createOrJoinChat = createOrJoinChat;
+exports.DEFAULT_PFP = DEFAULT_PFP;
+

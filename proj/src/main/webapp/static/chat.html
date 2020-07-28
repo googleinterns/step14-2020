@@ -34,22 +34,25 @@
             </a>
 
             <!-- submenu content for navigating between chats -->
-            <div id='chats-submenu' class="collapse sidebar-submenu">
-            </div> 
             <template id="chat-preview-temp">
-                <div class="chat-preview list-group-item">
-                    <strong><p id="chat-name"></p></strong>
-                    <span class="text-muted" id=timestamp></span>
-                    <div class="message">
-                        <div class="message-header">
-                            <img id="pfp" />
-                            <p id="username"></p>
+                <div class="chat-preview list-group-item row">
+                    <div class="d-flex">
+                        <div style="width:20%;">
+                            <div id="image-cropper-pfp">
+                                <img id="pfp" alt="profile picture">
+                            </div> 
                         </div>
-                        <p class="message-body"></p>
+                        <div class="message">
+                            <div class="message-header">
+                                <strong><p id="chat-name"></p></strong>
+                                <p id="username"></p>
+                                <span class="text-muted" id=timestamp></span>
+                            </div>
+                            <pre class="message-body"></pre>
+                        </div>
                     </div>
-                </div>
             </template>
-        
+            <div id='chats-submenu' class="collapse sidebar-submenu"></div> 
             <a href="#profile-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between align-items-center">
                         <span class="fa fa-user fa-fw mr-3 fa-1x"></span>
@@ -66,6 +69,10 @@
                         </div>
                     </div>
                     <ul class="list-group">
+                        <li id="change-pfp" class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
+                        <p><strong>change picture</strong></p>
+                        <input type="file" id="pfp-upload" />
+                    </li>
                         <li class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
                             <p><strong>name</strong></p>
                             <p class="ml-auto" id="user-display-name">doggie</p>
@@ -123,7 +130,7 @@
                             <div id="button-house">
                                 <button type="button" id='friend-request' hidden></button>
                                 <button type="button" id='deny' hidden>deny friend request</button>
-                               <button type="button" id='block' hidden>block</button>
+                                <button type="button" id='block' hidden>block</button>
                             </div>
                         </li>
                 </div>
@@ -190,7 +197,7 @@
                                         <li class="list-group-item">
                                             <div class="message-header justify-content-between">
                                                 <span><strong id="username">name</strong></span>
-                                                <span class="text-muted" id=timestamp>time</span>
+                                                <span class="text-muted" id="timestamp">time</span>
                                             </div>
                                             <div><p class="message-body"></p></div>
                                         </li>
