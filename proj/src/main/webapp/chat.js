@@ -329,6 +329,7 @@ function initChat() {
                 populateSidebar();
                 initRef(dbRefObject);
                 populateProfileSidebar(firebaseUser.uid);
+                addBlockedToSettings();
             });
         }
         else{
@@ -869,6 +870,42 @@ function addTagsToDom(uid) {
 }
 
 /*
+    block list in settings section
+*/
+
+function addBlockedToSettings() {
+    const currentUid = firebase.auth().currentUser.uid;
+    const blockedRef = firebase.database().ref('/users/'+currentUid+'/blocked');
+    blockedRef.on('value', function(snap) {
+        const blockedHouse = document.getElementById('blocked-house');
+        blockedHouse.innerHTML = '';
+
+        snap.forEach(function(child) {
+            const blockedUid = child.key;
+            addBlockedToDom(blockedUid);
+        })
+    })
+}
+
+function addBlockedToDom(uid) {
+    const blockedRef = firebase.database().ref('/users/'+uid);
+    blockedRef.once('value', function(snap) {
+        const name = snap.val().firstName + " " + snap.val().lastName;
+
+        const blockedTemplate = document.getElementById('blocked-template');
+        const docFrag = blockedTemplate.content.cloneNode(true);
+        const blockedt = docFrag.querySelector('.blockedt');
+
+        loadProfileOfSender(blockedt, uid); // to go profile on click
+
+        blockedt.querySelector('#display-name').innerText = name;
+        const blockedHouse = document.getElementById('blocked-house');
+        blockedHouse.append(blockedt);
+
+    })
+}
+
+/*
     friend list in profile section
 */
 
@@ -901,7 +938,7 @@ function addFriendToDom(uid) {
             })
         }
 
-        loadProfileOfSender(friend, uid) // to go profile on click
+        loadProfileOfSender(friend, uid); // to go profile on click
 
         const displayName = friend.querySelector('#display-name');
         displayName.innerText = snap.val().firstName + ' ' + snap.val().lastName;
