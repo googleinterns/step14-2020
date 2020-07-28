@@ -3,7 +3,7 @@
  */
 
 const MAX_CHAT_SIZE = 200;
-const defaultPfp = "gs://arringtonh-step-2020-d.appspot.com/profile-pictures/default.png";
+const DEFAULT_PFP = "gs://arringtonh-step-2020-d.appspot.com/profile-pictures/default.png";
 
 // Adds user to an existing chat when given a reference to the place in the database
 function addUserToTag(reference, tag, newLat, newLong){
@@ -500,7 +500,7 @@ function createMessageWithTemplate(key, messageObj) {
     // add pfp
     const pfpRef = firebase.database().ref('/users/'+messageObj.senderUID+'/photo');
     pfpRef.once('value', function(snap) {
-        const url = snap.val() || defaultPfp;
+        const url = snap.val() || DEFAULT_PFP;
         storageRef = firebase.storage().refFromURL(url);
         storageRef.getDownloadURL().then(function(src) {
             message.querySelector('#pfp').src = src;
@@ -683,7 +683,7 @@ async function addUsernameToMessage(uid, preview) {
         if(snap.val()) {
             preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
             // add pfp
-            const url = snap.val().photo || defaultPfp;
+            const url = snap.val().photo || DEFAULT_PFP;
             if (sessionStorage[uid+" pfp"]) {
                 const src = sessionStorage[uid+" pfp"];
                 preview.querySelector("#pfp").src = src;
@@ -871,7 +871,7 @@ function addUserInfoToDom(userObj) {
 
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
 
-    const url = userObj.photo || defaultPfp;
+    const url = userObj.photo || DEFAULT_PFP;
     if (sessionStorage[userObj.uid+" pfp"]) {
         const src = sessionStorage[userObj.uid+" pfp"];
         profile.querySelector("#user-pfp").src = src;
@@ -965,3 +965,4 @@ window.initChat = initChat;
 window.pushChatMessage = pushChatMessage;
 window.logout = logout;
 exports.createOrJoinChat = createOrJoinChat;
+exports.DEFAULT_PFP = DEFAULT_PFP

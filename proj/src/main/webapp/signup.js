@@ -64,7 +64,6 @@ async function signUp(fname, lname, email, pass, tagStr, lat, long){
         }
 
         const user = auth.currentUser;
-        const defaultPfp = "gs://arringtonh-step-2020-d.appspot.com/profile-pictures/default.png";
         await user.updateProfile({
             displayName: fname + " " + lname
             }).then(function(){
@@ -76,7 +75,7 @@ async function signUp(fname, lname, email, pass, tagStr, lat, long){
                 latitude : lat,
                 longitude : long,
                 bio : "I'm a new user! Say hi!",
-                photo: defaultPfp,
+                photo: chat.DEFAULT_PFP,
             }).then(function(){
                 window.location.replace("chat.html");
             });
