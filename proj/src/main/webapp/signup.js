@@ -172,7 +172,7 @@ function hasTag(){
     const tagBox = document.getElementById("tags");
     const pass = document.getElementById("passconf");
     if (tagBox.value.trim().length != 0){
-        console.log("tag edit");
+        $('#tags').css('border','none');
         return true;
     } else {
         // the tag box will only be in red after the user has input a valid password 
@@ -180,6 +180,7 @@ function hasTag(){
         if (noMatch.hidden){
             $('#tags').css('border','3px solid #fa8072');
         }
+        console.log("no tags");
         return false;
     }
 }
@@ -187,11 +188,10 @@ function hasTag(){
 function enableSignUp(passVal){
     $('#tags').keyup(hasTag());
     if (meetRequirements(passVal) && noMatch.hidden && hasTag){
-        console.log("filled out");
+        console.log("form completed");
         btnSignUp.disabled = false;
     } else {
-        console.log("something missing");
-        // console.log(hasTag);
+        console.log("something is missing");
         // disable sign up button
         btnSignUp.disabled = true;
     }
