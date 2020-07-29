@@ -385,6 +385,7 @@ function initRef(dbRefObject) {
     const currentUid = firebase.auth().currentUser.uid;
 
     setTitle(dbRefObject);
+    createFriendChat('e2N5J7gGjVMzK3jw4PtC9DedtpS2');
 
     // note that when a comment is added it will display more than the limit, which
     // is intentional
@@ -1003,6 +1004,49 @@ function addFriendToDom(uid) {
         const friendHouse = document.getElementById('friend-house');
         friendHouse.append(friend);
     })
+}
+
+/*
+    1 on 1 chat between friends
+*/
+
+async function createFriendChat(friendUid) {
+    const chatRef = firebase.database().ref('/chat/chats-1on1');
+    const chatId = chatRef.push().key;
+
+    // set users' ref to the chat id
+    const currentUid = firebase.auth().currentUser.uid;
+    const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+currentUid);
+    currFriendRef.set(chatId);
+    const otherFriendRef = firebase.database().ref('/users/'+friendUid+'/friends/'+friendUid);
+    currFriendRef.set(chatId);
+
+    // we gotta make a chat now
+    const chatInfoObj = {
+        'chatInfo': {
+            'name': 'to be set later',
+            'tag': 'chats-1on1',
+        }
+    }
+
+    // fetch the users' names
+    const currUserRef = firebase.database().ref('/users/'+currentUid);
+    const friendRef = firebase.database().ref('/users/'+friendUid);
+
+    currUserRef.once('value', function(snap) {
+        return snap.val();
+    }).then(function(currSnap) {
+        friendRef.once('value', function(snap) {
+            const currName = currSnap.val().firstName + ' ' + currSnap.val().lastName;
+            const friendName = snap.val().firstName + ' ' + snap.val().lastName;
+            const chatName = currName + ' and ' + friendName + "'s chat";
+            chatInfoObj.chatInfo.name = chatName;
+            
+            // push new chat info to chats
+            chatRef.child(chatId).set(chatInfoObj);
+        })
+    })
+
 }
 
 /* 
