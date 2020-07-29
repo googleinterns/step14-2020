@@ -1,6 +1,8 @@
 // Chai is a commonly used library for creating unit test suites. It is easily extended with plugins.
 const chai = require('chai');
 const assert = chai.assert;
+const expect = chai.expect;
+
 
 // For Test Clean Up
 const test = require('firebase-functions-test')();
@@ -133,4 +135,6 @@ describe('Creating and Joining Chats', function() {
             assert.isTrue(!firebase.auth().currentUser);
         });
     });
+    
 });
+
