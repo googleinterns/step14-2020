@@ -707,11 +707,11 @@ function pfpOnInput() {
     const pfp = input.files[0];
 
     const currentUid = firebase.auth().currentUser.uid;
-    const pfpStorageRef = firebase.storage().ref('/profile-pictures/${currentUid}/pfp.png');
+    const pfpStorageRef = firebase.storage().ref(`/profile-pictures/${currentUid}/pfp.png`);
     pfpStorageRef.put(pfp);
 
     pfpStorageRef.getDownloadURL().then(function(url) {
-        const userPfpRef = firebase.database().ref('/users/${currentUid}/photo');
+        const userPfpRef = firebase.database().ref(`/users/${currentUid}/photo`);
         userPfpRef.set(pfpStorageRef.toString());
 
         userPfp = document.getElementById('user-pfp');
