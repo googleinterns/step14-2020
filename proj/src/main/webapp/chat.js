@@ -320,7 +320,7 @@ function initChat() {
         if(firebaseUser){
             setupSidebar();
             clickWithEnterKey();
-            initNotifications();
+            notifications.initNotifications();
 
             // InitUserChat sets information relevant to logged-in user
             // Must run before enclosed functions
