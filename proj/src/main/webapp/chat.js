@@ -1043,8 +1043,6 @@ function addTag(tag, uid) {
   document.querySelector('.tag-container').insertBefore(tagContainer, tagInput);
 }
 
-
-
 function logout(){
     notifications.unSubscribeFromAllChats();
     sessionStorage.clear();
@@ -1052,7 +1050,6 @@ function logout(){
     window.location.replace("welcome.html");
     console.log("You logged out")
 }
-
 
 window.initChat = initChat;
 window.pushChatMessage = pushChatMessage;

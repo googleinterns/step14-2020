@@ -1,5 +1,4 @@
 const appconfig = require('./appconfig.js');
-const messaging = firebase.messaging();
 /*
     Notifications
  */
@@ -8,6 +7,7 @@ function getTopic(tag,chatId) {
 }
 
 async function getToken(){
+    const messaging = firebase.messaging();
     return await messaging.getToken().then((currentToken) => {
         if (currentToken) {
             return currentToken;
@@ -19,7 +19,8 @@ async function getToken(){
     });
 }
 
-async function initNotifications() {    
+async function initNotifications() {
+    const messaging = firebase.messaging();
     await messaging.requestPermission()
     .then(function () {
         console.log("Have permission");
