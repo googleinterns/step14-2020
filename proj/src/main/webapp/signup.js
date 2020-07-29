@@ -3,15 +3,9 @@ const chat = require('./chat.js');
 
 // init function for static/signup.html
 function initSignUp(){
-    firebase.auth().onAuthStateChanged(async firebaseUser => {
-        if(firebaseUser){
-            window.location.replace("/static/chat.html");
-        } else{
-            initSignUpButtons();
-            initializePasswordValidation();
-            location.getLocation();
-        }
-    });
+    initSignUpButtons();
+    initializePasswordValidation();
+    location.getLocation();
 }
 
 // if(btnLogin){
@@ -94,7 +88,8 @@ async function signUp(fname, lname, email, pass, tagStr, lat, long){
                 tagRemovalDict : tagRemovalDict,
                 latitude : lat,
                 longitude : long,
-                bio : "I'm a new user! Say hi!"
+                bio : "I'm a new user! Say hi!",
+                photo: chat.DEFAULT_PFP,
             }).then(function(){
                 window.location.replace("chat.html");
             });
