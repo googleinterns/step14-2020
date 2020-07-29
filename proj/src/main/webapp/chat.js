@@ -556,8 +556,12 @@ function friendRequestButton(uid) {
 
                     const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+uid);
                     const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUid);
-                    currFriendRef.set(true);
-                    otherFriendRef.set(true);
+
+                    const oneOnOneRef = firebase.database().ref('/chat/chats-1on1');
+                    const chatId = oneOnOneRef.push().key;
+                    createFriendChat(chatId, uid);
+                    currFriendRef.set(chatId);
+                    otherFriendRef.set(chatId);
 
                     deny.hidden = true;
                     deny.onclick = null;
@@ -586,6 +590,10 @@ function friendRequestButton(uid) {
                         button.onclick = function() {
                             currFriendRef.remove();
                             otherFriendRef.remove();
+
+                            // delete friend chat
+                            const oneOnOneRef = firebase.database().ref('/chat/chats-1on1');
+                            oneOnOneRef.child(snap.val()).remove();
                         };
                     } else {
                         // not friends, send request
@@ -600,6 +608,48 @@ function friendRequestButton(uid) {
         }
         button.hidden = false;
     });
+}
+
+/*
+    1 on 1 chat between friends
+*/
+
+function createFriendChat(chatId, friendUid) {
+    const chatRef = firebase.database().ref('/chat/chats-1on1');
+
+    // set users' ref to the chat id
+    const currentUid = firebase.auth().currentUser.uid;
+    const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+currentUid);
+    currFriendRef.set(chatId);
+    const otherFriendRef = firebase.database().ref('/users/'+friendUid+'/friends/'+friendUid);
+    otherFriendRef.set(chatId);
+
+    // we gotta make a chat now
+    const chatInfoObj = {
+        'chatInfo': {
+            'name': 'to be set later',
+            'tag': 'chats-1on1',
+        }
+    }
+
+    // fetch the users' names
+    const currUserRef = firebase.database().ref('/users/'+currentUid);
+    const friendRef = firebase.database().ref('/users/'+friendUid);
+
+    currUserRef.once('value', function(snap) {
+        return snap.val();
+    }).then(function(currSnap) {
+        friendRef.once('value', function(snap) {
+            const currName = currSnap.val().firstName + ' ' + currSnap.val().lastName;
+            const friendName = snap.val().firstName + ' ' + snap.val().lastName;
+            const chatName = currName + ' and ' + friendName + "'s chat";
+            chatInfoObj.chatInfo.name = chatName;
+            
+            // push new chat info to chats
+            chatRef.child(chatId).set(chatInfoObj);
+        })
+    })
+
 }
 
 function blockButton(uid) {
@@ -1004,49 +1054,6 @@ function addFriendToDom(uid) {
         const friendHouse = document.getElementById('friend-house');
         friendHouse.append(friend);
     })
-}
-
-/*
-    1 on 1 chat between friends
-*/
-
-async function createFriendChat(friendUid) {
-    const chatRef = firebase.database().ref('/chat/chats-1on1');
-    const chatId = chatRef.push().key;
-
-    // set users' ref to the chat id
-    const currentUid = firebase.auth().currentUser.uid;
-    const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+currentUid);
-    currFriendRef.set(chatId);
-    const otherFriendRef = firebase.database().ref('/users/'+friendUid+'/friends/'+friendUid);
-    currFriendRef.set(chatId);
-
-    // we gotta make a chat now
-    const chatInfoObj = {
-        'chatInfo': {
-            'name': 'to be set later',
-            'tag': 'chats-1on1',
-        }
-    }
-
-    // fetch the users' names
-    const currUserRef = firebase.database().ref('/users/'+currentUid);
-    const friendRef = firebase.database().ref('/users/'+friendUid);
-
-    currUserRef.once('value', function(snap) {
-        return snap.val();
-    }).then(function(currSnap) {
-        friendRef.once('value', function(snap) {
-            const currName = currSnap.val().firstName + ' ' + currSnap.val().lastName;
-            const friendName = snap.val().firstName + ' ' + snap.val().lastName;
-            const chatName = currName + ' and ' + friendName + "'s chat";
-            chatInfoObj.chatInfo.name = chatName;
-            
-            // push new chat info to chats
-            chatRef.child(chatId).set(chatInfoObj);
-        })
-    })
-
 }
 
 /* 
