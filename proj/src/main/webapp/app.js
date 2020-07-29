@@ -1,7 +1,7 @@
 // Imports
 const firebase = require('firebase/app');
-require('firebase/database');
 require('firebase/auth');
+require('firebase/database');
 require('firebase/storage');
 global.firebase = firebase;
 

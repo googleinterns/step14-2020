@@ -297,7 +297,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
             // numUsers is the number of users remaining after removal
             // There is a check to make sure numUsers is not 0
             chatLat = (chatLat * (numUsers+1) - lat)/numUsers;
-            chatLat = (chatLat * (numUsers+1) - lat)/numUsers;
+            chatLong = (chatLong * (numUsers+1) - long)/numUsers;
             infoRef.update({latitude : chatLat, longitude : chatLong});
         });
     }
@@ -835,6 +835,7 @@ function populateSidebar() {
 
 function changeChatOnClick(domElement, tag, chatId) {
     domElement.addEventListener('click', function() {
+        dbRefObject.off('child_added');
         dbRefObject = getDbRef(tag, chatId);
         sessionStorage.clear(); // clear pfps
         initRef(dbRefObject);
