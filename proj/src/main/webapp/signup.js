@@ -152,11 +152,11 @@ function initializePasswordValidation(){
     const noMatch = document.getElementById("noMatch");
     const btnSignUp = document.getElementById("btnSignUp");
     const pass = document.getElementById("pass");
-    const passconf = document.getElementById("passconf");
+    const passconf = document.getElementById("passconf"); 
     /* Check for password confirmation 
         enable button if and only if the password meets the 
         requirements and match each other**/
-    $('#pass, #passconf').on('keyup', function(){
+    $('#pass, #passconf, #tags').on('keyup', function(){
         let passVal = pass.value || '';
         let passconfVal = passconf.value || '';
         if (passVal == passconfVal){
@@ -169,14 +169,38 @@ function initializePasswordValidation(){
             passconf.classList.add("non-matching-pass");
             noMatch.hidden = false;
         }
-        if (meetRequirements(passVal) && noMatch.hidden) {
-            btnSignUp.disabled = false;
-        } else {
-            // disable sign up button
-            btnSignUp.disabled = true;
-        }
+        enableSignUp(passVal);
     })
 }
+
+function hasTag(){
+    const tagBox = document.getElementById("tags");
+    const pass = document.getElementById("passconf");
+    if (tagBox.value.trim().length != 0){
+        console.log("tag edit");
+        return true;
+    } else {
+        // the tag box will only be in red after the user has input a valid password 
+        // this is to prevent the page from being visually overwhelming and help guide the user
+        if (noMatch.hidden){
+            $('#tags').css('border','3px solid #fa8072');
+        }
+        return false;
+    }
+}
+
+function enableSignUp(passVal){
+    $('#tags').keyup(hasTag());
+    if (meetRequirements(passVal) && noMatch.hidden && hasTag){
+        console.log("filled out");
+        btnSignUp.disabled = false;
+    } else {
+        console.log("something missing");
+        // console.log(hasTag);
+        // disable sign up button
+        btnSignUp.disabled = true;
+    }
+};
 
 window.initSignUp = initSignUp;
 exports.signUp = signUp;
