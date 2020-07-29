@@ -1,9 +1,9 @@
 // Imports
 const firebase = require('firebase/app');
-require('firebase/database');
 require('firebase/auth');
-require('firebase/storage');
+require('firebase/database');
 require('firebase/messaging');
+require('firebase/storage');
 global.firebase = firebase;
 
 const { JSDOM } = require('jsdom');

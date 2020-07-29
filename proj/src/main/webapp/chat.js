@@ -332,6 +332,7 @@ function initChat() {
                 populateSidebar();
                 initRef();
                 populateProfileSidebar(firebaseUser.uid);
+                addBlockedToSettings();
             });
         }
         else{
@@ -895,6 +896,9 @@ function addUserInfoToDom(userObj) {
     
     profile.querySelector("#user-bio").innerText = userObj.bio;
 
+    document.getElementById('friend-house').innerHTML = '';
+    addFriendsToProfile(userObj.uid);
+
     for (tag in userObj.tags) {
         if (userObj.tags.hasOwnProperty(tag)) {
             addTag(tag, userObj.uid);
@@ -929,6 +933,85 @@ function addTagsToDom(uid) {
             });
         }
     });
+}
+
+/*
+    block list in settings section
+*/
+
+function addBlockedToSettings() {
+    const currentUid = firebase.auth().currentUser.uid;
+    const blockedRef = firebase.database().ref('/users/'+currentUid+'/blocked');
+    blockedRef.on('value', function(snap) {
+        const blockedHouse = document.getElementById('blocked-house');
+        blockedHouse.innerHTML = '';
+
+        snap.forEach(function(child) {
+            const blockedUid = child.key;
+            addBlockedToDom(blockedUid);
+        })
+    })
+}
+
+function addBlockedToDom(uid) {
+    const blockedRef = firebase.database().ref('/users/'+uid);
+    blockedRef.once('value', function(snap) {
+        const name = snap.val().firstName + " " + snap.val().lastName;
+
+        const blockedTemplate = document.getElementById('blocked-template');
+        const docFrag = blockedTemplate.content.cloneNode(true);
+        const blockedt = docFrag.querySelector('.blockedt');
+
+        loadProfileOfSender(blockedt, uid); // go to profile on click
+
+        blockedt.querySelector('#display-name').innerText = name;
+        const blockedHouse = document.getElementById('blocked-house');
+        blockedHouse.append(blockedt);
+
+    })
+}
+
+/*
+    friend list in profile section
+*/
+
+function addFriendsToProfile(uid) {
+    const friendRef = firebase.database().ref('/users/'+uid+'/friends');
+    friendRef.once('value', function(snap) {
+        snap.forEach(function(child) {
+            const friendUid = child.key;
+            addFriendToDom(friendUid);
+        })
+    })
+}
+
+function addFriendToDom(uid) {
+    const friendRef = firebase.database().ref('/users/'+uid);
+    friendRef.once('value', function(snap) {
+        const friendTemplate = document.getElementById('friend-template');
+        const docFrag = friendTemplate.content.cloneNode(true);
+        const friend = docFrag.querySelector('.friend');
+
+        if (sessionStorage[uid+" pfp"]) {
+            const src = sessionStorage[uid+" pfp"];
+            friend.querySelector('#pfp').src = src;
+        } else {
+            const url = snap.val().photo || DEFAULT_PFP;
+            pfpRef = firebase.storage().refFromURL(url);
+            pfpRef.getDownloadURL().then(function(src) {
+                friend.querySelector('#pfp').src = src;
+                sessionStorage[uid+" pfp"] = src;
+            })
+        }
+
+        loadProfileOfSender(friend, uid); // go to profile on click
+
+        const displayName = friend.querySelector('#display-name');
+        displayName.innerText = snap.val().firstName + ' ' + snap.val().lastName;
+
+        const friendHouse = document.getElementById('friend-house');
+        friendHouse.append(friend);
+    })
 }
 
 /* 
@@ -1095,4 +1178,5 @@ window.initChat = initChat;
 window.pushChatMessage = pushChatMessage;
 window.logout = logout;
 exports.createOrJoinChat = createOrJoinChat;
-exports.DEFAULT_PFP = DEFAULT_PFP
+exports.DEFAULT_PFP = DEFAULT_PFP;
+

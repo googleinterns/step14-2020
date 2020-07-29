@@ -90,6 +90,26 @@
                                 <textarea id="bio-edit" style="width:100%; height:100%;" hidden></textarea>
                             </div>
                         </li>
+
+                        <li class="info-section list-group-item menu-collapsed justify-content-start ">
+                            <template id="friend-template">
+                                <div class="friend">
+                                    <div class="friend-pfp-div">
+                                        <img id="pfp" />
+                                    </div>
+                                    <div class="username-div">
+                                        <p id="display-name">username</p>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <div>
+                                <p><strong>friends</strong></p>
+                                <div id="friend-house"></div>
+                            </div>
+                            
+                        </li>
+
                         <li class="info-section list-group-item menu-collapsed justify-content-start ">
                             <div>
                                 <p class="text-left"><strong>tags</strong></p>
@@ -127,6 +147,15 @@
                 <div id='settings-submenu' class="collapse sidebar-submenu">
                     <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
                         <span class="menu-collapsed">edit profile</span>
+                    </a>
+                    <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
+                        <span class="menu-collapsed">blocked users</span>
+                        <div id="blocked-house" class="menu-collapsed"></div>
+                        <template id="blocked-template">
+                            <div class="blockedt">
+                                    <p id="display-name">username</p>
+                            </div>
+                        </template>
                     </a>
                     <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
                         <span class="menu-collapsed">change password</span>
