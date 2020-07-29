@@ -21,6 +21,7 @@ firebase.initializeApp(appconfig.firebaseConfig);
 // Other files
 require('./chat.js');
 require('./location.js');
+require('./notifications.js');
 require('./script.js');
 require('./signup.js');
 require('./welcome.js');

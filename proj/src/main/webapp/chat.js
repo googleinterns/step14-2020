@@ -1,7 +1,4 @@
-/*
-    Authentication
- */
-
+notifications = require('./notifications.js');
 const MAX_CHAT_SIZE = 200;
 const DEFAULT_PFP = "gs://arringtonh-step-2020-d.appspot.com/profile-pictures/default.png";
 
@@ -140,7 +137,6 @@ async function setUserTags(tagList){
         var lat;
         var long;
 
-        let token = await getToken();
         const currentUid = firebase.auth().currentUser.uid;
         const abridgedTagsRef = "/users/" + currentUid + "/allTags";
         const abridgedTagRemovalRef = "/users/" + currentUid + "/tagRemovalDict";
@@ -173,7 +169,7 @@ async function setUserTags(tagList){
                     let keys = await createOrJoinChat(tag, lat, long);
                     allTags[tag] = keys['tag'];
                     tagRemovalDict[tag] = keys['tagRemoval'];
-                    subscribeToTagChatId(token, tag, keys['tag']);
+                    notifications.subscribeToTagChatId(tag, keys['tag']);
                 }
                 else{
                     allTags[tag] = currentTags[tag];
@@ -204,7 +200,7 @@ async function addUserTags(tagList){
     if(firebase.auth().currentUser){
         var lat;
         var long;
-        let token = await getToken();
+
         const currentUid = firebase.auth().currentUser.uid;
         const abridgedTagsRef = "/users/" + currentUid + "/allTags";
         const abridgedTagRemovalRef = "/users/" + currentUid + "/tagRemovalDict";
@@ -238,7 +234,7 @@ async function addUserTags(tagList){
                     let keys = await createOrJoinChat(tag, lat, long);
                     allTags[tag] = keys['tag'];
                     tagRemovalDict[tag] = keys['tagRemoval'];
-                    subscribeToTagChatId(token, tag, keys['tag'])
+                    notifications.subscribeToTagChatId(tag, keys['tag'])
                 }
             }
 
@@ -265,7 +261,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
     var numUsers;
     var removalKey;
     var chatId;
-    let token = await getToken();
+
     await tagRemovalRef.once("value").then(function(snapshot){
         //Gets removal key to remove specific user from chat
         var data = snapshot.val();
@@ -276,7 +272,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
             // Gets chatId to remove user from
             var data2 = snapshot2.val();
             chatId = data2[tag];
-            unsubscribeFromTagChatId(token, tag, chatId)
+            notifications.unsubscribeFromTagChatId(tag, chatId)
         }).finally(async function(){
             // Removes user from chat
             const chatRef = firebase.database().ref("/chat/" + tag + "/" + chatId + "/users/" + removalKey);
@@ -437,7 +433,7 @@ function pushChatMessage() {
             'lastMessage': message.content,
             'timestamp': message.timestamp
         });
-        sendNotificationForChat(sessionStorage.activeChatTag,sessionStorage.activeChatId,firebase.auth().currentUser.displayName,messageInput.value)
+        notifications.sendNotificationForChat(message)
     }
     messageInput.value = null; // clear the message
 }
@@ -1047,127 +1043,11 @@ function addTag(tag, uid) {
   document.querySelector('.tag-container').insertBefore(tagContainer, tagInput);
 }
 
-/*
-    Notifications
- */
-function getTopic(tag,chatId) {
-    return "/topics/"+tag+"."+chatId
-}
 
-async function getToken(){
-    return await messaging.getToken().then((currentToken) => {
-        if (currentToken) {
-            return currentToken;
-        } else {
-            console.log('No Instance ID token available. Request permission to generate one.');
-        }
-    }).catch((err) => {
-        console.log('An error occurred while retrieving token. ', err);
-    });
-}
-
-function getServerKey(){
-    // TODO: move this to appconfig.js and get it from there.
-    return 'key=AAAATmxWSLY:APA91bFngBwWTr1GyOT_bxAK1aiCtj4wPc8QT7NvrAi1mwkYYxSQGUn7ZeHKarx_Oc0OH_7qe61VaWFdKybizER9G77xP9Y3f77R9l4t2095CWSCPx77xM7nprK6jWihdjlAarRb2Zd3'
-}
-
-async function initNotifications() {
-    const messaging = firebase.messaging();
-    await messaging.requestPermission()
-    .then(function () {
-        console.log("Have permission");
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/firebase-messaging-sw.js')
-            .then(function(registration) {
-                console.log('Registration successful, scope is:', registration.scope);
-            }).catch(function(err) {
-                console.log('Service worker registration failed, error:', err);
-            });
-        }
-    });
-    subscribeToAllChats()
-    messaging.onMessage((payload,a,b,c) => {
-        console.log(payload,a,b,c)
-        if (!((payload.data.tag==sessionStorage.activeChatTag)&&(payload.data.chatId==sessionStorage.activeChatId))){
-            console.log("RECEIVED A MESSAGE FROM A NON-ACTIVE CHAT!")
-            // TODO: Show in page popup or notification and update the chat preview for that chat here
-        } else {
-            // TODO: Update the DOM here? or leave where it currently is.
-        }
-    });
-}
-async function subscribeToAllChats() {
-    let token = await getToken()
-    currentUid = firebase.auth().currentUser.uid;
-    tagsRef = firebase.database().ref('/users/'+currentUid+'/allTags');
-    tagsRef.once('value', function(snap) {
-        if (snap.val()) {
-            for (const [tag,chatId] of Object.entries(snap.val())) {
-                subscribeToTagChatId(token, tag, chatId)
-            }
-        }
-    });
-}
-
-function unsubscribeFromTagChatId(token, tag, chatId) {
-    url = "https://iid.googleapis.com/iid/v1:batchRemove";
-    console.log("ARINZE2: unsubscribing from",tag,chatId)
-    payload = {
-        "to": getTopic(tag,chatId),
-        "registration_tokens": [token]
-    }
-    $.ajax({
-        url: url,
-        type: 'post',
-        data: JSON.stringify(payload),
-        dataType: 'json',
-        headers: {
-            "Content-Type": 'application/json',
-            "Authorization": getServerKey()
-        }
-    });
-}
-
-function subscribeToTagChatId(token, tag, chatId) {
-    url = "https://iid.googleapis.com/iid/v1/"+token+"/rel"+getTopic(tag,chatId);
-    console.log("ARINZE1: subscribing to",tag,chatId)
-    $.ajax({
-        url: url,
-        type: 'post',
-        headers: {
-            "Content-Type": 'application/json',
-            "Authorization": getServerKey()
-        }
-    });
-}
-
-function sendNotificationForChat(tag,chatId,name,message) {
-    notificationBody = name+' has sent a message:\n'+message
-    let payload = {
-        "to": getTopic(tag,chatId),
-        "notification": {
-            "title": tag,
-            "body": notificationBody
-        },
-        "data":{
-            "tag": tag,
-            "chatId": chatId
-        }
-    }
-    $.ajax({
-        url: 'https://fcm.googleapis.com/fcm/send',
-        type: 'post',
-        data: JSON.stringify(payload),
-        dataType: 'json',
-        headers: {
-            "Content-Type": 'application/json',
-            "Authorization": getServerKey()
-        },
-        dataType: 'json'
-    });
-}
 
 function logout(){
+    notifications.unSubscribeFromAllChats();
+    sessionStorage.clear();
     firebase.auth().signOut();
     window.location.replace("welcome.html");
     console.log("You logged out")
