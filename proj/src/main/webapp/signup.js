@@ -170,7 +170,6 @@ function initializePasswordValidation(){
 
 function hasTag(){
     const tagBox = document.getElementById("tags");
-    const pass = document.getElementById("passconf");
     if (tagBox.value.trim().length != 0){
         $('#tags').css('border','none');
         return true;
@@ -180,18 +179,15 @@ function hasTag(){
         if (noMatch.hidden){
             $('#tags').css('border','3px solid #fa8072');
         }
-        console.log("no tags");
         return false;
     }
 }
 
 function enableSignUp(passVal){
-    $('#tags').keyup(hasTag());
-    if (meetRequirements(passVal) && noMatch.hidden && hasTag){
-        console.log("form completed");
+    $('#tags').keyup(hasTag);
+    if (meetRequirements(passVal) && noMatch.hidden && hasTag()){
         btnSignUp.disabled = false;
     } else {
-        console.log("something is missing");
         // disable sign up button
         btnSignUp.disabled = true;
     }
