@@ -1,6 +1,11 @@
 // Chai is a commonly used library for creating unit test suites. It is easily extended with plugins.
 const chai = require('chai');
 const assert = chai.assert;
+const expect = chai.expect
+
+//  To test DOM
+//  npm install chai-dom
+chai.use(require('chai-dom'))
 
 // For Test Clean Up
 const test = require('firebase-functions-test')();
@@ -96,15 +101,22 @@ describe('Test password validations', function() {
     });
 
     it('password ok', async function() {
-        assert.isTrue(signup.meetRequirements('testing1!'))
+        assert.isTrue(signup.meetRequirements('testing1!'));
     });
     it('password too short', async function() {
-        assert.isFalse(signup.meetRequirements('test1!'))
+        assert.isFalse(signup.meetRequirements('test1!'));
     });
     it('password missing number', async function() {
-        assert.isFalse(signup.meetRequirements('testing!'))
+        assert.isFalse(signup.meetRequirements('testing!'));
     });
     it('password missing symbol', async function() {
-        assert.isFalse(signup.meetRequirements('testing1'))
+        assert.isFalse(signup.meetRequirements('testing1'));
     });
+
+    // TODO: connect window to HTML to test page element
+    // it('user must have at least one tag', function(){
+    //     global.window = {location:{replace: function(newPath){
+    //         return assert.equal(newPath,'chat.html')}}}
+    //     expect(document.querySelector("#sign-in-title").to.have.text("Sign up"));
+    // });
 });
