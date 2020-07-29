@@ -4,7 +4,6 @@
 
 const MAX_CHAT_SIZE = 200;
 const DEFAULT_PFP = "gs://arringtonh-step-2020-d.appspot.com/profile-pictures/default.png";
-const messaging = firebase.messaging();
 
 // Adds user to an existing chat when given a reference to the place in the database
 function addUserToTag(reference, tag, newLat, newLong){
@@ -968,17 +967,6 @@ function addTag(tag, uid) {
 /*
     Notifications
  */
-
-messaging.onMessage((payload,a,b,c) => {
-    console.log(payload,a,b,c)
-    if (!((payload.data.tag==sessionStorage.activeChatTag)&&(payload.data.chatId==sessionStorage.activeChatId))){
-        console.log("RECEIVED A MESSAGE FROM A NON-ACTIVE CHAT!")
-        // TODO: Show in page popup or notification and update the chat preview for that chat here
-    } else {
-        // TODO: Update the DOM here? or leave where it currently is.
-    }
-});
-
 function getTopic(tag,chatId) {
     return "/topics/"+tag+"."+chatId
 }
@@ -999,7 +987,9 @@ function getServerKey(){
     // TODO: move this to appconfig.js and get it from there.
     return 'key=AAAATmxWSLY:APA91bFngBwWTr1GyOT_bxAK1aiCtj4wPc8QT7NvrAi1mwkYYxSQGUn7ZeHKarx_Oc0OH_7qe61VaWFdKybizER9G77xP9Y3f77R9l4t2095CWSCPx77xM7nprK6jWihdjlAarRb2Zd3'
 }
-async function subscribeToAllChats() {
+
+async function initNotifications() {
+    const messaging = firebase.messaging();
     await messaging.requestPermission()
     .then(function () {
         console.log("Have permission");
@@ -1013,6 +1003,15 @@ async function subscribeToAllChats() {
         }
     });
     subscribeToAllChats()
+    messaging.onMessage((payload,a,b,c) => {
+        console.log(payload,a,b,c)
+        if (!((payload.data.tag==sessionStorage.activeChatTag)&&(payload.data.chatId==sessionStorage.activeChatId))){
+            console.log("RECEIVED A MESSAGE FROM A NON-ACTIVE CHAT!")
+            // TODO: Show in page popup or notification and update the chat preview for that chat here
+        } else {
+            // TODO: Update the DOM here? or leave where it currently is.
+        }
+    });
 }
 async function subscribeToAllChats() {
     let token = await getToken()
