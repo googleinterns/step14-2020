@@ -4,6 +4,7 @@
 
 const MAX_CHAT_SIZE = 200;
 const DEFAULT_PFP = "gs://arringtonh-step-2020-d.appspot.com/profile-pictures/default.png";
+const messaging = firebase.messaging();
 
 // Adds user to an existing chat when given a reference to the place in the database
 function addUserToTag(reference, tag, newLat, newLong){
@@ -140,6 +141,7 @@ async function setUserTags(tagList){
         var lat;
         var long;
 
+        let token = await getToken();
         const currentUid = firebase.auth().currentUser.uid;
         const abridgedTagsRef = "/users/" + currentUid + "/allTags";
         const abridgedTagRemovalRef = "/users/" + currentUid + "/tagRemovalDict";
@@ -172,6 +174,7 @@ async function setUserTags(tagList){
                     let keys = await createOrJoinChat(tag, lat, long);
                     allTags[tag] = keys['tag'];
                     tagRemovalDict[tag] = keys['tagRemoval'];
+                    subscribeToTagChatId(token, tag, keys['tag']);
                 }
                 else{
                     allTags[tag] = currentTags[tag];
@@ -202,7 +205,7 @@ async function addUserTags(tagList){
     if(firebase.auth().currentUser){
         var lat;
         var long;
-
+        let token = await getToken();
         const currentUid = firebase.auth().currentUser.uid;
         const abridgedTagsRef = "/users/" + currentUid + "/allTags";
         const abridgedTagRemovalRef = "/users/" + currentUid + "/tagRemovalDict";
@@ -236,6 +239,7 @@ async function addUserTags(tagList){
                     let keys = await createOrJoinChat(tag, lat, long);
                     allTags[tag] = keys['tag'];
                     tagRemovalDict[tag] = keys['tagRemoval'];
+                    subscribeToTagChatId(token, tag, keys['tag'])
                 }
             }
 
@@ -262,6 +266,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
     var numUsers;
     var removalKey;
     var chatId;
+    let token = await getToken();
     await tagRemovalRef.once("value").then(function(snapshot){
         //Gets removal key to remove specific user from chat
         var data = snapshot.val();
@@ -272,6 +277,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
             // Gets chatId to remove user from
             var data2 = snapshot2.val();
             chatId = data2[tag];
+            unsubscribeFromTagChatId(token, tag, chatId)
         }).finally(async function(){
             // Removes user from chat
             const chatRef = firebase.database().ref("/chat/" + tag + "/" + chatId + "/users/" + removalKey);
@@ -297,7 +303,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
             // numUsers is the number of users remaining after removal
             // There is a check to make sure numUsers is not 0
             chatLat = (chatLat * (numUsers+1) - lat)/numUsers;
-            chatLat = (chatLat * (numUsers+1) - lat)/numUsers;
+            chatLong = (chatLong * (numUsers+1) - long)/numUsers;
             infoRef.update({latitude : chatLat, longitude : chatLong});
         });
     }
@@ -311,23 +317,21 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
 /*
     Realtime Database
  */
-var globalChatId = '-MB0ycAOM8VGIXlev5u8'
-var tag = 'test';
-var dbRefObject = getDbRef(tag, globalChatId);
 const LIMIT = 20; // how many messages to load at a time
 
 // Broad init function
 function initChat() {
     firebase.auth().onAuthStateChanged(async firebaseUser => {
         if(firebaseUser){
-            setupSidebar()
+            setupSidebar();
             clickWithEnterKey();
+            initNotifications();
 
             // InitUserChat sets information relevant to logged-in user
             // Must run before enclosed functions
             await initUserChat().then(function(){
                 populateSidebar();
-                initRef(dbRefObject);
+                initRef();
                 populateProfileSidebar(firebaseUser.uid);
             });
         }
@@ -353,11 +357,10 @@ function initUserChat(){
         query.once("value").then(function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
                 var key = childSnapshot.key;
-                var ChatID = childSnapshot.val();
-                if (key && ChatID) {
-                    tag = key;
-                    globalChatId = ChatID;
-                    dbRefObject = getDbRef(tag, globalChatId);
+                var chatId = childSnapshot.val();
+                if (key && chatId) {
+                    sessionStorage.activeChatTag = key;
+                    sessionStorage.activeChatId = chatId;
                     return true;
                 }
             });
@@ -368,8 +371,8 @@ function initUserChat(){
 
 
 // Sets title of page
-function setTitle(dbRefObj){
-    nameRef = dbRefObj.parent.child('chatInfo');
+function setTitle(){
+    nameRef = getActiveDbRef().parent.child('chatInfo');
     nameRef.once("value").then(function(snapshot){
         var data = snapshot.child("name").val();
         var presentableTitle = data.charAt(0).toUpperCase() + data.slice(1);
@@ -378,12 +381,13 @@ function setTitle(dbRefObj){
 }
 
 // initializes the .on() functions for the database reference
-function initRef(dbRefObject) {
+function initRef() {
+    let dbRefObject = getActiveDbRef();
     const chat = document.getElementById('chatbox');
     chat.innerHTML = '';
     const currentUid = firebase.auth().currentUser.uid;
 
-    setTitle(dbRefObject);
+    setTitle();
 
     // note that when a comment is added it will display more than the limit, which
     // is intentional
@@ -419,19 +423,21 @@ function pushChatMessage() {
             senderUID : firebase.auth().currentUser.uid
         }
         // push message to datastore
-        dbRefObject.push(message);
+        let dbRefObj = getActiveDbRef();
+        dbRefObj.push(message);
 
         // scroll down chat history to show recent message
         var chatHistory = document.getElementById("message-list");
         chatHistory.scrollTop = chatHistory.scrollHeight;
 
         // update chatInfo
-        const chatRef =  dbRefObject.parent.child('chatInfo');
+        const chatRef = dbRefObj.parent.child('chatInfo');
         chatRef.update({
             'lastAuthor': message.senderUID,
             'lastMessage': message.content,
             'timestamp': message.timestamp
         });
+        sendNotificationForChat(sessionStorage.activeChatTag,sessionStorage.activeChatId,firebase.auth().currentUser.displayName,messageInput.value)
     }
     messageInput.value = null; // clear the message
 }
@@ -453,7 +459,7 @@ function addMoreMessagesAtTheTop() {
             const firstChild = chatbox.firstChild;
             const firstChildTimestamp = firstChild.querySelector('#timestamp').dataMilli; // timestamp
 
-            dbRefObject.orderByChild("timestamp").endAt(firstChildTimestamp, firstChild.id).limitToLast(LIMIT + 1).once("value", snap => {
+            getActiveDbRef().orderByChild("timestamp").endAt(firstChildTimestamp, firstChild.id).limitToLast(LIMIT + 1).once("value", snap => {
                 snap.forEach(function(child) {
                     const messageUid = child.val().senderUID;
 
@@ -634,10 +640,12 @@ function blockButton(uid) {
     button.hidden = false;
 }
 
-function getDbRef(tag, chatId) {
-    const path = "/chat/"+tag+"/"+chatId+"/messages";
-    const dbRefObj = firebase.database().ref(path);
-    return dbRefObj;
+function getActiveDbRef() {
+    if (!sessionStorage.activeChatTag || !sessionStorage.activeChatId) {
+        return;
+    }
+    const path = "/chat/"+sessionStorage.activeChatTag+"/"+sessionStorage.activeChatId+"/messages";
+    return firebase.database().ref(path);
 }
 
 async function makePreviewWithLastMessage(tag, chatId) {
@@ -834,9 +842,11 @@ function populateSidebar() {
 
 function changeChatOnClick(domElement, tag, chatId) {
     domElement.addEventListener('click', function() {
-        dbRefObject = getDbRef(tag, chatId);
-        sessionStorage.clear(); // clear pfps
-        initRef(dbRefObject);
+        getActiveDbRef().off('child_added');
+        sessionStorage.clear(); // clear pfps and activeChat data
+        sessionStorage.activeChatTag = tag;
+        sessionStorage.activeChatId = chatId;
+        initRef();
     });
 }
 
@@ -953,6 +963,126 @@ function addTag(tag, uid) {
 
   const tagInput = document.getElementById('tag-input');
   document.querySelector('.tag-container').insertBefore(tagContainer, tagInput);
+}
+
+/*
+    Notifications
+ */
+
+messaging.onMessage((payload,a,b,c) => {
+    console.log(payload,a,b,c)
+    if (!((payload.data.tag==sessionStorage.activeChatTag)&&(payload.data.chatId==sessionStorage.activeChatId))){
+        console.log("RECEIVED A MESSAGE FROM A NON-ACTIVE CHAT!")
+        // TODO: Show in page popup or notification and update the chat preview for that chat here
+    } else {
+        // TODO: Update the DOM here? or leave where it currently is.
+    }
+});
+
+function getTopic(tag,chatId) {
+    return "/topics/"+tag+"."+chatId
+}
+
+async function getToken(){
+    return await messaging.getToken().then((currentToken) => {
+        if (currentToken) {
+            return currentToken;
+        } else {
+            console.log('No Instance ID token available. Request permission to generate one.');
+        }
+    }).catch((err) => {
+        console.log('An error occurred while retrieving token. ', err);
+    });
+}
+
+function getServerKey(){
+    // TODO: move this to appconfig.js and get it from there.
+    return 'key=AAAATmxWSLY:APA91bFngBwWTr1GyOT_bxAK1aiCtj4wPc8QT7NvrAi1mwkYYxSQGUn7ZeHKarx_Oc0OH_7qe61VaWFdKybizER9G77xP9Y3f77R9l4t2095CWSCPx77xM7nprK6jWihdjlAarRb2Zd3'
+}
+async function subscribeToAllChats() {
+    await messaging.requestPermission()
+    .then(function () {
+        console.log("Have permission");
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            .then(function(registration) {
+                console.log('Registration successful, scope is:', registration.scope);
+            }).catch(function(err) {
+                console.log('Service worker registration failed, error:', err);
+            });
+        }
+    });
+    subscribeToAllChats()
+}
+async function subscribeToAllChats() {
+    let token = await getToken()
+    currentUid = firebase.auth().currentUser.uid;
+    tagsRef = firebase.database().ref('/users/'+currentUid+'/allTags');
+    tagsRef.once('value', function(snap) {
+        if (snap.val()) {
+            for (const [tag,chatId] of Object.entries(snap.val())) {
+                subscribeToTagChatId(token, tag, chatId)
+            }
+        }
+    });
+}
+
+function unsubscribeFromTagChatId(token, tag, chatId) {
+    url = "https://iid.googleapis.com/iid/v1:batchRemove";
+    console.log("ARINZE2: unsubscribing from",tag,chatId)
+    payload = {
+        "to": getTopic(tag,chatId),
+        "registration_tokens": [token]
+    }
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: JSON.stringify(payload),
+        dataType: 'json',
+        headers: {
+            "Content-Type": 'application/json',
+            "Authorization": getServerKey()
+        }
+    });
+}
+
+function subscribeToTagChatId(token, tag, chatId) {
+    url = "https://iid.googleapis.com/iid/v1/"+token+"/rel"+getTopic(tag,chatId);
+    console.log("ARINZE1: subscribing to",tag,chatId)
+    $.ajax({
+        url: url,
+        type: 'post',
+        headers: {
+            "Content-Type": 'application/json',
+            "Authorization": getServerKey()
+        }
+    });
+}
+
+function sendNotificationForChat(tag,chatId,name,message) {
+    notificationBody = name+' has sent a message:\n'+message
+    let payload = {
+        "to": getTopic(tag,chatId),
+        "notification": {
+            "title": tag,
+            "body": notificationBody
+        },
+        "data":{
+            "tag": tag,
+            "chatId": chatId
+        }
+    }
+    $.ajax({
+        url: 'https://fcm.googleapis.com/fcm/send',
+        type: 'post',
+        data: JSON.stringify(payload),
+        dataType: 'json',
+        headers: {
+            "Content-Type": 'application/json',
+            "Authorization": getServerKey()
+        },
+        dataType: 'json'
+    });
 }
 
 function logout(){

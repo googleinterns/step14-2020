@@ -2,6 +2,8 @@
 const firebase = require('firebase/app');
 require('firebase/database');
 require('firebase/auth');
+require('firebase/storage');
+require('firebase/messaging');
 global.firebase = firebase;
 
 const { JSDOM } = require('jsdom');
