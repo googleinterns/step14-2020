@@ -385,7 +385,6 @@ function initRef(dbRefObject) {
     const currentUid = firebase.auth().currentUser.uid;
 
     setTitle(dbRefObject);
-    createFriendChat('e2N5J7gGjVMzK3jw4PtC9DedtpS2');
 
     // note that when a comment is added it will display more than the limit, which
     // is intentional
@@ -1023,12 +1022,13 @@ function addFriendsToProfile(uid) {
     friendRef.once('value', function(snap) {
         snap.forEach(function(child) {
             const friendUid = child.key;
-            addFriendToDom(friendUid);
+            const chatId = child.val();
+            addFriendToDom(friendUid, chatId);
         })
     })
 }
 
-function addFriendToDom(uid) {
+function addFriendToDom(uid, chatId) {
     const friendRef = firebase.database().ref('/users/'+uid);
     friendRef.once('value', function(snap) {
         const friendTemplate = document.getElementById('friend-template');
@@ -1046,6 +1046,12 @@ function addFriendToDom(uid) {
                 sessionStorage[uid+" pfp"] = src;
             })
         }
+
+        // add chat button
+        const button = friend.querySelector('#one-on-one');
+        const tag = 'chats-1on1';
+        changeChatOnClick(button, tag, chatId); // chat changes to 1on1 on button click
+        
 
         loadProfileOfSender(friend, uid); // go to profile on click
 
