@@ -332,6 +332,7 @@ function initChat() {
             });
         }
         else{
+            console.log("You logged out")
             window.location.replace("/static/welcome.html");
         }
     });
@@ -1043,12 +1044,10 @@ function addTag(tag, uid) {
   document.querySelector('.tag-container').insertBefore(tagContainer, tagInput);
 }
 
-function logout(){
-    notifications.unSubscribeFromAllChats();
+async function logout(){
+    await notifications.unSubscribeFromAllChats();
     sessionStorage.clear();
     firebase.auth().signOut();
-    window.location.replace("welcome.html");
-    console.log("You logged out")
 }
 
 window.initChat = initChat;
