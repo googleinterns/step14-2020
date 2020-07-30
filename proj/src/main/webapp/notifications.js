@@ -56,14 +56,13 @@ function subscribeToAllChats() {
     });
 }
 
-async function unSubscribeFromAllChats() {
-    let token = await getToken()
+function unSubscribeFromAllChats() {
     currentUid = firebase.auth().currentUser.uid;
     tagsRef = firebase.database().ref('/users/'+currentUid+'/allTags');
     tagsRef.once('value', function(snap) {
         if (snap.val()) {
             for (const [tag,chatId] of Object.entries(snap.val())) {
-                unSubscribeToTagChatId(token, tag, chatId)
+                unsubscribeFromTagChatId(tag, chatId)
             }
         }
     });
