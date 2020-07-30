@@ -116,7 +116,7 @@ describe('Test password validations', function() {
     // TODO: connect window to HTML to test page element
     // it('user must have at least one tag', function(){
     //     global.window = {location:{replace: function(newPath){
-    //         return assert.equal(newPath,'chat.html')}}}
+    //         return assert.equal(newPath,'signup.html')}}}
     //     expect(document.querySelector("#sign-in-title").to.have.text("Sign up"));
     // });
 });
