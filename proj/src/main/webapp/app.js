@@ -2,6 +2,7 @@
 const firebase = require('firebase/app');
 require('firebase/auth');
 require('firebase/database');
+require('firebase/messaging');
 require('firebase/storage');
 global.firebase = firebase;
 
@@ -20,6 +21,7 @@ firebase.initializeApp(appconfig.firebaseConfig);
 // Other files
 require('./chat.js');
 require('./location.js');
+require('./notifications.js');
 require('./script.js');
 require('./signup.js');
 require('./welcome.js');
