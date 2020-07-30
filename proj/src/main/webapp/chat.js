@@ -686,7 +686,9 @@ async function addUsernameToMessage(uid, preview) {
     const userRef = firebase.database().ref('/users/'+uid);
     await userRef.once("value", snap => {
         if(snap.val()) {
-            preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
+            if(uid){
+                preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
+            }
             // add pfp
             const url = snap.val().photo || DEFAULT_PFP;
             if (sessionStorage[uid+" pfp"]) {
@@ -1043,8 +1045,11 @@ function addTag(tag, uid) {
   document.querySelector('.tag-container').insertBefore(tagContainer, tagInput);
 }
 
-function logout(){
-    notifications.unSubscribeFromAllChats();
+async function logout(){
+    await new Promise(function(resolve){
+        notifications.unSubscribeFromAllChats();
+        resolve(1);
+    });
     sessionStorage.clear();
     firebase.auth().signOut();
     window.location.replace("welcome.html");
