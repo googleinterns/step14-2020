@@ -1052,6 +1052,9 @@ function addFriendToDom(uid, chatId) {
             })
         }
 
+        // sub to notifications
+        notifications.subscribeToTagChatId(tag, chatId);
+
         // add chat button
         const button = friend.querySelector('#one-on-one');
         const tag = 'chats-1on1';
