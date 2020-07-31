@@ -8,45 +8,31 @@ function initSignUp(){
     location.getLocation();
 }
 
-// if(btnLogin){
-//         btnLogin.addEventListener("click", e => {
-//             const emailVal = txtEmail.value;
-//             const passVal = txtPassword.value;
-
-//             // Initialize auth object
-//             const auth = firebase.auth();
-
-//             const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(){
-//                 window.location.replace("chat.html");
-//             });
-//             promise.catch(e => alert(e.message));
-//         });
-//     }
-
 function initSignUpButtons(){
     const btnSignUp = document.getElementById("btnSignUp");
     // Add sign up event
     if(btnSignUp){
         btnSignUp.addEventListener("click", async function () {
+            
+            // Elements of sign up container
+            const fname = document.getElementById("fname");
+            const lname = document.getElementById("lname");
+            const txtEmail = document.getElementById("email");
+            const txtPassword = document.getElementById("pass");
+            const tagStr = document.getElementById("tags");
+            const isLoc = document.getElementById("loc");
+            var lat;
+            var long;
+            if(isLoc.checked){
+                const coords = location.getLatLong();
+                lat = coords[0];
+                long = coords[1]; 
+            }
+            else{
+                lat = 999;
+                long = 999;
+            }
             try {
-                // Elements of sign up container
-                const fname = document.getElementById("fname");
-                const lname = document.getElementById("lname");
-                const txtEmail = document.getElementById("email");
-                const txtPassword = document.getElementById("pass");
-                const tagStr = document.getElementById("tags");
-                const isLoc = document.getElementById("loc");
-                var lat;
-                var long;
-                if(isLoc.checked){
-                    const coords = location.getLatLong();
-                    lat = coords[0];
-                    long = coords[1]; 
-                }
-                else{
-                    lat = 999;
-                    long = 999;
-                }
                 await signUp(fname.value, lname.value, txtEmail.value, txtPassword.value, tagStr.value, lat, long);
             }
             catch (e) {
