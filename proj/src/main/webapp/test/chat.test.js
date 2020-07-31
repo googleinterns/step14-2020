@@ -14,6 +14,77 @@ require("../app.js");
 let testHelper = require('./test-helper-functions.js');
 let chat = require('../chat.js');
 
+describe('creating and joining 1-on-1 chats', function() {
+    this.timeout(10000);
+    let testUsers = [{
+        email: 'test@test.com', 
+        password: 'test123!'
+    }, 
+    {
+        email: 'test2@test.com', 
+        password: 'test123!'
+    }];
+    let chatId;
+    const oneOnOneRef = firebase.database().ref('/chat/chats-1on1');
+
+    before(async function() {
+        for (let i = 0; i < testUsers.length; i++) {
+            await testHelper.createUserIfNotExisting(testUsers[i]);
+            await firebase.auth().signInWithEmailAndPassword(testUsers[i].email, testUsers[i].password);
+            testUsers[i]["uid"] = firebase.auth().currentUser.uid;
+            if (i == 1) {
+                chatId = oneOnOneRef.push().key;
+                await chat.createFriendChat(chatId, testUsers[0]["uid"]);
+            } else {
+                await firebase.auth().signOut();
+            }
+        }
+    });
+
+    after(async function() {
+        if (testconfig.shouldCleanUp) {
+            // Remove nodes created
+            await testHelper.emptyDatabase();
+        }
+
+        // delete created chat
+        oneOnOneRef.child(chatId).remove();
+
+        // sign out
+        await firebase.auth().signOut();
+
+        // Do cleanup tasks.
+        test.cleanup();
+    });
+
+    describe('make sure chat is created', function() {
+        it("make sure new chat exists", async function() {
+           await oneOnOneRef.child(chatId).once('value', function(snap) {
+                assert.isTrue(snap.exists());
+            })
+        })
+
+        it("first user's friend value is set to the chatId", async function() {
+            const uid1 = testUsers[0].uid;
+            const uid2 = testUsers[1].uid;
+            const friendRef = firebase.database().ref('/users/'+uid1+'/friends/'+uid2);
+            await friendRef.once('value', function(snap) {
+                assert.equal(snap.val(), chatId);
+            })
+        })
+
+        it("second user's friend value is set to the chatId", async function() {
+            const uid1 = testUsers[0].uid;
+            const uid2 = testUsers[1].uid;
+            const friendRef = firebase.database().ref('/users/'+uid2+'/friends/'+uid1);
+            await friendRef.once('value', function(snap) {
+                assert.equal(snap.val(), chatId);
+            })
+        })
+    })
+    
+})
+
 describe('Creating and Joining Chats', function() {
     this.timeout(10000);
     let testUsers = [

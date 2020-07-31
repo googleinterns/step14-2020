@@ -615,15 +615,15 @@ function friendRequestButton(uid) {
     1 on 1 chat between friends
 */
 
-function createFriendChat(chatId, friendUid) {
+async function createFriendChat(chatId, friendUid) {
     const chatRef = firebase.database().ref('/chat/chats-1on1');
 
     // set users' ref to the chat id
     const currentUid = firebase.auth().currentUser.uid;
-    const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+currentUid);
-    currFriendRef.set(chatId);
-    const otherFriendRef = firebase.database().ref('/users/'+friendUid+'/friends/'+friendUid);
-    otherFriendRef.set(chatId);
+    const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+friendUid);
+    await currFriendRef.set(chatId);
+    const otherFriendRef = firebase.database().ref('/users/'+friendUid+'/friends/'+currentUid);
+    await otherFriendRef.set(chatId);
 
     // we gotta make a chat now
     const chatInfoObj = {
@@ -637,17 +637,17 @@ function createFriendChat(chatId, friendUid) {
     const currUserRef = firebase.database().ref('/users/'+currentUid);
     const friendRef = firebase.database().ref('/users/'+friendUid);
 
-    currUserRef.once('value', function(snap) {
+    await currUserRef.once('value', function(snap) {
         return snap.val();
     }).then(function(currSnap) {
-        friendRef.once('value', function(snap) {
+        friendRef.once('value', async function(snap) {
             const currName = currSnap.val().firstName + ' ' + currSnap.val().lastName;
             const friendName = snap.val().firstName + ' ' + snap.val().lastName;
             const chatName = currName + ' and ' + friendName + "'s chat";
             chatInfoObj.chatInfo.name = chatName;
             
             // push new chat info to chats
-            chatRef.child(chatId).set(chatInfoObj);
+            await chatRef.child(chatId).set(chatInfoObj);
         })
     })
 
@@ -1111,5 +1111,6 @@ window.initChat = initChat;
 window.pushChatMessage = pushChatMessage;
 window.logout = logout;
 exports.createOrJoinChat = createOrJoinChat;
+exports.createFriendChat = createFriendChat;
 exports.DEFAULT_PFP = DEFAULT_PFP;
 
