@@ -1,7 +1,4 @@
-/*
-    Authentication
- */
-
+notifications = require('./notifications.js');
 const MAX_CHAT_SIZE = 200;
 const DEFAULT_PFP = "gs://arringtonh-step-2020-d.appspot.com/profile-pictures/default.png";
 
@@ -172,6 +169,7 @@ async function setUserTags(tagList){
                     let keys = await createOrJoinChat(tag, lat, long);
                     allTags[tag] = keys['tag'];
                     tagRemovalDict[tag] = keys['tagRemoval'];
+                    notifications.subscribeToTagChatId(tag, keys['tag']);
                 }
                 else{
                     allTags[tag] = currentTags[tag];
@@ -236,6 +234,7 @@ async function addUserTags(tagList){
                     let keys = await createOrJoinChat(tag, lat, long);
                     allTags[tag] = keys['tag'];
                     tagRemovalDict[tag] = keys['tagRemoval'];
+                    notifications.subscribeToTagChatId(tag, keys['tag'])
                 }
             }
 
@@ -262,6 +261,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
     var numUsers;
     var removalKey;
     var chatId;
+
     await tagRemovalRef.once("value").then(function(snapshot){
         //Gets removal key to remove specific user from chat
         var data = snapshot.val();
@@ -272,6 +272,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
             // Gets chatId to remove user from
             var data2 = snapshot2.val();
             chatId = data2[tag];
+            notifications.unsubscribeFromTagChatId(tag, chatId)
         }).finally(async function(){
             // Removes user from chat
             const chatRef = firebase.database().ref("/chat/" + tag + "/" + chatId + "/users/" + removalKey);
@@ -297,7 +298,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
             // numUsers is the number of users remaining after removal
             // There is a check to make sure numUsers is not 0
             chatLat = (chatLat * (numUsers+1) - lat)/numUsers;
-            chatLat = (chatLat * (numUsers+1) - lat)/numUsers;
+            chatLong = (chatLong * (numUsers+1) - long)/numUsers;
             infoRef.update({latitude : chatLat, longitude : chatLong});
         });
     }
@@ -311,28 +312,27 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
 /*
     Realtime Database
  */
-var globalChatId = '-MB0ycAOM8VGIXlev5u8'
-var tag = 'test';
-var dbRefObject = getDbRef(tag, globalChatId);
 const LIMIT = 20; // how many messages to load at a time
 
 // Broad init function
 function initChat() {
     firebase.auth().onAuthStateChanged(async firebaseUser => {
         if(firebaseUser){
-            setupSidebar()
+            setupSidebar();
             clickWithEnterKey();
+            notifications.initNotifications();
 
             // InitUserChat sets information relevant to logged-in user
             // Must run before enclosed functions
             await initUserChat().then(function(){
                 populateSidebar();
-                initRef(dbRefObject);
+                initRef();
                 populateProfileSidebar(firebaseUser.uid);
                 addBlockedToSettings();
             });
         }
         else{
+            console.log("You logged out")
             window.location.replace("/static/welcome.html");
         }
     });
@@ -354,11 +354,10 @@ function initUserChat(){
         query.once("value").then(function(snapshot) {
             snapshot.forEach(function(childSnapshot) {
                 var key = childSnapshot.key;
-                var ChatID = childSnapshot.val();
-                if (key && ChatID) {
-                    tag = key;
-                    globalChatId = ChatID;
-                    dbRefObject = getDbRef(tag, globalChatId);
+                var chatId = childSnapshot.val();
+                if (key && chatId) {
+                    sessionStorage.activeChatTag = key;
+                    sessionStorage.activeChatId = chatId;
                     return true;
                 }
             });
@@ -369,8 +368,8 @@ function initUserChat(){
 
 
 // Sets title of page
-function setTitle(dbRefObj){
-    nameRef = dbRefObj.parent.child('chatInfo');
+function setTitle(){
+    nameRef = getActiveDbRef().parent.child('chatInfo');
     nameRef.once("value").then(function(snapshot){
         var data = snapshot.child("name").val();
         var presentableTitle = data.charAt(0).toUpperCase() + data.slice(1);
@@ -379,12 +378,13 @@ function setTitle(dbRefObj){
 }
 
 // initializes the .on() functions for the database reference
-function initRef(dbRefObject) {
+function initRef() {
+    let dbRefObject = getActiveDbRef();
     const chat = document.getElementById('chatbox');
     chat.innerHTML = '';
     const currentUid = firebase.auth().currentUser.uid;
 
-    setTitle(dbRefObject);
+    setTitle();
 
     // note that when a comment is added it will display more than the limit, which
     // is intentional
@@ -420,19 +420,21 @@ function pushChatMessage() {
             senderUID : firebase.auth().currentUser.uid
         }
         // push message to datastore
-        dbRefObject.push(message);
+        let dbRefObj = getActiveDbRef();
+        dbRefObj.push(message);
 
         // scroll down chat history to show recent message
         var chatHistory = document.getElementById("message-list");
         chatHistory.scrollTop = chatHistory.scrollHeight;
 
         // update chatInfo
-        const chatRef =  dbRefObject.parent.child('chatInfo');
+        const chatRef = dbRefObj.parent.child('chatInfo');
         chatRef.update({
             'lastAuthor': message.senderUID,
             'lastMessage': message.content,
             'timestamp': message.timestamp
         });
+        notifications.sendNotificationForChat(message)
     }
     messageInput.value = null; // clear the message
 }
@@ -454,7 +456,7 @@ function addMoreMessagesAtTheTop() {
             const firstChild = chatbox.firstChild;
             const firstChildTimestamp = firstChild.querySelector('#timestamp').dataMilli; // timestamp
 
-            dbRefObject.orderByChild("timestamp").endAt(firstChildTimestamp, firstChild.id).limitToLast(LIMIT + 1).once("value", snap => {
+            getActiveDbRef().orderByChild("timestamp").endAt(firstChildTimestamp, firstChild.id).limitToLast(LIMIT + 1).once("value", snap => {
                 snap.forEach(function(child) {
                     const messageUid = child.val().senderUID;
 
@@ -635,10 +637,12 @@ function blockButton(uid) {
     button.hidden = false;
 }
 
-function getDbRef(tag, chatId) {
-    const path = "/chat/"+tag+"/"+chatId+"/messages";
-    const dbRefObj = firebase.database().ref(path);
-    return dbRefObj;
+function getActiveDbRef() {
+    if (!sessionStorage.activeChatTag || !sessionStorage.activeChatId) {
+        return;
+    }
+    const path = "/chat/"+sessionStorage.activeChatTag+"/"+sessionStorage.activeChatId+"/messages";
+    return firebase.database().ref(path);
 }
 
 async function makePreviewWithLastMessage(tag, chatId) {
@@ -707,11 +711,11 @@ function pfpOnInput() {
     const pfp = input.files[0];
 
     const currentUid = firebase.auth().currentUser.uid;
-    const pfpStorageRef = firebase.storage().ref('/profile-pictures/${currentUid}/pfp.png');
+    const pfpStorageRef = firebase.storage().ref(`/profile-pictures/${currentUid}/pfp.png`);
     pfpStorageRef.put(pfp);
 
     pfpStorageRef.getDownloadURL().then(function(url) {
-        const userPfpRef = firebase.database().ref('/users/${currentUid}/photo');
+        const userPfpRef = firebase.database().ref(`/users/${currentUid}/photo`);
         userPfpRef.set(pfpStorageRef.toString());
 
         userPfp = document.getElementById('user-pfp');
@@ -835,9 +839,11 @@ function populateSidebar() {
 
 function changeChatOnClick(domElement, tag, chatId) {
     domElement.addEventListener('click', function() {
-        dbRefObject = getDbRef(tag, chatId);
-        sessionStorage.clear(); // clear pfps
-        initRef(dbRefObject);
+        getActiveDbRef().off('child_added');
+        sessionStorage.clear(); // clear pfps and activeChat data
+        sessionStorage.activeChatTag = tag;
+        sessionStorage.activeChatId = chatId;
+        initRef();
     });
 }
 
@@ -1038,12 +1044,11 @@ function addTag(tag, uid) {
   document.querySelector('.tag-container').insertBefore(tagContainer, tagInput);
 }
 
-function logout(){
+async function logout(){
+    await notifications.unSubscribeFromAllChats();
+    sessionStorage.clear();
     firebase.auth().signOut();
-    window.location.replace("welcome.html");
-    console.log("You logged out")
 }
-
 
 window.initChat = initChat;
 window.pushChatMessage = pushChatMessage;
