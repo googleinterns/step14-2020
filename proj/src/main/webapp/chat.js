@@ -849,6 +849,8 @@ function changeChatOnClick(domElement, tag, chatId) {
 
 function populateProfileSidebar(uid) {
     const userRef = firebase.database().ref('/users/'+uid)
+    const auth = firebase.auth();
+
     userRef.once('value', snap => {
         const userObj = {};
         userObj.photo = snap.val().photo;
@@ -857,6 +859,7 @@ function populateProfileSidebar(uid) {
         userObj.lname = snap.val().lastName;
         userObj.bio = snap.val().bio;  // there is no bio yet
         userObj.tags = snap.val().allTags;
+        userObj.email = auth.currentUser.email;
         addUserInfoToDom(userObj)
     })
 }
@@ -892,6 +895,8 @@ function addUserInfoToDom(userObj) {
     }
     
     profile.querySelector("#user-bio").innerText = userObj.bio;
+
+    profile.querySelector("#user-email").innerText = userObj.email;
 
     document.getElementById('friend-house').innerHTML = '';
     addFriendsToProfile(userObj.uid);
