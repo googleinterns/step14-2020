@@ -156,6 +156,7 @@ function initializePasswordValidation(){
 
 function hasTag(){
     const tagBox = document.getElementById("tags");
+    const noMatch = document.getElementById("noMatch");
     if (tagBox.value.trim().length != 0){
         $('#tags').css('border','none');
         return true;
