@@ -13,7 +13,6 @@ function initSignUpButtons(){
     // Add sign up event
     if(btnSignUp){
         btnSignUp.addEventListener("click", async function () {
-            
             // Elements of sign up container
             const fname = document.getElementById("fname");
             const lname = document.getElementById("lname");
