@@ -171,8 +171,11 @@ function hasTag(){
 }
 
 function enableSignUp(passVal){
-    $('#tags').keyup(hasTag);
-    if (meetRequirements(passVal) && noMatch.hidden & hasTag()){
+    /* && is a logical AND operator which stops running the comparison when a false statement is reached 
+       & is a bitwise AND operator which compare all the of parts, regardless if the previous statement is false
+       the logical of the following function allows all functions to run while checking for veracity 
+    **/
+    if (meetRequirements(passVal) & noMatch.hidden && hasTag()){
         btnSignUp.disabled = false;
     } else {
         // disable sign up button
