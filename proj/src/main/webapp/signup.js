@@ -78,9 +78,9 @@ async function signUp(fname, lname, email, pass, tagStr, lat, long){
             }).then(function(){
                 window.location.replace("chat.html");
             });
-            });
-        }).catch(function(err){
-                alert(err);
+        });
+    }).catch(function(err){
+        alert(err);
     });
 }
 
