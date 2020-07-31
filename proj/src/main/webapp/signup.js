@@ -31,12 +31,7 @@ function initSignUpButtons(){
                 lat = 999;
                 long = 999;
             }
-            try {
-                await signUp(fname.value, lname.value, txtEmail.value, txtPassword.value, tagStr.value, lat, long);
-            }
-            catch (e) {
-                alert(e.message);
-            }
+            await signUp(fname.value, lname.value, txtEmail.value, txtPassword.value, tagStr.value, lat, long);
         });
     }
 }
@@ -50,38 +45,39 @@ async function signUp(fname, lname, email, pass, tagStr, lat, long){
     // Initialize auth object
     const auth = firebase.auth();
     auth.useDeviceLanguage();
+    try {
+        await auth.createUserWithEmailAndPassword(email, pass).then(async function(){
+            var allTags = {};
+            var tagRemovalDict = {};
+            for(var ii = 0; ii < tagList.length; ii++){
+                var tag = tagList[ii];                    
 
-    await auth.createUserWithEmailAndPassword(email, pass).then(async function(){
-        var allTags = {};
-        var tagRemovalDict = {};
-        for(var ii = 0; ii < tagList.length; ii++){
-            var tag = tagList[ii];                    
+                var keys = await chat.createOrJoinChat(tag, lat, long);
+                allTags[tag] = keys['tag'];
+                tagRemovalDict[tag] = keys['tagRemoval'];                 
+            }
 
-            var keys = await chat.createOrJoinChat(tag, lat, long);
-            allTags[tag] = keys['tag'];
-            tagRemovalDict[tag] = keys['tagRemoval'];                 
-        }
-
-        const user = auth.currentUser;
-        await user.updateProfile({
-            displayName: fname + " " + lname
-            }).then(function(){
-            firebase.database().ref("users/" + user.uid).set({
-                firstName : fname,
-                lastName : lname,
-                allTags : allTags,
-                tagRemovalDict : tagRemovalDict,
-                latitude : lat,
-                longitude : long,
-                bio : "I'm a new user! Say hi!",
-                photo: chat.DEFAULT_PFP,
-            }).then(function(){
-                window.location.replace("chat.html");
-            });
-        }).catch(function(err){
-            alert(err);
-        });
-    });
+            const user = auth.currentUser;
+            await user.updateProfile({
+                displayName: fname + " " + lname
+                }).then(function(){
+                firebase.database().ref("users/" + user.uid).set({
+                    firstName : fname,
+                    lastName : lname,
+                    allTags : allTags,
+                    tagRemovalDict : tagRemovalDict,
+                    latitude : lat,
+                    longitude : long,
+                    bio : "I'm a new user! Say hi!",
+                    photo: chat.DEFAULT_PFP,
+                }).then(function(){
+                    window.location.replace("chat.html");
+                });
+            })
+        })
+    } catch(e) {
+        alert(e);
+    }
 }
 
 /*
