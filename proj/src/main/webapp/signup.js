@@ -133,7 +133,7 @@ function initializePasswordValidation(){
     const noMatch = document.getElementById("noMatch");
     const btnSignUp = document.getElementById("btnSignUp");
     const pass = document.getElementById("pass");
-    const passconf = document.getElementById("passconf"); 
+    const passconf = document.getElementById("passconf");
     /* Check for password confirmation 
         enable button if and only if the password meets the 
         requirements and match each other**/
@@ -171,7 +171,7 @@ function hasTag(){
 
 function enableSignUp(passVal){
     $('#tags').keyup(hasTag);
-    if (meetRequirements(passVal) && noMatch.hidden && hasTag()){
+    if (meetRequirements(passVal) && noMatch.hidden & hasTag()){
         btnSignUp.disabled = false;
     } else {
         // disable sign up button
