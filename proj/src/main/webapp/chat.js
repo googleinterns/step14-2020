@@ -322,6 +322,7 @@ function initChat() {
         if(firebaseUser){
             setupSidebar()
             clickWithEnterKey();
+            initDeleteAccountButton();
 
             // InitUserChat sets information relevant to logged-in user
             // Must run before enclosed functions
@@ -340,7 +341,6 @@ function initChat() {
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
 
     document.getElementById('pfp-upload').oninput = pfpOnInput;
-
 }
 
 function initUserChat(){
@@ -891,6 +891,31 @@ function addUserInfoToDom(userObj) {
             addTag(tag, userObj.uid);
         }
     }
+}
+
+function initDeleteAccountButton(){
+    const txtEmail = document.getElementById("email");
+    const txtPassword = document.getElementById("pass");
+    const btnDelete = document.getElementById("btnDeleteAccount");
+    var user = firebase.auth().currentUser;
+    
+    btnDelete.addEventListener("click", async function () {
+        const emailVal = txtEmail.value;
+        const passVal = txtPassword.value;
+
+        // Reauthenticate creds
+        const auth = firebase.auth();
+        const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(){
+            // Deletes user from authenication 
+            // Their messages are still viewable 
+            user.delete().then(function() {
+                window.location.replace(chatPageUrl);
+            }).catch(function(error) {
+                error => alert(error.message);
+            });
+        });
+        promise.catch(e => alert(e.message))
+    });
 }
 
 // adds tag input

@@ -126,11 +126,23 @@
                 </a>
                 <div id='settings-submenu' class="collapse sidebar-submenu">
                     <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
-                        <span class="menu-collapsed">edit profile</span>
-                    </a>
-                    <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
                         <span class="menu-collapsed">change password</span>
                     </a>
+
+                    <a href="#account-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
+                            <span class="menu-collapsed">delete account</span>
+                    </a>
+                    <div id='account-submenu' class="collapse sidebar-submenu">
+                        <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
+                            <span class="menu-collapsed"><strong>re-enter account information to permanently delete your account</strong></span><br>
+                            <label for="email">email:</label><br>
+                            <input type="text" id="email" name="email" class="input" required><br>
+                            <label for="password">password:</label><br>
+                            <input type="password" id="pass" name="password" class="input" required><br>
+                            <button type="button" name="button" class="button" id="btnDeleteAccount">delete account</button>
+                        </a>
+                    </div>
+
                     <a class="bg-light bg-grey list-group-item list-group-item-action" onclick="logout()">
                         <span class="menu-collapsed">sign out</span>
                     </a>
@@ -201,5 +213,6 @@
     </div>
     <!-- end of body-row -->
     <script src="../bundle.js"></script>
+    <script src="../chat.js"></script>
 </body>
 </html>

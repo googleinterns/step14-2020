@@ -25,7 +25,6 @@
   padding-right: 3px;
 }
 
-
 .tag i {
   font-size: 90%;
 }
@@ -171,6 +170,22 @@ ul {
     border: 0;
 }
 
+#account-submenu {
+    background: #6c757d9e !important;
+}
+
+button {
+    background: var(--red) !important;
+    border: none;
+    border-radius: 10px;
+    width: 50%;
+    margin-top: 10px;
+}
+
+#email, 
+#pass {
+    border: none;
+}
 
 /* Closed submenu icon */
 #sidebar-container .list-group .list-group-item[aria-expanded="false"] .submenu-icon::after {
