@@ -1052,13 +1052,13 @@ function addFriendToDom(uid, chatId) {
             })
         }
 
-        // sub to notifications
-        notifications.subscribeToTagChatId(tag, chatId);
-
         // add chat button
         const button = friend.querySelector('#one-on-one');
         const tag = 'chats-1on1';
         changeChatOnClick(button, tag, chatId); // chat changes to 1on1 on button click
+
+        // sub to notifications
+        notifications.subscribeToTagChatId(tag, chatId);
         
 
         loadProfileOfSender(friend, uid); // go to profile on click
