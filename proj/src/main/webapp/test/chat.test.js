@@ -24,18 +24,17 @@ describe('creating and joining 1-on-1 chats', function() {
         email: 'test2@test.com', 
         password: 'test123!'
     }];
+    const TAG = 'chats-1on1';
     let chatId;
-    const oneOnOneRef = firebase.database().ref('/chat/chats-1on1');
+    const oneOnOneRef = firebase.database().ref(`/chat/${TAG}`);
 
     before(async function() {
         for (let i = 0; i < testUsers.length; i++) {
             await testHelper.createUserIfNotExisting(testUsers[i]);
             await firebase.auth().signInWithEmailAndPassword(testUsers[i].email, testUsers[i].password);
-            if (i == 1) {
-                chatId = oneOnOneRef.push().key;
-                await chat.createFriendChat(chatId, testUsers[0]["uid"]);
-            } else {
-                await firebase.auth().signOut();
+            // leaving the second user signed in b/c function needs current user
+            if (i == 0) {
+               await firebase.auth().signOut();
             }
         }
     });
@@ -46,7 +45,7 @@ describe('creating and joining 1-on-1 chats', function() {
             await testHelper.emptyDatabase();
         }
 
-        // sign out
+        // sign out second user
         await firebase.auth().signOut();
 
         // Do cleanup tasks.
@@ -54,25 +53,33 @@ describe('creating and joining 1-on-1 chats', function() {
     });
 
     describe('make sure chat is created', function() {
-        it("make sure new chat exists", async function() {
-           await oneOnOneRef.child(chatId).once('value', function(snap) {
+        it("make sure new chat is made properly", async function() {
+            chatId = oneOnOneRef.push().key;
+            await chat.createFriendChat(chatId, testUsers[0]["uid"]);
+            await oneOnOneRef.child(chatId).once('value', function(snap) {
                 assert.isTrue(snap.exists());
+            })
+
+            // name property exists
+            await oneOnOneRef.child(chatId+'/chatInfo/name').once('value', function(snap) {
+                assert.isTrue(snap.exists());
+            })
+
+            // tag property is correct
+            await oneOnOneRef.child(chatId+'/chatInfo/tag').once('value', function(snap) {
+                assert.equal(snap.val(), TAG);
             })
         })
 
-        it("first user's friend value is set to the chatId", async function() {
+        it("both users' friend value is set to the chatId", async function() {
             const uid1 = testUsers[0].uid;
             const uid2 = testUsers[1].uid;
-            const friendRef = firebase.database().ref('/users/'+uid1+'/friends/'+uid2);
+            var friendRef = firebase.database().ref('/users/'+uid1+'/friends/'+uid2);
             await friendRef.once('value', function(snap) {
                 assert.equal(snap.val(), chatId);
             })
-        })
 
-        it("second user's friend value is set to the chatId", async function() {
-            const uid1 = testUsers[0].uid;
-            const uid2 = testUsers[1].uid;
-            const friendRef = firebase.database().ref('/users/'+uid2+'/friends/'+uid1);
+            friendRef = firebase.database().ref('/users/'+uid2+'/friends/'+uid1);
             await friendRef.once('value', function(snap) {
                 assert.equal(snap.val(), chatId);
             })
