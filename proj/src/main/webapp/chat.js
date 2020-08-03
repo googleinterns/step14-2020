@@ -313,6 +313,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
     Realtime Database
  */
 const LIMIT = 20; // how many messages to load at a time
+const TAG_1ON1 = 'chats-1on1';
 
 // Broad init function
 function initChat() {
@@ -558,7 +559,7 @@ function friendRequestButton(uid) {
                     const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+uid);
                     const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUid);
 
-                    const oneOnOneRef = firebase.database().ref('/chat/chats-1on1');
+                    const oneOnOneRef = firebase.database().ref(`/chat/${TAG_1ON1}`);
                     const chatId = oneOnOneRef.push().key;
                     createFriendChat(chatId, uid);
                     currFriendRef.set(chatId);
@@ -593,7 +594,7 @@ function friendRequestButton(uid) {
                             otherFriendRef.remove();
 
                             // delete friend chat
-                            const oneOnOneRef = firebase.database().ref('/chat/chats-1on1');
+                            const oneOnOneRef = firebase.database().ref(`/chat/${TAG_1ON1}`);
                             oneOnOneRef.child(snap.val()).remove();
                         };
                     } else {
@@ -616,7 +617,7 @@ function friendRequestButton(uid) {
 */
 
 async function createFriendChat(chatId, friendUid) {
-    const chatRef = firebase.database().ref('/chat/chats-1on1');
+    const chatRef = firebase.database().ref(`/chat/${TAG_1ON1}`);
 
     // set users' ref to the chat id
     const currentUid = firebase.auth().currentUser.uid;
@@ -629,7 +630,7 @@ async function createFriendChat(chatId, friendUid) {
     const chatInfoObj = {
         'chatInfo': {
             'name': 'to be set later',
-            'tag': 'chats-1on1',
+            'tag': TAG_1ON1,
         }
     }
 
@@ -1054,7 +1055,7 @@ function addFriendToDom(uid, chatId) {
 
         // add chat button
         const button = friend.querySelector('#one-on-one');
-        const tag = 'chats-1on1';
+        const tag = TAG_1ON1;
         changeChatOnClick(button, tag, chatId); // chat changes to 1on1 on button click
 
         // sub to notifications
