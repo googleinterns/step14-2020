@@ -897,19 +897,23 @@ function initDeleteAccountButton(){
     const txtEmail = document.getElementById("email");
     const txtPassword = document.getElementById("pass");
     const btnDelete = document.getElementById("btnDeleteAccount");
-    var user = firebase.auth().currentUser;
     
+    
+
     btnDelete.addEventListener("click", async function () {
         const emailVal = txtEmail.value;
         const passVal = txtPassword.value;
 
-        // Reauthenticate creds
+        console.log(emailVal);
+
+        // Re-authenticate credentials
         const auth = firebase.auth();
         const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(){
-            // Deletes user from authenication 
-            // Their messages are still viewable 
+            // Deletes user from database but not their messages 
+            // A new account can be created with the previously associated email 
+            var user = firebase.auth().currentUser;
             user.delete().then(function() {
-                window.location.replace(chatPageUrl);
+                window.location.replace(welcome.html);
             }).catch(function(error) {
                 error => alert(error.message);
             });
