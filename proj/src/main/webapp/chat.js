@@ -421,7 +421,7 @@ function pushChatMessage() {
         }
         // push message to datastore
         let dbRefObj = getActiveDbRef();
-        dbRefObj.push(message).key;
+        dbRefObj.push(message);
 
         // scroll down chat history to show recent message
         var chatHistory = document.getElementById("message-list");
