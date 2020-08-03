@@ -320,10 +320,11 @@ function initChat() {
         if(firebaseUser){
             // If the user is verified or using a test server
             if(firebaseUser.emailVerified || window.location.href.includes("https://8080")){
-                if(firebaseUser.emailVerified)
+                if(firebaseUser.emailVerified){
                     console.log("You have been verified as a Camaraderie user");
-                else
+                } else {
                     console.log("You have been verified as a Camaraderie testing developer");
+                }
                 setupSidebar();
                 clickWithEnterKey();
                 notifications.initNotifications();
