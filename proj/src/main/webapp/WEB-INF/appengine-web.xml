@@ -5,6 +5,19 @@
   <runtime>java8</runtime>
   <static-files>
     <!-- prevent unwanted caching when accessing via the web preview server -->
-    <include path="/**" expiration="0s" />
+    <include path="/**.html" expiration="0s" >
+    </include>
+    <include path="/**.js" expiration="0s" >
+    </include>
+    <include path="/**.css" expiration="0s" >
+    </include>
+    <include path="/**.ico" expiration="0s" >
+    </include>
+    <include path="/**.png" expiration="0s" >
+    </include>
+    <include path="/**.svg" expiration="0s" >
+        <http-header name="Content-Type"
+                    value="image/svg+xml" />
+    </include>
   </static-files>
 </appengine-web-app>

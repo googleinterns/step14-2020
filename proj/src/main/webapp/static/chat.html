@@ -6,16 +6,18 @@
     <meta name="generator" content="Codeply" />
     <meta http-equiv="ScreenOrientation" content="autoRotate:disabled">
 
-    <title>Chat</title>
+    <title>Camaraderie - Chat</title>
     <base target="_self"> 
     <!-- font awesome icons -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <script src="https://kit.fontawesome.com/d691fbec03.js" crossorigin="anonymous"></script>
     <!-- bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-
     <!-- chatroom styling -->
     <link rel="stylesheet" href="../chat.css" />
+    <!-- jQuery -->
+    <script src="jquery-3.5.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body onload="initChat()" id="top">
@@ -79,7 +81,7 @@
                         </li>
                         <li class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
                             <p><strong>email</strong></p>
-                            <p class="ml-auto">cool@dog.com</p>
+                            <p class="ml-auto" id="user-email">cool@dog.com</p>
                         </li>
                         <li class="info-section list-group-item menu-collapsed justify-content-start ">
                             <div>
@@ -90,6 +92,26 @@
                                 <textarea id="bio-edit" style="width:100%; height:100%;" hidden></textarea>
                             </div>
                         </li>
+
+                        <li class="info-section list-group-item menu-collapsed justify-content-start ">
+                            <template id="friend-template">
+                                <div class="friend">
+                                    <div class="friend-pfp-div">
+                                        <img id="pfp" />
+                                    </div>
+                                    <div class="username-div">
+                                        <p id="display-name">username</p>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <div>
+                                <p><strong>friends</strong></p>
+                                <div id="friend-house"></div>
+                            </div>
+                            
+                        </li>
+
                         <li class="info-section list-group-item menu-collapsed justify-content-start ">
                             <div>
                                 <p class="text-left"><strong>tags</strong></p>
@@ -125,6 +147,18 @@
                     </div>
                 </a>
                 <div id='settings-submenu' class="collapse sidebar-submenu">
+                    <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
+                        <span class="menu-collapsed">edit profile</span>
+                    </a>
+                    <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
+                        <span class="menu-collapsed">blocked users</span>
+                        <div id="blocked-house" class="menu-collapsed"></div>
+                        <template id="blocked-template">
+                            <div class="blockedt">
+                                    <p id="display-name">username</p>
+                            </div>
+                        </template>
+                    </a>
                     <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
                         <span class="menu-collapsed">change password</span>
                     </a>

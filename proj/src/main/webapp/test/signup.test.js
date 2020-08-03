@@ -104,7 +104,7 @@ describe('Test password validations', function() {
         assert.isTrue(signup.meetRequirements('testing1!'));
     });
     it('password too short', async function() {
-        assert.isFalse(signup.meetRequirements('test1!'));
+        assert.isFalse(signup.meetRequirements('t123!'))
     });
     it('password missing number', async function() {
         assert.isFalse(signup.meetRequirements('testing!'));
@@ -112,11 +112,4 @@ describe('Test password validations', function() {
     it('password missing symbol', async function() {
         assert.isFalse(signup.meetRequirements('testing1'));
     });
-
-    // TODO: connect window to HTML to test page element
-    // it('user must have at least one tag', function(){
-    //     global.window = {location:{replace: function(newPath){
-    //         return assert.equal(newPath,'signup.html')}}}
-    //     expect(document.querySelector("#sign-in-title").to.have.text("Sign up"));
-    // });
 });
