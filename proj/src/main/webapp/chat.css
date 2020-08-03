@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
+/* styling for hiding something */
+.hidden {
+    position: absolute;
+    left: -999px;
+    bottom: -999px;
+}
+
 /* styling for block list */
 #blocked-house {
   display: flex;

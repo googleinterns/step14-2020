@@ -722,15 +722,20 @@ async function addUsernameToMessage(uid, preview) {
 }
 
 // function for when a user adds a picture
-function pfpOnInput() {
+async function pfpOnInput() {
     const input = document.getElementById("pfp-upload");
     const pfp = input.files[0];
 
     const currentUid = firebase.auth().currentUser.uid;
     const pfpStorageRef = firebase.storage().ref(`/profile-pictures/${currentUid}/pfp.png`);
-    pfpStorageRef.put(pfp);
+    const uploadStatus = document.getElementById('upload-status')
+    await pfpStorageRef.put(pfp).then(function() {
+        uploadStatus.innerText = 'upload success';
+    }).catch(function(error) {
+        uploadStatus.innerText = 'upload failed: '+error.message;
+    });
 
-    pfpStorageRef.getDownloadURL().then(function(url) {
+    await pfpStorageRef.getDownloadURL().then(function(url) {
         const userPfpRef = firebase.database().ref(`/users/${currentUid}/photo`);
         userPfpRef.set(pfpStorageRef.toString());
 
@@ -738,7 +743,8 @@ function pfpOnInput() {
         userPfp.src = url;
     })
     input.files = null; // clear the input
-    sessionStorage[currentUid +" pfp"] = null; // clear session storage
+    input.value = "";
+    delete sessionStorage[currentUid +" pfp"]; // clear session storage
 }
 
 function initBio() {
@@ -887,13 +893,15 @@ function addUserInfoToDom(userObj) {
     tagContainer.innerHTML = '';
     
     if (userObj.uid !== currentUid) {
-            friendRequestButton(userObj.uid);
-            blockButton(userObj.uid);
+        friendRequestButton(userObj.uid);
+        blockButton(userObj.uid);
+        document.getElementById('change-pfp').classList.add('hidden');
     } else {
         document.getElementById('friend-request').hidden = true;
         document.getElementById('block').hidden = true;
         initBio();
         addTagsToDom(currentUid);
+        document.getElementById('change-pfp').classList.remove('hidden');
     }
 
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
@@ -1009,11 +1017,13 @@ function addFriendToDom(uid) {
         const friendTemplate = document.getElementById('friend-template');
         const docFrag = friendTemplate.content.cloneNode(true);
         const friend = docFrag.querySelector('.friend');
-
+        
         if (sessionStorage[uid+" pfp"]) {
             const src = sessionStorage[uid+" pfp"];
             friend.querySelector('#pfp').src = src;
         } else {
+            console.log(snap.key);
+            console.log(snap.val())
             const url = snap.val().photo || DEFAULT_PFP;
             pfpRef = firebase.storage().refFromURL(url);
             pfpRef.getDownloadURL().then(function(src) {
