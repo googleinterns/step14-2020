@@ -318,18 +318,34 @@ const LIMIT = 20; // how many messages to load at a time
 function initChat() {
     firebase.auth().onAuthStateChanged(async firebaseUser => {
         if(firebaseUser){
-            setupSidebar();
-            clickWithEnterKey();
-            notifications.initNotifications();
+            // If the user is verified or using a test server
+            if(firebaseUser.emailVerified || window.location.href.includes("https://8080")){
+                if(firebaseUser.emailVerified){
+                    console.log("You have been verified as a Camaraderie user");
+                } else {
+                    console.log("You have been verified as a Camaraderie testing developer");
+                }
+                setupSidebar();
+                clickWithEnterKey();
+                notifications.initNotifications();
 
-            // InitUserChat sets information relevant to logged-in user
-            // Must run before enclosed functions
-            await initUserChat().then(function(){
-                populateSidebar();
-                initRef();
-                populateProfileSidebar(firebaseUser.uid);
-                addBlockedToSettings();
-            });
+                // InitUserChat sets information relevant to logged-in user
+                // Must run before enclosed functions
+                await initUserChat().then(function(){
+                    populateSidebar();
+                    initRef();
+                    populateProfileSidebar(firebaseUser.uid);
+                    addBlockedToSettings();
+                });
+            }
+            else{
+                firebaseUser.sendEmailVerification().then(function(){
+                    alert("An email has been sent to your account for verification. " +
+                    "\n\nPlease follow the verification link and then refresh the page.");
+                }).catch(function(err){
+                    console.log("There has been an error sending an email to your account", err);
+                });
+            }
         }
         else{
             console.log("You logged out")
