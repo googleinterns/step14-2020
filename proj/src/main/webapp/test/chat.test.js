@@ -31,7 +31,6 @@ describe('creating and joining 1-on-1 chats', function() {
         for (let i = 0; i < testUsers.length; i++) {
             await testHelper.createUserIfNotExisting(testUsers[i]);
             await firebase.auth().signInWithEmailAndPassword(testUsers[i].email, testUsers[i].password);
-            testUsers[i]["uid"] = firebase.auth().currentUser.uid;
             if (i == 1) {
                 chatId = oneOnOneRef.push().key;
                 await chat.createFriendChat(chatId, testUsers[0]["uid"]);
@@ -46,9 +45,6 @@ describe('creating and joining 1-on-1 chats', function() {
             // Remove nodes created
             await testHelper.emptyDatabase();
         }
-
-        // delete created chat
-        oneOnOneRef.child(chatId).remove();
 
         // sign out
         await firebase.auth().signOut();
