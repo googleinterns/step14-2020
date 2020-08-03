@@ -255,9 +255,7 @@ async function addUserTags(tagList){
 }
 
 async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedTagsRef, lat, long){
-    // Can't be an invalid ref (will be valid ref if tags exist; this is tag removal function)
-    // Gets tag removal key
-    // tagRemovalRef = ref@ "/users/" + firebaseUser.uid + "/tagRemovalDict"
+
     var numUsers;
     var removalKey;
     var chatId;
