@@ -314,7 +314,6 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
  */
 const LIMIT = 20; // how many messages to load at a time
 const TAG_1ON1 = 'chats-1on1';
-
 // Broad init function
 function initChat() {
     firebase.auth().onAuthStateChanged(async firebaseUser => {
@@ -326,7 +325,6 @@ function initChat() {
                 } else {
                     console.log("You have been verified as a Camaraderie testing developer");
                 }
-                setupSidebar();
                 clickWithEnterKey();
                 notifications.initNotifications();
 
@@ -356,9 +354,7 @@ function initChat() {
 
     const chat = document.getElementById('message-list');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
-
     document.getElementById('pfp-upload').oninput = pfpOnInput;
-
 }
 
 function initUserChat(){
@@ -845,13 +841,16 @@ function setupSidebar(){
             checkLoadingDisplays();
         }
 
-        // adjust message tempate proportions
+        // adjust message template proportions
         if (screen.width < 800) {
-            $('#img-col').addClass('col-2');
-            $('#msg-col').addClass('col-10');
+            $('.img-col').removeClass('col-1');
+            $('.img-col').addClass('col-2');
+            $('.msg-col').removeClass('col-11');
+            $('.msg-col').addClass('col-10');
         }
     });
 }
+
 function sidebarCollapse () {
     // remove locational reset
     $('#bottom').removeClass('topbtn');

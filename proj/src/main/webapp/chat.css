@@ -415,3 +415,7 @@ img {
     border-radius: 50% !important;
     }
 }
+
+.bluetooth {
+    background: lightblue !important;
+}
