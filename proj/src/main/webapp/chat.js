@@ -904,12 +904,15 @@ function initDeleteAccountButton(){
         const emailVal = txtEmail.value;
         const passVal = txtPassword.value;
 
-        console.log(emailVal);
-
         // Re-authenticate credentials
         const auth = firebase.auth();
         const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(){
-            // Deletes user from database but not their messages 
+            // Deletes user from Database but save their old messages 
+            const uid = firebase.auth().currentUser.uid;
+            let userRef = firebase.database().ref('users/' + uid);
+            userRef.remove();
+
+            // Deletes user from Authentication 
             // A new account can be created with the previously associated email 
             var user = firebase.auth().currentUser;
             user.delete().then(function() {
