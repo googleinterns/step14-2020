@@ -1024,8 +1024,6 @@ function addFriendToDom(uid) {
             const src = sessionStorage[uid+" pfp"];
             friend.querySelector('#pfp').src = src;
         } else {
-            console.log(snap.key);
-            console.log(snap.val())
             const url = snap.val().photo || DEFAULT_PFP;
             pfpRef = firebase.storage().refFromURL(url);
             pfpRef.getDownloadURL().then(function(src) {
