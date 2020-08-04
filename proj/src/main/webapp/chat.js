@@ -731,8 +731,10 @@ async function pfpOnInput() {
     const uploadStatus = document.getElementById('upload-status')
     await pfpStorageRef.put(pfp).then(function() {
         uploadStatus.innerText = 'upload success';
+        setTimeout(function(){ uploadStatus.innerText = ''; }, 5000);
     }).catch(function(error) {
         uploadStatus.innerText = 'upload failed: '+error.message;
+        setTimeout(function(){ uploadStatus.innerText = ''; }, 5000);
     });
 
     await pfpStorageRef.getDownloadURL().then(function(url) {
