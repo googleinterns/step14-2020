@@ -753,16 +753,16 @@ function initBio() {
     const bioBox = document.getElementById('user-bio');
     const editInputBox = document.getElementById('bio-edit');
 
-    bioBox.addEventListener('dblclick', function() {
+    bioBox.ondblclick = function() {
         this.hidden = true;
 
         editInputBox.hidden = false;
-        editInputBox.value = this.innerText
+        editInputBox.value = this.innerText;
 
         editInputBox.focus();
-    });
+    };
 
-    editInputBox.addEventListener('blur', function() {
+    editInputBox.onblur = function() {
         const uid = firebase.auth().currentUser.uid;
         const userBioRef = firebase.database().ref('/users/'+uid+'/bio');
         userBioRef.set(this.value);
@@ -770,7 +770,15 @@ function initBio() {
         this.hidden = true;
         bioBox.hidden = false;
         bioBox.innerText = this.value;
-    });
+    };
+}
+
+function unInitBio() {
+    const bioBox = document.getElementById('user-bio');
+    const editInputBox = document.getElementById('bio-edit');
+
+    bioBox.ondblclick = null;
+    editInputBox.onblur = null;
 }
 
 
@@ -898,6 +906,7 @@ function addUserInfoToDom(userObj) {
         friendRequestButton(userObj.uid);
         blockButton(userObj.uid);
         document.getElementById('change-pfp').classList.add('hidden');
+        unInitBio();
     } else {
         document.getElementById('friend-request').hidden = true;
         document.getElementById('block').hidden = true;
