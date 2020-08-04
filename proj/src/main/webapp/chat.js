@@ -905,14 +905,16 @@ function addUserInfoToDom(userObj) {
     if (userObj.uid !== currentUid) {
         friendRequestButton(userObj.uid);
         blockButton(userObj.uid);
-        document.getElementById('change-pfp').classList.add('hidden');
+        document.getElementById('change-pfp').classList.remove('d-flex');
+        document.getElementById('change-pfp').hidden = true;
         unInitBio();
     } else {
         document.getElementById('friend-request').hidden = true;
         document.getElementById('block').hidden = true;
         initBio();
         addTagsToDom(currentUid);
-        document.getElementById('change-pfp').classList.remove('hidden');
+        document.getElementById('change-pfp').classList.add('d-flex');
+        document.getElementById('change-pfp').hidden = false;
     }
 
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
