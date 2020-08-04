@@ -938,6 +938,9 @@ function initDeleteAccountButton(){
         // Re-authenticate credentials
         const auth = firebase.auth();
         const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(){
+            // Unsubscribe from chats 
+            notifications.unSubscribeFromAllChats;
+            
             // Deletes user from Database but save their old messages 
             const uid = firebase.auth().currentUser.uid;
             let userRef = firebase.database().ref('users/' + uid);

@@ -1,11 +1,6 @@
 // Chai is a commonly used library for creating unit test suites. It is easily extended with plugins.
 const chai = require('chai');
 const assert = chai.assert;
-const expect = chai.expect
-
-//  To test DOM
-//  npm install chai-dom
-chai.use(require('chai-dom'))
 
 // For Test Clean Up
 const test = require('firebase-functions-test')();
