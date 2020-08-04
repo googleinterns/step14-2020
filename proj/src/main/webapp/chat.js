@@ -735,9 +735,9 @@ async function pfpOnInput() {
     }).catch(function(error) {
         uploadStatus.innerText = 'upload failed: '+error.message;
         setTimeout(function(){ uploadStatus.innerText = ''; }, 5000);
-    });
-
-    await pfpStorageRef.getDownloadURL().then(function(url) {
+    }).then(function() {
+        return pfpStorageRef.getDownloadURL();
+    }).then(function(url) {
         const userPfpRef = firebase.database().ref(`/users/${currentUid}/photo`);
         userPfpRef.set(pfpStorageRef.toString());
 
