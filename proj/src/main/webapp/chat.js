@@ -1019,7 +1019,7 @@ function addFriendToDom(uid) {
         const friendTemplate = document.getElementById('friend-template');
         const docFrag = friendTemplate.content.cloneNode(true);
         const friend = docFrag.querySelector('.friend');
-        
+
         if (sessionStorage[uid+" pfp"]) {
             const src = sessionStorage[uid+" pfp"];
             friend.querySelector('#pfp').src = src;
