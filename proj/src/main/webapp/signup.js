@@ -31,7 +31,12 @@ function initSignUpButtons(){
                 lat = 999;
                 long = 999;
             }
-            await signUp(fname.value, lname.value, txtEmail.value, txtPassword.value, tagStr.value, lat, long);
+            try {
+                await signUp(fname.value, lname.value, txtEmail.value, txtPassword.value, tagStr.value, lat, long);
+            }
+            catch (e) {
+                alert(e.message);
+            }
         });
     }
 }
@@ -73,9 +78,9 @@ async function signUp(fname, lname, email, pass, tagStr, lat, long){
             }).then(function(){
                 window.location.replace("chat.html");
             });
-        }).catch(function(err){
-            alert(err);
         });
+    }).catch(function(err){
+        alert(err);
     });
 }
 
@@ -96,7 +101,7 @@ function meetRequirements(password){
 
 function passwordLength(password){
     let alertObj = document.getElementById("pwLength");
-    return styleAlert(alertObj,password.length > 7);
+    return styleAlert(alertObj,password.length > 5);
 }
 
 function containsNumber(password){
@@ -129,8 +134,9 @@ function initializePasswordValidation(){
     const pass = document.getElementById("pass");
     const passconf = document.getElementById("passconf");
     /* Check for password confirmation 
-        enable button if and only if the password meets the requiremetns and match **/
-    $('#pass, #passconf').on('keyup', function(){
+        enable button if and only if the password meets the 
+        requirements and match each other**/
+    $('#pass, #passconf, #tags').on('keyup', function(){
         let passVal = pass.value || '';
         let passconfVal = passconf.value || '';
         if (passVal == passconfVal){
@@ -143,14 +149,38 @@ function initializePasswordValidation(){
             passconf.classList.add("non-matching-pass");
             noMatch.hidden = false;
         }
-        if (meetRequirements(passVal) && noMatch.hidden) {
-            btnSignUp.disabled = false;
-        } else {
-            // disable sign up button
-            btnSignUp.disabled = true;
-        }
+        enableSignUp(passVal);
     })
 }
+
+function hasTag(){
+    const tagBox = document.getElementById("tags");
+    const noMatch = document.getElementById("noMatch");
+    if (tagBox.value.trim().length != 0){
+        $('#tags').css('border','none');
+        return true;
+    } else {
+        // the tag box will only be in red after the user has input a valid password 
+        // this is to prevent the page from being visually overwhelming and help guide the user
+        if (noMatch.hidden){
+            $('#tags').css('border','3px solid #fa8072');
+        }
+        return false;
+    }
+}
+
+function enableSignUp(passVal){
+    /* && is a logical AND operator which stops running the comparison when a false statement is reached 
+       & is a bitwise AND operator which compare all the of parts, regardless if the previous statement is false
+       the logical of the following function allows all functions to run while checking for veracity 
+    **/
+    if (meetRequirements(passVal) & noMatch.hidden && hasTag()){
+        btnSignUp.disabled = false;
+    } else {
+        // disable sign up button
+        btnSignUp.disabled = true;
+    }
+};
 
 window.initSignUp = initSignUp;
 exports.signUp = signUp;
