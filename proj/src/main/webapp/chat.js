@@ -323,7 +323,6 @@ function initChat() {
                 } else {
                     console.log("You have been verified as a Camaraderie testing developer");
                 }
-
                 setupSidebar();
                 clickWithEnterKey();
                 notifications.initNotifications();

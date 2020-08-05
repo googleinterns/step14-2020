@@ -96,15 +96,15 @@ describe('Test password validations', function() {
     });
 
     it('password ok', async function() {
-        assert.isTrue(signup.meetRequirements('testing1!'))
+        assert.isTrue(signup.meetRequirements('testing1!'));
     });
     it('password too short', async function() {
         assert.isFalse(signup.meetRequirements('t123!'))
     });
     it('password missing number', async function() {
-        assert.isFalse(signup.meetRequirements('testing!'))
+        assert.isFalse(signup.meetRequirements('testing!'));
     });
     it('password missing symbol', async function() {
-        assert.isFalse(signup.meetRequirements('testing1'))
+        assert.isFalse(signup.meetRequirements('testing1'));
     });
 });

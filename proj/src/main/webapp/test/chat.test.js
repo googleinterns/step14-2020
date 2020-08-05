@@ -120,8 +120,8 @@ describe('Creating and Joining Chats', function() {
             await firebase.auth().signInWithEmailAndPassword(userData.email, userData.password).then(function(data){
                 assert.equal(userData.uid,firebase.auth().currentUser.uid);
             }).catch(function(err){
-                throw err
-                })
+                throw err;
+                });
         });
 
         it('create a chat with the tag', async function() {
@@ -154,7 +154,7 @@ describe('Creating and Joining Chats', function() {
         it('sign out of first user', async function() {
 
             //Sign out of user
-            await firebase.auth().signOut()
+            await firebase.auth().signOut();
             assert.isTrue(!firebase.auth().currentUser);
         });
     });
@@ -168,15 +168,14 @@ describe('Creating and Joining Chats', function() {
             await firebase.auth().signInWithEmailAndPassword(userData.email, userData.password).then(function(data){
                 assert.equal(userData.uid,firebase.auth().currentUser.uid);
             }).catch(function(err){
-                throw err
+                throw err;
                 })
         });
-
         it('join an existing chat with the tag', async function() {
             const lat = 99.6;
             const long = 99.6;
             // Make sure chat with 'test-tag' does exit
-            let chatRef = firebase.database().ref("/chat/")
+            let chatRef = firebase.database().ref("/chat/");
             await chatRef.once('value', function(snapshot) {
                 assert.isTrue(snapshot.hasChild(tag));
             });
@@ -203,7 +202,7 @@ describe('Creating and Joining Chats', function() {
         });
         it('sign out of second user', async function() {
             //Sign out of user
-            await firebase.auth().signOut()
+            await firebase.auth().signOut();
             assert.isTrue(!firebase.auth().currentUser);
         });
     });
