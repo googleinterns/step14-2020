@@ -722,14 +722,14 @@ async function addUsernameToMessage(uid, preview) {
 }
 
 // function for when a user adds a picture
-async function pfpOnInput() {
+function pfpOnInput() {
     const input = document.getElementById("pfp-upload");
     const pfp = input.files[0];
 
     const currentUid = firebase.auth().currentUser.uid;
     const pfpStorageRef = firebase.storage().ref(`/profile-pictures/${currentUid}/pfp.png`);
     const uploadStatus = document.getElementById('upload-status')
-    await pfpStorageRef.put(pfp).then(function() {
+    pfpStorageRef.put(pfp).then(function() {
         uploadStatus.innerText = 'upload success';
         setTimeout(function(){ uploadStatus.innerText = ''; }, 5000);
     }).catch(function(error) {
@@ -743,10 +743,11 @@ async function pfpOnInput() {
 
         userPfp = document.getElementById('user-pfp');
         userPfp.src = url;
+
+        input.files = null; // clear the input
+        input.value = "";
+        delete sessionStorage[currentUid +" pfp"]; // clear session storage
     })
-    input.files = null; // clear the input
-    input.value = "";
-    delete sessionStorage[currentUid +" pfp"]; // clear session storage
 }
 
 function initBio() {
