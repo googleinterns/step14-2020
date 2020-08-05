@@ -537,7 +537,7 @@ function createMessageWithTemplate(key, messageObj, currentUid, lastVisited) {
         })
     })
     if(messageObj.timestamp > lastVisited && messageObj.senderUID != firebase.auth().currentUser.uid){
-        message.querySelector('.unread').innerText = " (unread)";
+        message.querySelector('.unread').innerText = " (New)";
     }
     
 

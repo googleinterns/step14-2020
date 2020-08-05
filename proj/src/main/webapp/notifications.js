@@ -38,12 +38,6 @@ async function initNotifications() {
         if (!((payload.data.tag==sessionStorage.activeChatTag)&&(payload.data.chatId==sessionStorage.activeChatId))){
             console.log("RECEIVED A MESSAGE FROM A NON-ACTIVE CHAT:", payload);
             // TODO: Show in page popup or notification and update the chat preview for that chat here
-        } else {
-            // Removes the inevitably generated 'unread' marker if user is looking at page
-            const unreadClasses = document.querySelectorAll('.unread');
-            unreadClasses.forEach(unreadMarker => {
-                unreadMarker.innerText = '';
-            });
         }
     });
 }
