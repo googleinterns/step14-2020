@@ -939,7 +939,7 @@ function initDeleteAccountButton(){
         const auth = firebase.auth();
         const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(){
             // Unsubscribe from chats 
-            notifications.unSubscribeFromAllChats;
+            notifications.unSubscribeFromAllChats();
             
             // Deletes user from Database but save their old messages 
             const uid = firebase.auth().currentUser.uid;
