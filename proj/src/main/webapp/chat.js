@@ -112,7 +112,6 @@ function createOrJoinChat(currentTag, lat, long){
 
 function getExistingTags(ref){
     var currentTags = {};
-    console.log(ref.toString());
     return ref.once("value").then(function(dataSnapshot){
         dataSnapshot.forEach(function(tagSnapshot){
             currentTags[tagSnapshot.key] = tagSnapshot.val();
@@ -327,7 +326,6 @@ function initChat() {
                 setupSidebar();
                 clickWithEnterKey();
                 notifications.initNotifications();
-                console.log(notifications.getToken());
 
                 // InitUserChat sets information relevant to logged-in user
                 // Must run before enclosed functions
