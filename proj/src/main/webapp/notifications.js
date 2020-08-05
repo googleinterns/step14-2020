@@ -101,14 +101,21 @@ function sendNotificationForChat(message) {
     const tag = sessionStorage.activeChatTag;
     const chatId = sessionStorage.activeChatId;
     const name = message.senderDisplay;
-    notificationBody = name+' has sent a message:\n\n'+message.content
+    notificationBody = name+' has sent a message:\n\n'+message.content;
+    var url;
+    if(window.location.href.includes("https://8080")){
+        url = 'https://8080-9f73b32e-6ccb-426e-8d6e-c03d6f324666.us-west1.cloudshell.dev/static/chat.html';
+    }
+    else{
+        url = 'https://arringtonh-step-2020-d.uc.r.appspot.com/static/chat.html';
+    }
     let payload = {
         "to": getTopic(tag,chatId),
         "notification": {
             "title": tag,
             "body": notificationBody,
             "icon": '/static/images/friendsChatting.png',
-            "click_action": 'https://8080-9f73b32e-6ccb-426e-8d6e-c03d6f324666.us-west1.cloudshell.dev/static/chat.html'
+            "click_action": url
         },
         "data":{
             "tag": tag,
