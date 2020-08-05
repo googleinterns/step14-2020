@@ -754,7 +754,9 @@ async function addUsernameToMessage(uid, preview) {
     const userRef = firebase.database().ref('/users/'+uid);
     await userRef.once("value", snap => {
         if(snap.val()) {
-            preview.querySelector('#username').innerText = snap.val().firstName + ' ' + snap.val().lastName;
+            const fName = snap.val().firstName || ' ';
+            const lName = snap.val().lastName || ' ';
+            preview.querySelector('#username').innerText = fName + ' ' + lName;
             // add pfp
             const url = snap.val().photo || DEFAULT_PFP;
             if (sessionStorage[uid+" pfp"]) {
