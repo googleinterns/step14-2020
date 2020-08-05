@@ -460,7 +460,7 @@ function pushChatMessage() {
 
         const unreadClasses = document.querySelectorAll('.unread');
         unreadClasses.forEach(unreadMarker => {
-            unreadMarker.innerText = '';
+            unreadMarker.classList.add('invisible');
         });
     }
     messageInput.value = null; // clear the message
@@ -537,7 +537,7 @@ function createMessageWithTemplate(key, messageObj, currentUid, lastVisited) {
         })
     })
     if((messageObj.timestamp > lastVisited) && lastVisited != 0 && messageObj.senderUID != firebase.auth().currentUser.uid){
-        message.querySelector('.unread').innerText = " (New)";
+        message.querySelector('.unread').classList.remove('invisible');
     }
     
 
