@@ -136,4 +136,3 @@ exports.subscribeToTagChatId = subscribeToTagChatId;
 exports.unsubscribeFromTagChatId = unsubscribeFromTagChatId;
 exports.sendNotificationForChat = sendNotificationForChat;
 exports.unSubscribeFromAllChats = unSubscribeFromAllChats;
-exports.getToken = getToken;
