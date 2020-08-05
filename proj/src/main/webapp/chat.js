@@ -838,10 +838,6 @@ function setupSidebar(){
     $('[data-toggle = sidebar-colapse]').click(function() {
         sidebarCollapse();
     });
-
-    // if ((screen.width < 543) && ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" ))) {
-    //     $('#sidebar-container').removeClass('d-block');
-    // }
 }
 
 $( document ).ready(function() {
@@ -849,7 +845,7 @@ $( document ).ready(function() {
         checkLoadingDisplays();
     }
 
-    // adjust message template proportions
+    // Adjust message template proportions
     if (screen.width < 800) {
         $('.img-col').removeClass('col-1');
         $('.img-col').addClass('col-2');
@@ -859,7 +855,6 @@ $( document ).ready(function() {
 });
 
 function sidebarCollapse () {
-
     // If the device is small, this will hide the chat when they open the side bar
     if (screen.width < 768) {
         $('.sidebar + .p-4').toggleClass('d-none');
