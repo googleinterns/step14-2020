@@ -827,7 +827,8 @@ function unInitBio() {
     Chatroom sidebar
 */
 function setupSidebar(){
-    // Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
+    // Hides submenus
+    // Profile and chat lists are in different submenus and appear when its sidebar option is clicked
     $('#body-row .collapse').collapse('hide');
 
     // Collapse/Expand icon
@@ -838,10 +839,9 @@ function setupSidebar(){
         sidebarCollapse();
     });
 
-    // move the buttom on mobile view
-    if ((screen.width < 543) && ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" ))) {
-        $('#sidebar-container').removeClass('d-block');
-    }
+    // if ((screen.width < 543) && ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" ))) {
+    //     $('#sidebar-container').removeClass('d-block');
+    // }
 }
 
 $( document ).ready(function() {
@@ -860,17 +860,17 @@ $( document ).ready(function() {
 
 function sidebarCollapse () {
 
-    // if the device is small, this will hide the chat when they open the side bar
+    // If the device is small, this will hide the chat when they open the side bar
     if (screen.width < 768) {
         $('.sidebar + .p-4').toggleClass('d-none');
     }
 
-    // if the device is smaller than a phone, the siedbar will collapse into a button
+    // Hide sidebar when collpased on mobile screens
     if (screen.width < 543) {
         $('#sidebar-container').toggleClass('d-block');
     }
 
-    // collapse sidebar as normal
+    // Collapse sidebar as normal
     $('.menu-collapsed').toggleClass('d-none');
     $('.sidebar-submenu').toggleClass('d-none');
     $('.submenu-icon').toggleClass('d-none');
