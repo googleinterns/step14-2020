@@ -488,7 +488,7 @@ function addMoreMessagesAtTheTop() {
                     const messageUid = child.val().senderUID;
 
                     if (!blockedUsers[messageUid] && child.key !== firstChild.id) {
-                        const message = createMessageWithTemplate(child.key, child.val(), currentUid, 9999999999999);
+                        const message = createMessageWithTemplate(child.key, child.val(), currentUid, 0);
                         chatbox.insertBefore(message, firstChild);
                     }
                 });
@@ -536,7 +536,7 @@ function createMessageWithTemplate(key, messageObj, currentUid, lastVisited) {
             message.querySelector('#pfp').src = src;
         })
     })
-    if(messageObj.timestamp > lastVisited && messageObj.senderUID != firebase.auth().currentUser.uid){
+    if((messageObj.timestamp > lastVisited) && lastVisited != 0 && messageObj.senderUID != firebase.auth().currentUser.uid){
         message.querySelector('.unread').innerText = " (New)";
     }
     
