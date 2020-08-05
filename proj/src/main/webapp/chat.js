@@ -579,6 +579,7 @@ function friendRequestButton(uid) {
         switch (snap.val()) {
             case 'sent':
                 // cancel friend request
+                deny.hidden = true;
                 button.innerText = 'cancel friend request';
                 button.onclick = function() {
                     currUserRef.remove();
@@ -616,6 +617,7 @@ function friendRequestButton(uid) {
                 deny.hidden = false;
                 break;
             default:
+                deny.hidden = true;
                 // check if already friends, then send request
                 const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+uid);
                 const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUid);
@@ -1143,12 +1145,12 @@ function addFriendsToProfile(uid) {
         snap.forEach(function(child) {
             const friendUid = child.key;
             const chatId = child.val();
-            addFriendToDom(friendUid, chatId);
+            addFriendToDom(uid, friendUid, chatId);
         })
     })
 }
 
-function addFriendToDom(uid, chatId) {
+function addFriendToDom(profileUid, uid, chatId) {
     const friendRef = firebase.database().ref('/users/'+uid);
     friendRef.once('value', function(snap) {
         const friendTemplate = document.getElementById('friend-template');
@@ -1168,9 +1170,15 @@ function addFriendToDom(uid, chatId) {
         }
 
         // add chat button
+        const currentUid = firebase.auth().currentUser.uid;
         const button = friend.querySelector('#one-on-one');
-        const tag = TAG_1ON1;
-        changeChatOnClick(button, tag, chatId); // chat changes to 1on1 on button click
+        if (currentUid == profileUid) { // on own profile
+            const tag = TAG_1ON1;
+            changeChatOnClick(button, tag, chatId); // chat changes to 1on1 on button click
+        } else { // remove button
+            button.remove();
+        }
+        
 
         // sub to notifications
         notifications.subscribeToTagChatId(tag, chatId);
