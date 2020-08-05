@@ -328,6 +328,7 @@ function initChat() {
 
                 setupSidebar()
                 clickWithEnterKey();
+                initChangePasswordButton();
                 initDeleteAccountButton();
                 notifications.initNotifications();
 
@@ -984,12 +985,21 @@ function addUserInfoToDom(userObj) {
     }
 }
 
+function initChangePasswordButton(){
+    var user = firebase.auth().currentUser;
+    var newPassword = getASecureRandomPassword();
+    const newPassword = document.getElementById("newPass");
+    user.updatePassword(newPassword).then(function() {
+            alert("Password changed successfully");
+        }).catch(function(error) {
+            error => alert(error.message);
+        });
+}
+
 function initDeleteAccountButton(){
     const txtEmail = document.getElementById("email");
     const txtPassword = document.getElementById("pass");
     const btnDelete = document.getElementById("btnDeleteAccount");
-    
-    
 
     btnDelete.addEventListener("click", async function () {
         const emailVal = txtEmail.value;

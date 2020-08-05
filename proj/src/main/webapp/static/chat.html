@@ -156,9 +156,19 @@
                             </div>
                         </template>
                     </a>
-                    <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
-                        <span class="menu-collapsed">change password</span>
+                    <a href="#password-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
+                            <span class="menu-collapsed">change password</span>
                     </a>
+                    <div id="password-submenu" class="collapse sidebar-submenu">
+                        <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
+                            <span class="menu-collapsed"><strong>change password</strong></span><br>
+                            <!-- <label for="email">email:</label><br>
+                            <input type="text" id="email" name="email" class="input" required><br> -->
+                            <label for="password">new password:</label><br>
+                            <input type="password" id="newPass" name="password" class="input" required><br>
+                            <button type="button" name="button" class="button" id="btnChangePassword">confirm</button>
+                        </a>
+                    </div>
 
                     <a href="#account-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                             <span class="menu-collapsed">delete account</span>
