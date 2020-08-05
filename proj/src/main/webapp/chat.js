@@ -328,6 +328,7 @@ function initChat() {
                 }
                 setupSidebar();
                 clickWithEnterKey();
+                initDeleteAccountButton();
                 notifications.initNotifications();
 
                 // InitUserChat sets information relevant to logged-in user
@@ -358,7 +359,6 @@ function initChat() {
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
 
     document.getElementById('pfp-upload').oninput = pfpOnInput;
-
 }
 
 function initUserChat(){
@@ -982,6 +982,41 @@ function addUserInfoToDom(userObj) {
             addTag(tag, userObj.uid);
         }
     }
+}
+
+function initDeleteAccountButton(){
+    const txtEmail = document.getElementById("email");
+    const txtPassword = document.getElementById("pass");
+    const btnDelete = document.getElementById("btnDeleteAccount");
+    
+    
+
+    btnDelete.addEventListener("click", async function () {
+        const emailVal = txtEmail.value;
+        const passVal = txtPassword.value;
+
+        // Re-authenticate credentials
+        const auth = firebase.auth();
+        const promise = auth.signInWithEmailAndPassword(emailVal, passVal).then(function(){
+            // Unsubscribe from chats 
+            notifications.unSubscribeFromAllChats();
+            
+            // Deletes user from Database but save their old messages 
+            const uid = firebase.auth().currentUser.uid;
+            let userRef = firebase.database().ref('users/' + uid);
+            userRef.remove();
+
+            // Deletes user from Authentication 
+            // A new account can be created with the previously associated email 
+            var user = firebase.auth().currentUser;
+            user.delete().then(function() {
+                window.location.replace(welcome.html);
+            }).catch(function(error) {
+                error => alert(error.message);
+            });
+        });
+        promise.catch(e => alert(e.message))
+    });
 }
 
 // adds tag input
