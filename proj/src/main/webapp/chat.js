@@ -433,13 +433,14 @@ function initRef(lastVisited) {
 
 function pushChatMessage() {
     const messageInput = document.getElementById('message-input');
+    const currentUid = firebase.auth().currentUser.uid;
     // prevent blank messages
     if (messageInput.value.trim().length != 0){
         var message = {
             content : messageInput.value,
             timestamp : new Date().getTime(),
             senderDisplay : firebase.auth().currentUser.displayName,
-            senderUID : firebase.auth().currentUser.uid
+            senderUID : currentUid
         }
         // push message to datastore
         let dbRefObj = getActiveDbRef();
@@ -462,6 +463,14 @@ function pushChatMessage() {
         unreadClasses.forEach(unreadMarker => {
             unreadMarker.classList.add('invisible');
         });
+
+        // updates last visited property
+        const dbRef = firebase.database().ref("/users/" + currentUid + "/lastVisited/");
+        var date = new Date();
+        var timestamp = date.getTime();
+        var updates = {};
+        updates[sessionStorage.activeChatTag] = timestamp;
+        dbRef.update(updates);
     }
     messageInput.value = null; // clear the message
 }
