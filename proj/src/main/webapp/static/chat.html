@@ -22,8 +22,7 @@
     <div class="row" id="body-row">
         <!-- sidebar -->
         <div id="sidebar-container" class="scroll sidebar sidebar-expanded d-none d-block">
-            <!-- d-* hiddens the Sidebar in smaller devices. -->
-    
+            <!-- hiddens the Sidebar in smaller devices. -->
             <a href="#chats-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between align-items-center">                
                     <span class="fa fas fa-comments fa-fw mr-3 fa-1x"></span>
@@ -41,17 +40,17 @@
                                 <img id="pfp" alt="profile picture">
                             </div> 
                         </div>
-                        <div class="message">
+                        <div class="message" style="width:80%;">
                             <div class="message-header">
                                 <strong><p id="chat-name"></p></strong>
                                 <p id="username"></p>
                                 <span class="text-muted" id=timestamp></span>
                             </div>
-                            <pre class="message-body"></pre>
+                            <pre class="message-body" style='overflow:hidden;'></pre>
                         </div>
                     </div>
             </template>
-            <div id='chats-submenu' class="collapse sidebar-submenu"></div> 
+            <div id="chats-submenu" class="collapse sidebar-submenu"></div> 
             <a href="#profile-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between align-items-center">
                         <span class="fa fa-user fa-fw mr-3 fa-1x"></span>
@@ -60,7 +59,7 @@
                     </div>
             </a>
 
-            <div id='profile-submenu' class="collapse sidebar-submenu">
+            <div id="profile-submenu" class="collapse sidebar-submenu">
                 <div id="user-profile">
                     <div class="center-h">
                         <div id="image-cropper">
@@ -69,9 +68,16 @@
                     </div>
                     <ul class="list-group">
                         <li id="change-pfp" class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
-                        <p><strong>change picture</strong></p>
-                        <input type="file" id="pfp-upload" />
-                    </li>
+                            <div class="d-flex flex-wrap">
+                                <div>
+                                    <p><strong>change picture</strong></p>
+                                    <input type="file" id="pfp-upload" />
+                                </div>
+                                <div style="width:100%;">
+                                    <p id="upload-status"></p>
+                                </div>
+                            </div>
+                        </li>
                         <li class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
                             <p><strong>name</strong></p>
                             <p class="ml-auto" id="user-display-name">doggie</p>
@@ -128,9 +134,9 @@
                                 </div>
                             </div>
                             <div id="button-house">
-                                <button type="button" id='friend-request' hidden></button>
-                                <button type="button" id='deny' hidden>deny friend request</button>
-                                <button type="button" id='block' hidden>block</button>
+                                <button type="button" id="friend-request" hidden></button>
+                                <button type="button" id="deny" hidden>deny friend request</button>
+                                <button type="button" id="block" hidden>block</button>
                             </div>
                         </li>
                 </div>
@@ -144,7 +150,7 @@
                         <span class="submenu-icon ml-auto"></span>
                     </div>
                 </a>
-                <div id='settings-submenu' class="collapse sidebar-submenu">
+                <div id="settings-submenu" class="collapse sidebar-submenu">
                     <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
                         <span class="menu-collapsed">edit profile</span>
                     </a>
@@ -160,6 +166,21 @@
                     <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
                         <span class="menu-collapsed">change password</span>
                     </a>
+
+                    <a href="#account-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
+                            <span class="menu-collapsed">delete account</span>
+                    </a>
+                    <div id="account-submenu" class="collapse sidebar-submenu">
+                        <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
+                            <span class="menu-collapsed"><strong>re-enter account information to permanently delete your account</strong></span><br>
+                            <label for="email">email:</label><br>
+                            <input type="text" id="email" name="email" class="input" required><br>
+                            <label for="password">password:</label><br>
+                            <input type="password" id="pass" name="password" class="input" required><br>
+                            <button type="button" name="button" class="button" id="btnDeleteAccount">delete account</button>
+                        </a>
+                    </div>
+
                     <a class="bg-light bg-grey list-group-item list-group-item-action" onclick="logout()">
                         <span class="menu-collapsed">sign out</span>
                     </a>
@@ -180,7 +201,16 @@
         <!-- main chat section -->
         <div class="col p-4">
             <div class="card" id="main-chat">
-                <h1 class="display-4 card-header" id="big-title"> Chat Room </h1>
+                <span>
+                    <a data-toggle="sidebar-colapse" class="bg-light bg-gold list-group-item list-group-item-action d-flex align-items-center d-block d-sm-none topbtn">
+                        <div class="d-flex w-100 justify-content-start align-items-center">
+                            <span id="top-collapse-icon" class="fas fa-bars fa-lg mr-3"></span>
+                        </div>
+                    </a>
+                    <h1 class="display-4 card-header" id="big-title"> 
+                        Chat Room 
+                    </h1>
+                </span>
                 <!-- chat display-->
                 <div class="card-body" id="message-list">
                     <ul>
@@ -188,12 +218,12 @@
                             <div id="chatbox" class="chat"></div>
                             <template id="message-temp" class="row">
                                 <div class="message d-flex">
-                                    <div class="col-1" id="img-col">
+                                    <div class="col-2 col-lg-1 img-col">
                                         <div id="image-cropper-pfp">
                                             <img id="pfp" src="https://cdn130.picsart.com/278148578018211.png" alt="profile picture">
                                         </div> 
                                     </div>
-                                    <div class="col-11" id="msg-col">
+                                    <div class="col-10 col-lg-11 msg-col">
                                         <li class="list-group-item">
                                             <div class="message-header justify-content-between">
                                                 <span><strong id="username">name</strong></span>
@@ -230,6 +260,8 @@
         <!-- end of main chat section -->
 
     </div>
+
+    
     <!-- end of body-row -->
     <script src="../bundle.js"></script>
 </body>
