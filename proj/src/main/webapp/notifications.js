@@ -37,7 +37,7 @@ async function initNotifications() {
     messaging.onMessage((payload) => {
         console.log(payload)
         if (!((payload.data.tag==sessionStorage.activeChatTag)&&(payload.data.chatId==sessionStorage.activeChatId))){
-            console.log("RECEIVED A MESSAGE FROM A NON-ACTIVE CHAT!")
+            console.log("RECEIVED A MESSAGE FROM A NON-ACTIVE CHAT!");
             // TODO: Show in page popup or notification and update the chat preview for that chat here
         } else {
             // TODO: Update the DOM here? or leave where it currently is.
@@ -101,10 +101,12 @@ async function subscribeToTagChatId(tag, chatId) {
 }
 
 function sendNotificationForChat(message) {
+    console.log(message);
     const tag = sessionStorage.activeChatTag;
     const chatId = sessionStorage.activeChatId;
     const name = message.senderDisplay;
     notificationBody = name+' has sent a message:\n\n'+message.content
+    console.log(message.timestamp);
     let payload = {
         "to": getTopic(tag,chatId),
         "notification": {
@@ -116,7 +118,8 @@ function sendNotificationForChat(message) {
         "data":{
             "tag": tag,
             "chatId": chatId,
-            "name" : name
+            "name" : name,
+            "time" : message.timestamp
         }
     }
     $.ajax({
@@ -138,3 +141,4 @@ exports.subscribeToTagChatId = subscribeToTagChatId;
 exports.unsubscribeFromTagChatId = unsubscribeFromTagChatId;
 exports.sendNotificationForChat = sendNotificationForChat;
 exports.unSubscribeFromAllChats = unSubscribeFromAllChats;
+exports.getToken = getToken;

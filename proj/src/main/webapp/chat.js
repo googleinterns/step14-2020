@@ -270,7 +270,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
             // Gets chatId to remove user from
             var data2 = snapshot2.val();
             chatId = data2[tag];
-            notifications.unsubscribeFromTagChatId(tag, chatId)
+            notifications.unsubscribeFromTagChatId(tag, chatId);
         }).finally(async function(){
             // Removes user from chat
             const chatRef = firebase.database().ref("/chat/" + tag + "/" + chatId + "/users/" + removalKey);
@@ -323,15 +323,23 @@ function initChat() {
                 } else {
                     console.log("You have been verified as a Camaraderie testing developer");
                 }
+
                 setupSidebar();
                 clickWithEnterKey();
                 notifications.initNotifications();
+                console.log(notifications.getToken());
 
                 // InitUserChat sets information relevant to logged-in user
                 // Must run before enclosed functions
                 await initUserChat().then(function(){
+                    var lastVisited;
+                    const dbRef = firebase.database().ref("/users/" + firebaseUser.uid + "/lastVisited/");
+                    dbRef.once('value', snap => {
+                        lastVisited = snap.child(sessionStorage.activeChatTag).val();
+                    });
+
                     populateSidebar();
-                    initRef();
+                    initRef(lastVisited);
                     populateProfileSidebar(firebaseUser.uid);
                     addBlockedToSettings();
                 });
@@ -392,7 +400,7 @@ function setTitle(){
 }
 
 // initializes the .on() functions for the database reference
-function initRef() {
+function initRef(lastVisited) {
     let dbRefObject = getActiveDbRef();
     const chat = document.getElementById('chatbox');
     chat.innerHTML = '';
@@ -409,13 +417,14 @@ function initRef() {
     }).then(function(blockedUsers) {
         blockedUsers = blockedUsers || {};
         var firstMessageSkipped = false;
+        //Makes messages visible
         dbRefObject.orderByChild("timestamp").limitToLast(LIMIT + 1).on('child_added', snap => {
             messageUid = snap.val().senderUID;
             if (!blockedUsers[messageUid]) {
                 if (!firstMessageSkipped) {
                     firstMessageSkipped = true;
                 } else {
-                    messageDom = createMessageWithTemplate(snap.key, snap.val());
+                    messageDom = createMessageWithTemplate(snap.key, snap.val(), currentUid, lastVisited);
                     chat.appendChild(messageDom);
                 }
             }
@@ -475,7 +484,7 @@ function addMoreMessagesAtTheTop() {
                     const messageUid = child.val().senderUID;
 
                     if (!blockedUsers[messageUid] && child.key !== firstChild.id) {
-                        const message = createMessageWithTemplate(child.key, child.val());
+                        const message = createMessageWithTemplate(child.key, child.val(), currentUid, 9999999999999);
                         chatbox.insertBefore(message, firstChild);
                     }
                 });
@@ -499,7 +508,7 @@ function clickWithEnterKey() {
     });
 }
 
-function createMessageWithTemplate(key, messageObj) {
+function createMessageWithTemplate(key, messageObj, currentUid, lastVisited) {
     const messageTemplate = document.getElementById('message-temp');
     const docFrag = messageTemplate.content.cloneNode(true);
     const message = docFrag.querySelector('.message')
@@ -523,6 +532,9 @@ function createMessageWithTemplate(key, messageObj) {
             message.querySelector('#pfp').src = src;
         })
     })
+    if(messageObj.timestamp > lastVisited && messageObj.senderUID != firebase.auth().currentUser.uid){
+        message.querySelector('.unread').innerText = " (unread)";
+    }
     
 
     message.id = key;
@@ -857,7 +869,20 @@ function changeChatOnClick(domElement, tag, chatId) {
         sessionStorage.clear(); // clear pfps and activeChat data
         sessionStorage.activeChatTag = tag;
         sessionStorage.activeChatId = chatId;
-        initRef();
+        
+        var lastVisited;
+        var uid = firebase.auth().currentUser.uid;
+        const dbRef = firebase.database().ref("/users/" + uid + "/lastVisited/");
+        dbRef.once('value', snap => {
+            lastVisited = snap.child(tag).val();
+            initRef(lastVisited);
+        }).finally(function(){
+            var date = new Date();
+            var timestamp = date.getTime();
+            var updates = {};
+            updates[tag] = timestamp;
+            dbRef.update(updates);
+        });
     });
 }
 

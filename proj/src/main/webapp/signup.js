@@ -54,12 +54,14 @@ async function signUp(fname, lname, email, pass, tagStr, lat, long){
     await auth.createUserWithEmailAndPassword(email, pass).then(async function(){
         var allTags = {};
         var tagRemovalDict = {};
+        var lastVisited = {};
         for(var ii = 0; ii < tagList.length; ii++){
             var tag = tagList[ii];                    
 
             var keys = await chat.createOrJoinChat(tag, lat, long);
             allTags[tag] = keys['tag'];
-            tagRemovalDict[tag] = keys['tagRemoval'];                 
+            tagRemovalDict[tag] = keys['tagRemoval'];
+            lastVisited[tag] = 0;
         }
 
         const user = auth.currentUser;
@@ -71,6 +73,7 @@ async function signUp(fname, lname, email, pass, tagStr, lat, long){
                 lastName : lname,
                 allTags : allTags,
                 tagRemovalDict : tagRemovalDict,
+                lastVisited : lastVisited,
                 latitude : lat,
                 longitude : long,
                 bio : "I'm a new user! Say hi!",
