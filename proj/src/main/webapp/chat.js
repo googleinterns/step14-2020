@@ -314,7 +314,6 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
  */
 const LIMIT = 20; // how many messages to load at a time
 const TAG_1ON1 = 'chats-1on1';
-
 // Broad init function
 function initChat() {
     firebase.auth().onAuthStateChanged(async firebaseUser => {
@@ -326,7 +325,8 @@ function initChat() {
                 } else {
                     console.log("You have been verified as a Camaraderie testing developer");
                 }
-                setupSidebar();
+
+                setupSidebar()
                 clickWithEnterKey();
                 initDeleteAccountButton();
                 notifications.initNotifications();
@@ -357,7 +357,6 @@ function initChat() {
 
     const chat = document.getElementById('message-list');
     chat.addEventListener('scroll', addMoreMessagesAtTheTop);
-
     document.getElementById('pfp-upload').oninput = pfpOnInput;
 }
 
@@ -829,7 +828,8 @@ function unInitBio() {
     Chatroom sidebar
 */
 function setupSidebar(){
-    // Hides submenus. Profile and chat lists are in different submenus and appear when its sidebar option is clicked.
+    // Hides submenus
+    // Profile and chat lists are in different submenus and appear when its sidebar option is clicked
     $('#body-row .collapse').collapse('hide');
 
     // Collapse/Expand icon
@@ -839,29 +839,34 @@ function setupSidebar(){
     $('[data-toggle = sidebar-colapse]').click(function() {
         sidebarCollapse();
     });
-
-    $( document ).ready(function() {
-        if (screen.width < 750) {
-            checkLoadingDisplays();
-        }
-
-        // adjust message tempate proportions
-        if (screen.width < 800) {
-            $('#img-col').addClass('col-2');
-            $('#msg-col').addClass('col-10');
-        }
-    });
 }
-function sidebarCollapse () {
-    // remove locational reset
-    $('#bottom').removeClass('topbtn');
 
-    // if the device is small, this will hide the chat when they open the side bar
-    if (screen.width < 750) {
+$( document ).ready(function() {
+    if (screen.width < 768) {
+        checkLoadingDisplays();
+    }
+
+    // Adjust message template proportions
+    if (screen.width < 800) {
+        $('.img-col').removeClass('col-1');
+        $('.img-col').addClass('col-2');
+        $('.msg-col').removeClass('col-11');
+        $('.msg-col').addClass('col-10');
+    }
+});
+
+function sidebarCollapse () {
+    // If the device is small, this will hide the chat when they open the side bar
+    if (screen.width < 768) {
         $('.sidebar + .p-4').toggleClass('d-none');
     }
 
-    // collapse sidebar as normal
+    // Hide sidebar when collpased on mobile screens
+    if (screen.width < 543) {
+        $('#sidebar-container').toggleClass('d-block');
+    }
+
+    // Collapse sidebar as normal
     $('.menu-collapsed').toggleClass('d-none');
     $('.sidebar-submenu').toggleClass('d-none');
     $('.submenu-icon').toggleClass('d-none');
@@ -873,11 +878,6 @@ function sidebarCollapse () {
         SeparatorTitle.removeClass('d-flex');
     } else {
         SeparatorTitle.addClass('d-flex');
-    }
-
-    // move the buttom on mobile view
-    if ((screen.width < 500) && ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" ))) {
-        $('#bottom').addClass('topbtn');
     }
 
      // Collapse/Expand icon
