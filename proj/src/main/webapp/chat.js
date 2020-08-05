@@ -313,6 +313,7 @@ async function removeUserFromChatByTag(tag, allTagsRef, tagRemovalRef, abridgedT
     Realtime Database
  */
 const LIMIT = 20; // how many messages to load at a time
+const TAG_1ON1 = 'chats-1on1';
 
 // Broad init function
 function initChat() {
@@ -573,8 +574,12 @@ function friendRequestButton(uid) {
 
                     const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+uid);
                     const otherFriendRef = firebase.database().ref('/users/'+uid+'/friends/'+currentUid);
-                    currFriendRef.set(true);
-                    otherFriendRef.set(true);
+
+                    const oneOnOneRef = firebase.database().ref(`/chat/${TAG_1ON1}`);
+                    const chatId = oneOnOneRef.push().key;
+                    createFriendChat(chatId, uid);
+                    currFriendRef.set(chatId);
+                    otherFriendRef.set(chatId);
 
                     deny.hidden = true;
                     deny.onclick = null;
@@ -603,6 +608,10 @@ function friendRequestButton(uid) {
                         button.onclick = function() {
                             currFriendRef.remove();
                             otherFriendRef.remove();
+
+                            // delete friend chat
+                            const oneOnOneRef = firebase.database().ref(`/chat/${TAG_1ON1}`);
+                            oneOnOneRef.child(snap.val()).remove();
                         };
                     } else {
                         // not friends, send request
@@ -617,6 +626,48 @@ function friendRequestButton(uid) {
         }
         button.hidden = false;
     });
+}
+
+/*
+    1 on 1 chat between friends
+*/
+
+async function createFriendChat(chatId, friendUid) {
+    const chatRef = firebase.database().ref(`/chat/${TAG_1ON1}`);
+
+    // set users' ref to the chat id
+    const currentUid = firebase.auth().currentUser.uid;
+    const currFriendRef = firebase.database().ref('/users/'+currentUid+'/friends/'+friendUid);
+    await currFriendRef.set(chatId);
+    const otherFriendRef = firebase.database().ref('/users/'+friendUid+'/friends/'+currentUid);
+    await otherFriendRef.set(chatId);
+
+    // we gotta make a chat now
+    const chatInfoObj = {
+        'chatInfo': {
+            'name': 'to be set later',
+            'tag': TAG_1ON1,
+        }
+    }
+
+    // fetch the users' names
+    const currUserRef = firebase.database().ref('/users/'+currentUid);
+    const friendRef = firebase.database().ref('/users/'+friendUid);
+
+    await currUserRef.once('value', function(snap) {
+        return snap.val();
+    }).then(function(currSnap) {
+        friendRef.once('value', async function(snap) {
+            const currName = currSnap.val().firstName + ' ' + currSnap.val().lastName;
+            const friendName = snap.val().firstName + ' ' + snap.val().lastName;
+            const chatName = currName + ' and ' + friendName + "'s chat";
+            chatInfoObj.chatInfo.name = chatName;
+            
+            // push new chat info to chats
+            await chatRef.child(chatId).set(chatInfoObj);
+        })
+    })
+
 }
 
 function blockButton(uid) {
@@ -745,16 +796,16 @@ function initBio() {
     const bioBox = document.getElementById('user-bio');
     const editInputBox = document.getElementById('bio-edit');
 
-    bioBox.addEventListener('dblclick', function() {
+    bioBox.ondblclick = function() {
         this.hidden = true;
 
         editInputBox.hidden = false;
-        editInputBox.value = this.innerText
+        editInputBox.value = this.innerText;
 
         editInputBox.focus();
-    });
+    };
 
-    editInputBox.addEventListener('blur', function() {
+    editInputBox.onblur = function() {
         const uid = firebase.auth().currentUser.uid;
         const userBioRef = firebase.database().ref('/users/'+uid+'/bio');
         userBioRef.set(this.value);
@@ -762,7 +813,15 @@ function initBio() {
         this.hidden = true;
         bioBox.hidden = false;
         bioBox.innerText = this.value;
-    });
+    };
+}
+
+function unInitBio() {
+    const bioBox = document.getElementById('user-bio');
+    const editInputBox = document.getElementById('bio-edit');
+
+    bioBox.ondblclick = null;
+    editInputBox.onblur = null;
 }
 
 
@@ -887,8 +946,9 @@ function addUserInfoToDom(userObj) {
     tagContainer.innerHTML = '';
     
     if (userObj.uid !== currentUid) {
-            friendRequestButton(userObj.uid);
-            blockButton(userObj.uid);
+        unInitBio();
+        friendRequestButton(userObj.uid);
+        blockButton(userObj.uid);
     } else {
         document.getElementById('friend-request').hidden = true;
         document.getElementById('block').hidden = true;
@@ -1033,12 +1093,13 @@ function addFriendsToProfile(uid) {
     friendRef.once('value', function(snap) {
         snap.forEach(function(child) {
             const friendUid = child.key;
-            addFriendToDom(friendUid);
+            const chatId = child.val();
+            addFriendToDom(friendUid, chatId);
         })
     })
 }
 
-function addFriendToDom(uid) {
+function addFriendToDom(uid, chatId) {
     const friendRef = firebase.database().ref('/users/'+uid);
     friendRef.once('value', function(snap) {
         const friendTemplate = document.getElementById('friend-template');
@@ -1056,6 +1117,15 @@ function addFriendToDom(uid) {
                 sessionStorage[uid+" pfp"] = src;
             })
         }
+
+        // add chat button
+        const button = friend.querySelector('#one-on-one');
+        const tag = TAG_1ON1;
+        changeChatOnClick(button, tag, chatId); // chat changes to 1on1 on button click
+
+        // sub to notifications
+        notifications.subscribeToTagChatId(tag, chatId);
+        
 
         loadProfileOfSender(friend, uid); // go to profile on click
 
@@ -1110,5 +1180,6 @@ window.initChat = initChat;
 window.pushChatMessage = pushChatMessage;
 window.logout = logout;
 exports.createOrJoinChat = createOrJoinChat;
+exports.createFriendChat = createFriendChat;
 exports.DEFAULT_PFP = DEFAULT_PFP;
 
