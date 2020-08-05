@@ -35,12 +35,9 @@ async function initNotifications() {
     });
     subscribeToAllChats()
     messaging.onMessage((payload) => {
-        console.log(payload)
         if (!((payload.data.tag==sessionStorage.activeChatTag)&&(payload.data.chatId==sessionStorage.activeChatId))){
-            console.log("RECEIVED A MESSAGE FROM A NON-ACTIVE CHAT!")
+            console.log("RECEIVED A MESSAGE FROM A NON-ACTIVE CHAT:", payload);
             // TODO: Show in page popup or notification and update the chat preview for that chat here
-        } else {
-            // TODO: Update the DOM here? or leave where it currently is.
         }
     });
 }
@@ -116,7 +113,8 @@ function sendNotificationForChat(message) {
         "data":{
             "tag": tag,
             "chatId": chatId,
-            "name" : name
+            "name" : name,
+            "time" : message.timestamp
         }
     }
     $.ajax({

@@ -77,6 +77,14 @@
   font-size: 90%;
 }
 
+.unread {
+    color:blue;
+}
+
+.invisible {
+    display:none;
+}
+
 /* container with all child divs aligned horizontally in the center*/
 body {
     background-color: #333333;
