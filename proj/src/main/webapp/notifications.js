@@ -40,7 +40,11 @@ async function initNotifications() {
             console.log("RECEIVED A MESSAGE FROM A NON-ACTIVE CHAT!");
             // TODO: Show in page popup or notification and update the chat preview for that chat here
         } else {
-            // TODO: Update the DOM here? or leave where it currently is.
+            // Removes the inevitably generated 'unread' marker if user is looking at page
+            const unreadClasses = document.querySelectorAll('.unread');
+            unreadClasses.forEach(unreadMarker => {
+                unreadMarker.innerText = '';
+            });
         }
     });
 }
