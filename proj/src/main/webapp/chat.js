@@ -458,6 +458,11 @@ function pushChatMessage() {
             'timestamp': message.timestamp
         });
         notifications.sendNotificationForChat(message)
+
+        const unreadClasses = document.querySelectorAll('.unread');
+        unreadClasses.forEach(unreadMarker => {
+            unreadMarker.innerText = '';
+        });
     }
     messageInput.value = null; // clear the message
 }
