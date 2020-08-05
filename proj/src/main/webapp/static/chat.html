@@ -16,7 +16,6 @@
     <!-- chatroom styling -->
     <link rel="stylesheet" href="../chat.css" />
     <!-- jQuery -->
-    <script src="jquery-3.5.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
@@ -183,7 +182,17 @@
         <!-- main chat section -->
         <div class="col p-4">
             <div class="card" id="main-chat">
-                <h1 class="display-4 card-header" id="big-title"> Chat Room </h1>
+                <span>
+                    <a data-toggle="sidebar-colapse" class="bg-light bg-gold list-group-item list-group-item-action d-flex align-items-center topbtn">
+                        <div class="d-flex w-100 justify-content-start align-items-center">
+                            <span id="top-collapse-icon" class="fas fa-bars fa-lg mr-3"></span>
+                        </div>
+                    </a>
+
+                    <h1 class="display-4 card-header" id="big-title"> 
+                        Chat Room 
+                    </h1>
+                </span>
                 <!-- chat display-->
                 <div class="card-body" id="message-list">
                     <ul>
@@ -191,12 +200,12 @@
                             <div id="chatbox" class="chat"></div>
                             <template id="message-temp" class="row">
                                 <div class="message d-flex">
-                                    <div class="col-1 img-col">
+                                    <div class="col-2 col-lg-1 img-col">
                                         <div id="image-cropper-pfp">
                                             <img id="pfp" src="https://cdn130.picsart.com/278148578018211.png" alt="profile picture">
                                         </div> 
                                     </div>
-                                    <div class="col-11 msg-col">
+                                    <div class="col-10 col-lg-11 msg-col">
                                         <li class="list-group-item">
                                             <div class="message-header justify-content-between">
                                                 <span><strong id="username">name</strong></span>

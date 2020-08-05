@@ -355,11 +355,15 @@ img {
 }
 
 .topbtn {
-    width: inherit;
     position: fixed;
     top: 40px;
     left: 12.5%;
     z-index: 3;
+    border: 0;
+    height: 60px;
+    width: 60px;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.17), 0 5px 10px 0 rgba(0, 0, 0, 0.15);
 }
 
 /* tablets or smaller */
@@ -397,7 +401,7 @@ img {
 }
 
 /* phones */
-@media only screen and (max-width: 450px) {
+@media only screen and (max-width: 576px) {
     #big-title {
         font-size: 3rem;
     }    
@@ -412,10 +416,6 @@ img {
 
     a.bg-light:focus, a.bg-light:hover, button.bg-light:focus, button.bg-light:hover {
     background-color: #D1B280! important;
-    border-radius: 50% !important;
     }
-}
-
-.bluetooth {
-    background: lightblue !important;
+    
 }

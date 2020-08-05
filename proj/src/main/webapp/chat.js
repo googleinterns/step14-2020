@@ -325,6 +325,8 @@ function initChat() {
                 } else {
                     console.log("You have been verified as a Camaraderie testing developer");
                 }
+
+                setupSidebar()
                 clickWithEnterKey();
                 notifications.initNotifications();
 
@@ -836,28 +838,36 @@ function setupSidebar(){
         sidebarCollapse();
     });
 
-    $( document ).ready(function() {
-        if (screen.width < 750) {
-            checkLoadingDisplays();
-        }
-
-        // adjust message template proportions
-        if (screen.width < 800) {
-            $('.img-col').removeClass('col-1');
-            $('.img-col').addClass('col-2');
-            $('.msg-col').removeClass('col-11');
-            $('.msg-col').addClass('col-10');
-        }
-    });
+    // move the buttom on mobile view
+    if ((screen.width < 543) && ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" ))) {
+        $('#sidebar-container').removeClass('d-block');
+    }
 }
 
+$( document ).ready(function() {
+    if (screen.width < 768) {
+        checkLoadingDisplays();
+    }
+
+    // adjust message template proportions
+    if (screen.width < 800) {
+        $('.img-col').removeClass('col-1');
+        $('.img-col').addClass('col-2');
+        $('.msg-col').removeClass('col-11');
+        $('.msg-col').addClass('col-10');
+    }
+});
+
 function sidebarCollapse () {
-    // remove locational reset
-    $('#bottom').removeClass('topbtn');
 
     // if the device is small, this will hide the chat when they open the side bar
-    if (screen.width < 750) {
+    if (screen.width < 768) {
         $('.sidebar + .p-4').toggleClass('d-none');
+    }
+
+    // if the device is smaller than a phone, the siedbar will collapse into a button
+    if (screen.width < 543) {
+        $('#sidebar-container').toggleClass('d-block');
     }
 
     // collapse sidebar as normal
@@ -872,11 +882,6 @@ function sidebarCollapse () {
         SeparatorTitle.removeClass('d-flex');
     } else {
         SeparatorTitle.addClass('d-flex');
-    }
-
-    // move the buttom on mobile view
-    if ((screen.width < 500) && ($( "#sidebar-container" ).hasClass( "sidebar-collapsed" ))) {
-        $('#bottom').addClass('topbtn');
     }
 
      // Collapse/Expand icon
