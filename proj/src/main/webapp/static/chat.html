@@ -68,9 +68,16 @@
                     </div>
                     <ul class="list-group">
                         <li id="change-pfp" class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
-                        <p><strong>change picture</strong></p>
-                        <input type="file" id="pfp-upload" />
-                    </li>
+                            <div class="d-flex flex-wrap">
+                                <div>
+                                    <p><strong>change picture</strong></p>
+                                    <input type="file" id="pfp-upload" />
+                                </div>
+                                <div style="width:100%;">
+                                    <p id="upload-status"></p>
+                                </div>
+                            </div>
+                        </li>
                         <li class="info-section list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
                             <p><strong>name</strong></p>
                             <p class="ml-auto" id="user-display-name">doggie</p>
@@ -253,6 +260,8 @@
         <!-- end of main chat section -->
 
     </div>
+
+    
     <!-- end of body-row -->
     <script src="../bundle.js"></script>
 </body>
