@@ -778,17 +778,26 @@ function pfpOnInput() {
 
     const currentUid = firebase.auth().currentUser.uid;
     const pfpStorageRef = firebase.storage().ref(`/profile-pictures/${currentUid}/pfp.png`);
-    pfpStorageRef.put(pfp);
-
-    pfpStorageRef.getDownloadURL().then(function(url) {
+    const uploadStatus = document.getElementById('upload-status')
+    pfpStorageRef.put(pfp).then(function() {
+        uploadStatus.innerText = 'upload success';
+        setTimeout(function(){ uploadStatus.innerText = ''; }, 5000);
+    }).catch(function(error) {
+        uploadStatus.innerText = 'upload failed: '+error.message;
+        setTimeout(function(){ uploadStatus.innerText = ''; }, 5000);
+    }).then(function() {
+        return pfpStorageRef.getDownloadURL();
+    }).then(function(url) {
         const userPfpRef = firebase.database().ref(`/users/${currentUid}/photo`);
         userPfpRef.set(pfpStorageRef.toString());
 
         userPfp = document.getElementById('user-pfp');
         userPfp.src = url;
+
+        input.files = null; // clear the input
+        input.value = "";
+        delete sessionStorage[currentUid +" pfp"]; // clear session storage
     })
-    input.files = null; // clear the input
-    sessionStorage[currentUid +" pfp"] = null; // clear session storage
 }
 
 function initBio() {
@@ -946,14 +955,18 @@ function addUserInfoToDom(userObj) {
     tagContainer.innerHTML = '';
     
     if (userObj.uid !== currentUid) {
-        unInitBio();
         friendRequestButton(userObj.uid);
         blockButton(userObj.uid);
+        document.getElementById('change-pfp').classList.remove('d-flex');
+        document.getElementById('change-pfp').hidden = true;
+        unInitBio();
     } else {
         document.getElementById('friend-request').hidden = true;
         document.getElementById('block').hidden = true;
         initBio();
         addTagsToDom(currentUid);
+        document.getElementById('change-pfp').classList.add('d-flex');
+        document.getElementById('change-pfp').hidden = false;
     }
 
     profile.querySelector("#user-display-name").innerText = userObj.fname + ' ' + userObj.lname;
