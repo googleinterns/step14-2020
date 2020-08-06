@@ -152,6 +152,10 @@ h1 {
     width: 60px;
 }
 
+.sidebar > a{
+    background: #D1B280 !important;
+}
+
 ul {
     list-style-type: none;
     padding: 0;
