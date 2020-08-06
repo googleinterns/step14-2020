@@ -441,4 +441,7 @@ img {
     background-color: #D1B280! important;
     }
     
+    #main-chat {
+        height: 95vh;
+    }
 }
