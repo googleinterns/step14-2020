@@ -102,13 +102,7 @@ function sendNotificationForChat(message) {
     const chatId = sessionStorage.activeChatId;
     const name = message.senderDisplay;
     notificationBody = name+' has sent a message:\n\n'+message.content;
-    var url;
-    if(window.location.href.includes("https://8080")){
-        url = 'https://8080-9f73b32e-6ccb-426e-8d6e-c03d6f324666.us-west1.cloudshell.dev/static/chat.html';
-    }
-    else{
-        url = 'https://arringtonh-step-2020-d.uc.r.appspot.com/static/chat.html';
-    }
+    var url = window.location.href;
     let payload = {
         "to": getTopic(tag,chatId),
         "notification": {
