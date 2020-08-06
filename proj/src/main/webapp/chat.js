@@ -1047,7 +1047,6 @@ function initChangePasswordButton(){
     var newPassword = document.getElementById("newPass").value;
     const promise = auth.signInWithEmailAndPassword(email, oldPassword).then(function(){
         if (meetPWRequirements(newPassword)) {
-            console.log("satisifes requirements");
             user.updatePassword(newPassword).then(function() {
                 alert("Password changed successfully");
             }).catch(function(error) {
