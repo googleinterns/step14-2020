@@ -12,14 +12,7 @@ importScripts('https://www.gstatic.com/firebasejs/7.17.1/firebase-messaging.js')
 // https://firebase.google.com/docs/web/setup#config-object
 // TODO: get this from appconfig.js
 firebase.initializeApp({
-    apiKey: "AIzaSyAcpxnpwrTCO4XTymTcneRscMBzJBne2Qg",
-    authDomain: "arringtonh-step-2020-d.firebaseapp.com",
-    databaseURL: "https://arringtonh-step-2020-d.firebaseio.com",
-    projectId: "arringtonh-step-2020-d",
-    storageBucket: "arringtonh-step-2020-d.appspot.com",
-    messagingSenderId: "336825043126",
-    appId: "1:336825043126:web:1256d7b08f1c8daa93be17",
-    measurementId: "G-VJQS6TEYGV"
+    
 });
 
 const messaging = firebase.messaging();
