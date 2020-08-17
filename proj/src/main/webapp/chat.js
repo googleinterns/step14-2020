@@ -1035,12 +1035,53 @@ function addUserInfoToDom(userObj) {
     }
 }
 
+$( "#btnChangePassword" ).click(function() {
+    initChangePasswordButton();
+});
+
+function initChangePasswordButton(){
+    const auth = firebase.auth();
+    const user = auth.currentUser;
+    const email = user.email;
+    var oldPassword = document.getElementById("oldPass").value;
+    var newPassword = document.getElementById("newPass").value;
+    const promise = auth.signInWithEmailAndPassword(email, oldPassword).then(function(){
+        if (meetPWRequirements(newPassword)) {
+            user.updatePassword(newPassword).then(function() {
+                alert("Password changed successfully");
+            }).catch(function(error) {
+                alert(error.message);
+            });
+        }
+    });
+    // Catches errors for old passwords
+    promise.catch(error => alert(error.message));
+}
+
+function meetPWRequirements(password){
+    errors = [];
+    if (password.length < 6) {
+        errors.push("Your password must contain at least 6 characters."); 
+    }
+    if (password.search(/[0-9]/) < 0) {
+        errors.push("Your password must contain at least one number."); 
+    }
+    if (password.search(/[$-/:-?{-~!"^_`@#\[\]\\]/) < 0) {
+        errors.push("Your password must contain at least one symbol."); 
+    }
+    if (errors.length > 0) {
+        // Shows what the new password is missing, if any
+        alert(errors.join("\n"));
+        return false;
+    }
+    return true;
+}
+
+
 function initDeleteAccountButton(){
     const txtEmail = document.getElementById("email");
     const txtPassword = document.getElementById("pass");
     const btnDelete = document.getElementById("btnDeleteAccount");
-    
-    
 
     btnDelete.addEventListener("click", async function () {
         const emailVal = txtEmail.value;
@@ -1066,7 +1107,7 @@ function initDeleteAccountButton(){
                 error => alert(error.message);
             });
         });
-        promise.catch(e => alert(e.message))
+        promise.catch(e => alert(e.message));
     });
 }
 

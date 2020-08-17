@@ -152,9 +152,6 @@
                 </a>
                 <div id="settings-submenu" class="collapse sidebar-submenu">
                     <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
-                        <span class="menu-collapsed">edit profile</span>
-                    </a>
-                    <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
                         <span class="menu-collapsed">blocked users</span>
                         <div id="blocked-house" class="menu-collapsed"></div>
                         <template id="blocked-template">
@@ -163,9 +160,24 @@
                             </div>
                         </template>
                     </a>
-                    <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
-                        <span class="menu-collapsed">change password</span>
+                    <a href="#password-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
+                            <span class="menu-collapsed">change password</span>
                     </a>
+                    <div id="password-submenu" class="collapse sidebar-submenu">
+                        <a href="#" class="bg-light bg-grey list-group-item list-group-item-action">
+                            <label for="password">old password:</label><br>
+                            <input type="password" id="oldPass" name="password" class="input" required><br>
+                            <label for="password"><br><br>new password:</label><br>
+                            <input type="password" id="newPass" name="password" class="input" required><br>
+                            <p>password must contain atleast:</p>
+                            <ul>
+                                <li>-six characters</li>
+                                <li>-one symbol</li>
+                                <li>-one number</li>
+                            </ul>
+                            <button type="button" name="button" class="button" id="btnChangePassword">confirm</button>
+                        </a>
+                    </div>
 
                     <a href="#account-submenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action flex-column align-items-start">
                             <span class="menu-collapsed">delete account</span>
